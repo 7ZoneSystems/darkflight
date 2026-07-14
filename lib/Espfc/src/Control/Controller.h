@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Control/Altitude.hpp"
+#include "Control/PosHold.hpp"
 #include "Control/Rates.h"
 #include "Model.h"
 
@@ -31,6 +32,7 @@ private:
   Model& _model;
   Rates _rates;
   Utils::Filter _speedFilter;
+  PosHold _posHold;
 };
 
 } // namespace Espfc::Control

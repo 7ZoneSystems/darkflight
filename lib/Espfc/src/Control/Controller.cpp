@@ -4,7 +4,7 @@
 
 namespace Espfc::Control {
 
-Controller::Controller(Model& model): _model(model), _rates{} {}
+Controller::Controller(Model& model): _model(model), _rates{}, _posHold(model) {}
 
 int Controller::begin()
 {
@@ -17,6 +17,7 @@ int Controller::begin()
   beginOuterLoop(AXIS_ROLL);
   beginOuterLoop(AXIS_PITCH);
   beginAltHold();
+  _posHold.begin();
 
   return 1;
 }
@@ -29,6 +30,9 @@ int FAST_CODE_ATTR Controller::update()
     startTime = micros();
     _model.state.debug[0] = startTime - _model.state.loopTimer.last;
   }
+
+  // Update position hold before outer loop so setpoint.angle is fresh
+  _posHold.update();
 
   {
     Utils::Stats::Measure(_model.state.stats, COUNTER_OUTER_PID);
@@ -127,7 +131,16 @@ void FAST_CODE_ATTR Controller::outerLoop()
   {
     for (size_t i = 0; i < AXIS_COUNT_RP; i++)
     {
-      const float angleSetpoint = Utils::toRad(_model.config.level.angleLimit) * _model.state.input.ch[i];
+      // Use position hold's angle setpoint if active, otherwise use stick input
+      float angleSetpoint;
+      if (_model.isModeActive(MODE_POSHOLD))
+      {
+        angleSetpoint = _model.state.setpoint.angle[i];
+      }
+      else
+      {
+        angleSetpoint = Utils::toRad(_model.config.level.angleLimit) * _model.state.input.ch[i];
+      }
       _model.state.setpoint.rate[i] = _model.state.outerPid[i].update(angleSetpoint, _model.state.attitude.euler[i]);
       // disable fterm in angle mode
       _model.state.innerPid[i].fScale = 0.f;
