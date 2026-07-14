@@ -81,6 +81,7 @@ enum FlightMode {
   MODE_FAILSAFE,
   MODE_BLACKBOX,
   MODE_BLACKBOX_ERASE,
+  MODE_POSHOLD,
   MODE_COUNT,
 };
 
@@ -667,6 +668,10 @@ struct GpsConfig
 {
   uint8_t minSats = 8;
   uint8_t setHomeOnce = 1;
+  uint8_t posHoldMaxAngle = 10; // deg
+  uint8_t posHoldStickDeadband = 10; // percent of roll/pitch stick travel
+  int16_t posHoldMaxHorizontalAccuracy = 5000; // mm
+  int16_t posHoldGpsTimeout = 1500; // ms
 
   // GNSS Constellation Configuration (M10 multi-band support)
   uint8_t gnssMode = 0;          // 0=Auto, 1=GPS only, 2=GPS+GLO, 3=GPS+GAL, 4=GPS+BDS, 5=All
@@ -717,8 +722,8 @@ class ModelConfig
       [FC_PID_PITCH] = { .P = 46, .I = 90, .D = 26, .F = 76 },  // PITCH
       [FC_PID_YAW]   = { .P = 45, .I = 90, .D =  0, .F = 72 },  // YAW
       [FC_PID_ALT]   = { .P =  0, .I =  0, .D =  0, .F =  0 },  // ALTHOLD POS
-      [FC_PID_POS]   = { .P =  0, .I =  0, .D =  0, .F =  0 },  // POSHOLD_P * 100, POSHOLD_I * 100,
-      [FC_PID_POSR]  = { .P =  0, .I =  0, .D =  0, .F =  0 },  // POSHOLD_RATE_P * 10, POSHOLD_RATE_I * 100, POSHOLD_RATE_D * 1000,
+      [FC_PID_POS]   = { .P = 15, .I =  0, .D =  0, .F =  0 },  // POSHOLD_P * 100, POSHOLD_I * 100,
+      [FC_PID_POSR]  = { .P = 40, .I =  0, .D =  0, .F =  0 },  // POSHOLD_RATE_P * 10, POSHOLD_RATE_I * 100, POSHOLD_RATE_D * 1000,
       [FC_PID_NAVR]  = { .P =  0, .I =  0, .D =  0, .F =  0 },  // NAV_P * 10, NAV_I * 100, NAV_D * 1000
       [FC_PID_LEVEL] = { .P = 45, .I =  0, .D =  0, .F =  0 },  // ANGLE/LEVEL
       [FC_PID_MAG]   = { .P =  0, .I =  0, .D =  0, .F =  0 },  // MAG

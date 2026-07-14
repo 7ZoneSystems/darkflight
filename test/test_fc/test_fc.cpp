@@ -513,6 +513,71 @@ void test_actuator_arming_throttle()
   TEST_ASSERT_EQUAL_UINT32(ARMING_DISABLED_THROTTLE, model.state.mode.armingDisabledFlags);
 }
 
+void setup_poshold_ready(Model& model)
+{
+  model.state.gps.present = true;
+  model.state.gps.fix = true;
+  model.state.gps.fixType = 3;
+  model.state.gps.numSats = model.config.gps.minSats;
+  model.state.gps.accuracy.horizontal = 4000;
+  model.state.gps.lastMsgTs = 1000000;
+}
+
+void test_poshold_mode_id_appended()
+{
+  TEST_ASSERT_EQUAL_UINT32(0, MODE_ARMED);
+  TEST_ASSERT_EQUAL_UINT32(7, MODE_BLACKBOX_ERASE);
+  TEST_ASSERT_EQUAL_UINT32(8, MODE_POSHOLD);
+  TEST_ASSERT_EQUAL_UINT32(9, MODE_COUNT);
+}
+
+void test_actuator_poshold_gps_gate_accepts_good_fix()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(2000000);
+
+  Model model;
+  setup_poshold_ready(model);
+
+  Actuator actuator(model);
+  TEST_ASSERT_TRUE(actuator.canActivateMode(MODE_POSHOLD));
+}
+
+void test_actuator_poshold_gps_gate_rejects_bad_fix()
+{
+  Model model;
+  setup_poshold_ready(model);
+
+  Actuator actuator(model);
+
+  model.state.gps.fix = false;
+  TEST_ASSERT_FALSE(actuator.canActivateMode(MODE_POSHOLD));
+
+  setup_poshold_ready(model);
+  model.state.gps.fixType = 2;
+  TEST_ASSERT_FALSE(actuator.canActivateMode(MODE_POSHOLD));
+
+  setup_poshold_ready(model);
+  model.state.gps.numSats = model.config.gps.minSats - 1;
+  TEST_ASSERT_FALSE(actuator.canActivateMode(MODE_POSHOLD));
+
+  setup_poshold_ready(model);
+  model.state.gps.accuracy.horizontal = model.config.gps.posHoldMaxHorizontalAccuracy + 1;
+  TEST_ASSERT_FALSE(actuator.canActivateMode(MODE_POSHOLD));
+}
+
+void test_actuator_poshold_gps_gate_rejects_stale_fix()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(3000000);
+
+  Model model;
+  setup_poshold_ready(model);
+
+  Actuator actuator(model);
+  TEST_ASSERT_FALSE(actuator.canActivateMode(MODE_POSHOLD));
+}
+
 void test_mixer_throttle_limit_none()
 {
   Model model;
@@ -653,6 +718,10 @@ int main(int argc, char **argv)
   RUN_TEST(test_actuator_arming_gyro_motor_calbration);
   RUN_TEST(test_actuator_arming_failsafe);
   RUN_TEST(test_actuator_arming_throttle);
+  RUN_TEST(test_poshold_mode_id_appended);
+  RUN_TEST(test_actuator_poshold_gps_gate_accepts_good_fix);
+  RUN_TEST(test_actuator_poshold_gps_gate_rejects_bad_fix);
+  RUN_TEST(test_actuator_poshold_gps_gate_rejects_stale_fix);
   RUN_TEST(test_mixer_throttle_limit_none);
   RUN_TEST(test_mixer_throttle_limit_scale);
   RUN_TEST(test_mixer_throttle_limit_clip);

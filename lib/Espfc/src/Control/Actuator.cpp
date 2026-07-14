@@ -175,6 +175,16 @@ bool Actuator::canActivateMode(FlightMode mode)
       return _model.state.mode.airmodeAllowed;
     case MODE_ALTHOLD:
       return _model.state.baro.dev;
+    case MODE_POSHOLD:
+      return _model.state.gps.present
+        && _model.state.gps.fix
+        && _model.state.gps.fixType >= 3
+        && _model.state.gps.numSats >= _model.config.gps.minSats
+        && _model.config.gps.posHoldMaxHorizontalAccuracy > 0
+        && _model.config.gps.posHoldGpsTimeout > 0
+        && _model.state.gps.accuracy.horizontal <= (uint32_t)_model.config.gps.posHoldMaxHorizontalAccuracy
+        && _model.state.gps.lastMsgTs
+        && (micros() - _model.state.gps.lastMsgTs) <= (uint32_t)_model.config.gps.posHoldGpsTimeout * 1000;
     default:
       return true;
   }
