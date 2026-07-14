@@ -23,6 +23,37 @@ void test_distance_zero_at_same_position()
   TEST_ASSERT_EQUAL_FLOAT(0.0f, distance);
 }
 
+void test_local_offset_zero_at_same_position()
+{
+  const auto offset = Gps::calculateLocalOffset(377490000, -1224194000, 377490000, -1224194000);
+  TEST_ASSERT_EQUAL_FLOAT(0.0f, offset.north);
+  TEST_ASSERT_EQUAL_FLOAT(0.0f, offset.east);
+}
+
+void test_local_offset_signed_axes()
+{
+  const auto offset = Gps::calculateLocalOffset(0, 0, 10000, -20000);
+  TEST_ASSERT_FLOAT_WITHIN(0.01f, 111.3f, offset.north);
+  TEST_ASSERT_FLOAT_WITHIN(0.01f, -222.6f, offset.east);
+}
+
+void test_local_offset_known_pair_mid_latitude()
+{
+  // San Francisco: 0.0009 deg north, 0.0011 deg east. Error is bounded by
+  // the equirectangular approximation and fixed 111300 m/deg scale used here.
+  const auto offset = Gps::calculateLocalOffset(377749000, -1224194000, 377758000, -1224183000);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 100.17f, offset.north);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 96.80f, offset.east);
+}
+
+void test_local_offset_longitude_scales_by_origin_latitude()
+{
+  const auto equator = Gps::calculateLocalOffset(0, 0, 0, 100000);
+  const auto sixtyDeg = Gps::calculateLocalOffset(600000000, 0, 600000000, 100000);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 1113.0f, equator.east);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 556.5f, sixtyDeg.east);
+}
+
 void test_bearing_north()
 {
   const auto [distance, bearing] = Gps::calculateDistanceAndBearing(0, 0, 10000000, 0);
@@ -97,6 +128,20 @@ void test_date_line_crossing_bearing()
   TEST_ASSERT_FLOAT_WITHIN(0.01f, toRad(270.0f), bearing);
 }
 
+void test_local_offset_date_line_crossing_east()
+{
+  const auto offset = Gps::calculateLocalOffset(0, 1799990000, 0, -1799990000);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 0.0f, offset.north);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 222.6f, offset.east);
+}
+
+void test_local_offset_date_line_crossing_west()
+{
+  const auto offset = Gps::calculateLocalOffset(0, -1799990000, 0, 1799990000);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, 0.0f, offset.north);
+  TEST_ASSERT_FLOAT_WITHIN(0.1f, -222.6f, offset.east);
+}
+
 // ---------------------------------------------------------------------------
 
 int main()
@@ -105,6 +150,10 @@ int main()
 
   RUN_TEST(test_distance_north);
   RUN_TEST(test_distance_zero_at_same_position);
+  RUN_TEST(test_local_offset_zero_at_same_position);
+  RUN_TEST(test_local_offset_signed_axes);
+  RUN_TEST(test_local_offset_known_pair_mid_latitude);
+  RUN_TEST(test_local_offset_longitude_scales_by_origin_latitude);
   RUN_TEST(test_bearing_north);
   RUN_TEST(test_bearing_east);
   RUN_TEST(test_bearing_south);
@@ -114,6 +163,8 @@ int main()
   RUN_TEST(test_date_line_crossing_east_to_west);
   RUN_TEST(test_date_line_crossing_west_to_east);
   RUN_TEST(test_date_line_crossing_bearing);
+  RUN_TEST(test_local_offset_date_line_crossing_east);
+  RUN_TEST(test_local_offset_date_line_crossing_west);
 
   return UNITY_END();
 }
