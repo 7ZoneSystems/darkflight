@@ -147,6 +147,10 @@ private:
 
     const float targetNorth = _positionPid[AXIS_ROLL].update(offset.north, 0.0f);
     const float targetEast = _positionPid[AXIS_PITCH].update(offset.east, 0.0f);
+
+    // velocity.raw is in mm/s from UBX NAV_PVT; convert to m/s for PID
+    // Scaling verified: FC_PID_POSR P/I/D values use { P*10, I*100, D*1000 }
+    // so velocity input in m/s gives angle output in degrees
     const float velocityNorth = _model.state.gps.velocity.raw.north * 0.001f;
     const float velocityEast = _model.state.gps.velocity.raw.east * 0.001f;
 

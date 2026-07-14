@@ -447,6 +447,12 @@ const Cli::Param * Cli::initialize(ModelConfig& c)
     Param(PSTR("gps_enable_qzss"), &c.gps.enableQZSS),
     Param(PSTR("gps_enable_sbas"), &c.gps.enableSBAS),
     
+    // Position hold tuning parameters (Phase 4)
+    Param(PSTR("gps_poshold_max_angle"), &c.gps.posHoldMaxAngle),
+    Param(PSTR("gps_poshold_deadband"), &c.gps.posHoldStickDeadband),
+    Param(PSTR("gps_poshold_max_horz_accuracy"), &c.gps.posHoldMaxHorizontalAccuracy),
+    Param(PSTR("gps_poshold_gps_timeout"), &c.gps.posHoldGpsTimeout),
+
     Param(PSTR("board_align_roll"), &c.boardAlignment[0]),
     Param(PSTR("board_align_pitch"), &c.boardAlignment[1]),
     Param(PSTR("board_align_yaw"), &c.boardAlignment[2]),

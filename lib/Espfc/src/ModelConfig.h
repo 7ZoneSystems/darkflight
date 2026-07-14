@@ -722,8 +722,8 @@ class ModelConfig
       [FC_PID_PITCH] = { .P = 46, .I = 90, .D = 26, .F = 76 },  // PITCH
       [FC_PID_YAW]   = { .P = 45, .I = 90, .D =  0, .F = 72 },  // YAW
       [FC_PID_ALT]   = { .P =  0, .I =  0, .D =  0, .F =  0 },  // ALTHOLD POS
-      [FC_PID_POS]   = { .P = 15, .I =  0, .D =  0, .F =  0 },  // POSHOLD_P * 100, POSHOLD_I * 100,
-      [FC_PID_POSR]  = { .P = 40, .I =  0, .D =  0, .F =  0 },  // POSHOLD_RATE_P * 10, POSHOLD_RATE_I * 100, POSHOLD_RATE_D * 1000,
+      [FC_PID_POS]   = { .P = 35, .I = 10, .D =  0, .F =  0 },  // POSHOLD_P * 100, POSHOLD_I * 100
+      [FC_PID_POSR]  = { .P = 60, .I = 20, .D =  0, .F =  0 },  // POSHOLD_RATE_P * 10, POSHOLD_RATE_I * 100, POSHOLD_RATE_D * 1000
       [FC_PID_NAVR]  = { .P =  0, .I =  0, .D =  0, .F =  0 },  // NAV_P * 10, NAV_I * 100, NAV_D * 1000
       [FC_PID_LEVEL] = { .P = 45, .I =  0, .D =  0, .F =  0 },  // ANGLE/LEVEL
       [FC_PID_MAG]   = { .P =  0, .I =  0, .D =  0, .F =  0 },  // MAG
