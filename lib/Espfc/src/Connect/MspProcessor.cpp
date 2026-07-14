@@ -89,6 +89,60 @@ static Espfc::SerialSpeed fromBaudIndex(SerialSpeedIndex index)
   }
 }
 
+static uint8_t toMspBoxId(uint8_t mode)
+{
+  using namespace Espfc;
+  switch((FlightMode)mode)
+  {
+    case MODE_ARMED:
+      return BOXARM;
+    case MODE_AIRMODE:
+      return BOXAIRMODE;
+    case MODE_ANGLE:
+      return BOXANGLE;
+    case MODE_ALTHOLD:
+      return MODE_ALTHOLD;
+    case MODE_BUZZER:
+      return BOXBEEPERON;
+    case MODE_FAILSAFE:
+      return BOXFAILSAFE;
+    case MODE_BLACKBOX:
+      return BOXBLACKBOX;
+    case MODE_BLACKBOX_ERASE:
+      return BOXBLACKBOXERASE;
+    case MODE_POSHOLD:
+      return BOXGPSRESCUE;
+    default:
+      return mode;
+  }
+}
+
+static uint8_t fromMspBoxId(uint8_t boxId)
+{
+  using namespace Espfc;
+  switch(boxId)
+  {
+    case BOXARM:
+      return MODE_ARMED;
+    case BOXAIRMODE:
+      return MODE_AIRMODE;
+    case BOXANGLE:
+      return MODE_ANGLE;
+    case BOXBEEPERON:
+      return MODE_BUZZER;
+    case BOXFAILSAFE:
+      return MODE_FAILSAFE;
+    case BOXBLACKBOX:
+      return MODE_BLACKBOX;
+    case BOXBLACKBOXERASE:
+      return MODE_BLACKBOX_ERASE;
+    case BOXGPSRESCUE:
+      return MODE_POSHOLD;
+    default:
+      return boxId < MODE_COUNT ? boxId : MODE_COUNT;
+  }
+}
+
 static uint8_t toFilterTypeDerivative(uint8_t t)
 {
   switch(t) {
@@ -275,25 +329,25 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       break;
 
     case MSP_BOXNAMES:
-      r.writeString(F("ARM;AIRMODE;ANGLE;ALTHOLD;BEEPER;FAILSAFE;BLACKBOX;BLACKBOXERASE;POSHOLD;"));
+      r.writeString(F("ARM;AIRMODE;ANGLE;ALTHOLD;BEEPER;FAILSAFE;BLACKBOX;BLACKBOXERASE;GPS HOLD;"));
       break;
 
     case MSP_BOXIDS:
-      r.writeU8(MODE_ARMED);
-      r.writeU8(MODE_AIRMODE);
-      r.writeU8(MODE_ANGLE);
-      r.writeU8(MODE_ALTHOLD);
-      r.writeU8(MODE_BUZZER);
-      r.writeU8(MODE_FAILSAFE);
-      r.writeU8(MODE_BLACKBOX);
-      r.writeU8(MODE_BLACKBOX_ERASE);
-      r.writeU8(MODE_POSHOLD);
+      r.writeU8(toMspBoxId(MODE_ARMED));
+      r.writeU8(toMspBoxId(MODE_AIRMODE));
+      r.writeU8(toMspBoxId(MODE_ANGLE));
+      r.writeU8(toMspBoxId(MODE_ALTHOLD));
+      r.writeU8(toMspBoxId(MODE_BUZZER));
+      r.writeU8(toMspBoxId(MODE_FAILSAFE));
+      r.writeU8(toMspBoxId(MODE_BLACKBOX));
+      r.writeU8(toMspBoxId(MODE_BLACKBOX_ERASE));
+      r.writeU8(toMspBoxId(MODE_POSHOLD));
       break;
 
     case MSP_MODE_RANGES:
       for(size_t i = 0; i < ACTUATOR_CONDITIONS; i++)
       {
-        r.writeU8(_model.config.conditions[i].id);
+        r.writeU8(toMspBoxId(_model.config.conditions[i].id));
         r.writeU8(_model.config.conditions[i].ch - AXIS_AUX_1);
         r.writeU8((_model.config.conditions[i].min - 900) / 25);
         r.writeU8((_model.config.conditions[i].max - 900) / 25);
@@ -304,7 +358,7 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       r.writeU8(ACTUATOR_CONDITIONS);
       for(size_t i = 0; i < ACTUATOR_CONDITIONS; i++)
       {
-        r.writeU8(_model.config.conditions[i].id);
+        r.writeU8(toMspBoxId(_model.config.conditions[i].id));
         r.writeU8(_model.config.conditions[i].logicMode);
         r.writeU8(_model.config.conditions[i].linkId);
       }
@@ -316,13 +370,29 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         size_t i = m.readU8();
         if(i < ACTUATOR_CONDITIONS)
         {
-          _model.config.conditions[i].id = m.readU8();
-          _model.config.conditions[i].ch = m.readU8() + AXIS_AUX_1;
-          _model.config.conditions[i].min = m.readU8() * 25 + 900;
-          _model.config.conditions[i].max = m.readU8() * 25 + 900;
+          const uint8_t mode = fromMspBoxId(m.readU8());
+          const uint8_t ch = m.readU8() + AXIS_AUX_1;
+          const int16_t min = m.readU8() * 25 + 900;
+          const int16_t max = m.readU8() * 25 + 900;
+          if(mode < MODE_COUNT)
+          {
+            _model.config.conditions[i].id = mode;
+            _model.config.conditions[i].ch = ch;
+            _model.config.conditions[i].min = min;
+            _model.config.conditions[i].max = max;
+          }
+          else
+          {
+            r.result = -1;
+          }
           if(m.remain() >= 2) {
-            _model.config.conditions[i].logicMode = m.readU8(); // mode logic
-            _model.config.conditions[i].linkId = m.readU8(); // link to
+            const uint8_t logicMode = m.readU8(); // mode logic
+            const uint8_t linkId = m.readU8(); // link to
+            if(mode < MODE_COUNT)
+            {
+              _model.config.conditions[i].logicMode = logicMode;
+              _model.config.conditions[i].linkId = linkId;
+            }
           }
         }
         else
