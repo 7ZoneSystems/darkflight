@@ -28,6 +28,23 @@ public:
   {
     if (!_model.isModeActive(MODE_POSHOLD))
     {
+      if (_fallbackAngle && !_model.isSwitchActive(MODE_POSHOLD))
+      {
+        _fallbackAngle = false;
+      }
+      if (_active)
+      {
+        _model.logger.info().logln(F("GPS POSHOLD EXIT"));
+      }
+      reset();
+      return false;
+    }
+
+    if (!isGpsHealthy())
+    {
+      _model.logger.err().logln(F("GPS POSHOLD BAIL"));
+      _model.clearMode(MODE_POSHOLD);
+      _fallbackAngle = true;
       reset();
       return false;
     }
@@ -37,6 +54,8 @@ public:
       captureHoldPoint();
       resetPids();
       _active = true;
+      _fallbackAngle = false;
+      _model.logger.info().logln(F("GPS POSHOLD ENTER"));
     }
 
     if (isStickOverrideActive())
@@ -57,6 +76,11 @@ public:
 
     updateHoldAngles();
     return true;
+  }
+
+  bool isAngleFallbackActive() const
+  {
+    return _fallbackAngle;
   }
 
 private:
@@ -104,6 +128,7 @@ private:
     _overrideActive = false;
     _holdLat = 0;
     _holdLon = 0;
+    _wasClamped = false;
     resetPids();
   }
 
@@ -127,6 +152,31 @@ private:
     const float deadband = std::clamp((float)_model.config.gps.posHoldStickDeadband * 0.01f, 0.0f, 1.0f);
     return std::fabs(_model.state.input.ch[AXIS_ROLL]) > deadband
         || std::fabs(_model.state.input.ch[AXIS_PITCH]) > deadband;
+  }
+
+  bool isGpsHealthy() const
+  {
+    const auto& gps = _model.state.gps;
+    const auto& config = _model.config.gps;
+
+    if (!gps.present || !gps.fix || gps.fixType < 3 || gps.numSats < config.minSats)
+    {
+      return false;
+    }
+    if (config.posHoldMaxHorizontalAccuracy <= 0 || config.posHoldGpsTimeout <= 0)
+    {
+      return false;
+    }
+    if (gps.accuracy.horizontal > (uint32_t)config.posHoldMaxHorizontalAccuracy)
+    {
+      return false;
+    }
+    if (!gps.lastMsgTs)
+    {
+      return false;
+    }
+
+    return micros() - gps.lastMsgTs <= (uint32_t)config.posHoldGpsTimeout * 1000u;
   }
 
   void updateManualAngles()
@@ -161,17 +211,24 @@ private:
     rotateEarthToBody(earthNorthAngle, earthEastAngle);
   }
 
-  void clampEarthAngle(float& northAngle, float& eastAngle) const
+  void clampEarthAngle(float& northAngle, float& eastAngle)
   {
     const float maxAngleDeg = std::min((float)_model.config.gps.posHoldMaxAngle, (float)_model.config.level.angleLimit);
     const float maxAngle = Utils::toRad(std::max(0.0f, maxAngleDeg));
     const float angle = std::sqrt(northAngle * northAngle + eastAngle * eastAngle);
 
-    if (angle > maxAngle && angle > 0.0f)
+    const bool clamped = angle > maxAngle && angle > 0.0f;
+    if (clamped)
     {
       const float scale = maxAngle / angle;
       northAngle *= scale;
       eastAngle *= scale;
+    }
+
+    if (clamped != _wasClamped)
+    {
+      _model.logger.info().logln(clamped ? F("GPS POSHOLD CLAMP") : F("GPS POSHOLD UNCLAMP"));
+      _wasClamped = clamped;
     }
   }
 
@@ -190,6 +247,8 @@ private:
   Pid _velocityPid[AXIS_COUNT_RP];
   bool _active = false;
   bool _overrideActive = false;
+  bool _wasClamped = false;
+  bool _fallbackAngle = false;
   int32_t _holdLat = 0;
   int32_t _holdLon = 0;
 };

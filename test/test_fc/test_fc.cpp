@@ -313,6 +313,7 @@ void setup_poshold_controller(Model& model)
   model.state.gps.fixType = 3;
   model.state.gps.numSats = model.config.gps.minSats;
   model.state.gps.accuracy.horizontal = 4000;
+  model.state.gps.lastMsgTs = 1000;
   model.state.gps.location.raw.lat = 0;
   model.state.gps.location.raw.lon = 0;
 }
@@ -320,7 +321,8 @@ void setup_poshold_controller(Model& model)
 void test_controller_poshold_forces_angle_without_angle_mode()
 {
   ArduinoFakeReset();
-  When(Method(ArduinoFake(), micros)).Return(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007);
+  When(Method(ArduinoFake(), micros)).AlwaysReturn(1000);
+  When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
 
   Model model;
   setup_poshold_controller(model);
@@ -342,7 +344,8 @@ void test_controller_poshold_forces_angle_without_angle_mode()
 void test_controller_poshold_stick_override_recaptures_hold_point()
 {
   ArduinoFakeReset();
-  When(Method(ArduinoFake(), micros)).Return(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011);
+  When(Method(ArduinoFake(), micros)).AlwaysReturn(1000);
+  When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
 
   Model model;
   setup_poshold_controller(model);
@@ -361,6 +364,28 @@ void test_controller_poshold_stick_override_recaptures_hold_point()
   controller.update();
 
   TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, model.state.setpoint.angle[AXIS_PITCH]);
+}
+
+void test_controller_poshold_bails_on_stale_gps()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(1000).AlwaysReturn(3000);
+  When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
+
+  Model model;
+  setup_poshold_controller(model);
+
+  Controller controller(model);
+  controller.begin();
+  controller.update();
+
+  model.config.gps.posHoldGpsTimeout = 1;
+  model.state.input.ch[AXIS_PITCH] = 0.5f;
+  controller.update();
+
+  TEST_ASSERT_FALSE(model.isModeActive(MODE_POSHOLD));
+  TEST_ASSERT_TRUE(model.state.setpoint.rate[AXIS_PITCH] > 0.01f);
+  TEST_ASSERT_EQUAL_FLOAT(0.0f, model.state.innerPid[AXIS_PITCH].fScale);
 }
 
 void test_rates_betaflight()
@@ -777,6 +802,7 @@ int main(int argc, char **argv)
   RUN_TEST(test_controller_rates_limit);
   RUN_TEST(test_controller_poshold_forces_angle_without_angle_mode);
   RUN_TEST(test_controller_poshold_stick_override_recaptures_hold_point);
+  RUN_TEST(test_controller_poshold_bails_on_stale_gps);
   RUN_TEST(test_rates_betaflight);
   RUN_TEST(test_rates_betaflight_expo);
   RUN_TEST(test_rates_raceflight);
