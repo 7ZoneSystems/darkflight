@@ -297,6 +297,72 @@ void test_controller_rates_limit()
   TEST_ASSERT_FLOAT_WITHIN(0.01f,  -6.98f, controller.calculateSetpointRate(AXIS_YAW, 1.0f));
 }
 
+void setup_poshold_controller(Model& model)
+{
+  model.state.gyro.clock = 8000;
+  model.config.gyro.dlpf = GYRO_DLPF_256;
+  model.config.loopSync = 8;
+  model.config.mixerSync = 1;
+  model.config.mixer.type = FC_MIXER_QUADX;
+  model.state.input.us[AXIS_THRUST] = 1500;
+  model.begin();
+
+  model.state.mode.mask = (1 << MODE_ARMED) | (1 << MODE_POSHOLD);
+  model.state.gps.present = true;
+  model.state.gps.fix = true;
+  model.state.gps.fixType = 3;
+  model.state.gps.numSats = model.config.gps.minSats;
+  model.state.gps.accuracy.horizontal = 4000;
+  model.state.gps.location.raw.lat = 0;
+  model.state.gps.location.raw.lon = 0;
+}
+
+void test_controller_poshold_forces_angle_without_angle_mode()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007);
+
+  Model model;
+  setup_poshold_controller(model);
+
+  Controller controller(model);
+  controller.begin();
+  controller.update();
+
+  model.state.gps.location.raw.lat = -10000;
+  controller.update();
+
+  TEST_ASSERT_TRUE(model.isModeActive(MODE_POSHOLD));
+  TEST_ASSERT_FALSE(model.isModeActive(MODE_ANGLE));
+  TEST_ASSERT_TRUE(model.state.setpoint.angle[AXIS_PITCH] > 0.01f);
+  TEST_ASSERT_TRUE(model.state.setpoint.rate[AXIS_PITCH] > 0.01f);
+  TEST_ASSERT_EQUAL_FLOAT(0.0f, model.state.innerPid[AXIS_PITCH].fScale);
+}
+
+void test_controller_poshold_stick_override_recaptures_hold_point()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 1011);
+
+  Model model;
+  setup_poshold_controller(model);
+
+  Controller controller(model);
+  controller.begin();
+  controller.update();
+
+  model.state.gps.location.raw.lat = -10000;
+  model.state.input.ch[AXIS_PITCH] = 0.5f;
+  controller.update();
+
+  TEST_ASSERT_FLOAT_WITHIN(0.001f, Utils::toRad(model.config.level.angleLimit) * 0.5f, model.state.setpoint.angle[AXIS_PITCH]);
+
+  model.state.input.ch[AXIS_PITCH] = 0.0f;
+  controller.update();
+
+  TEST_ASSERT_FLOAT_WITHIN(0.001f, 0.0f, model.state.setpoint.angle[AXIS_PITCH]);
+}
+
 void test_rates_betaflight()
 {
   InputConfig config;
@@ -709,6 +775,8 @@ int main(int argc, char **argv)
   RUN_TEST(test_model_outer_pid_init);
   RUN_TEST(test_controller_rates);
   RUN_TEST(test_controller_rates_limit);
+  RUN_TEST(test_controller_poshold_forces_angle_without_angle_mode);
+  RUN_TEST(test_controller_poshold_stick_override_recaptures_hold_point);
   RUN_TEST(test_rates_betaflight);
   RUN_TEST(test_rates_betaflight_expo);
   RUN_TEST(test_rates_raceflight);

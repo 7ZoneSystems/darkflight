@@ -127,7 +127,7 @@ void Controller::innerLoopRobot()
 void FAST_CODE_ATTR Controller::outerLoop()
 {
   // Roll/Pitch rates control
-  if (_model.isModeActive(MODE_ANGLE))
+  if (_model.isModeActive(MODE_ANGLE) || _model.isModeActive(MODE_POSHOLD))
   {
     for (size_t i = 0; i < AXIS_COUNT_RP; i++)
     {
