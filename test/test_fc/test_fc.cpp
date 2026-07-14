@@ -321,7 +321,7 @@ void setup_poshold_controller(Model& model)
 void test_controller_poshold_forces_angle_without_angle_mode()
 {
   ArduinoFakeReset();
-  When(Method(ArduinoFake(), micros)).AlwaysReturn(1000);
+  When(Method(ArduinoFake(), micros)).Return(1000).AlwaysReturn(2000);
   When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
 
   Model model;
@@ -332,6 +332,7 @@ void test_controller_poshold_forces_angle_without_angle_mode()
   controller.update();
 
   model.state.gps.location.raw.lat = -10000;
+  model.state.gps.lastMsgTs = 2000;
   controller.update();
 
   TEST_ASSERT_TRUE(model.isModeActive(MODE_POSHOLD));
@@ -344,7 +345,7 @@ void test_controller_poshold_forces_angle_without_angle_mode()
 void test_controller_poshold_stick_override_recaptures_hold_point()
 {
   ArduinoFakeReset();
-  When(Method(ArduinoFake(), micros)).AlwaysReturn(1000);
+  When(Method(ArduinoFake(), micros)).Return(1000).AlwaysReturn(2000);
   When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
 
   Model model;
@@ -386,6 +387,56 @@ void test_controller_poshold_bails_on_stale_gps()
   TEST_ASSERT_FALSE(model.isModeActive(MODE_POSHOLD));
   TEST_ASSERT_TRUE(model.state.setpoint.rate[AXIS_PITCH] > 0.01f);
   TEST_ASSERT_EQUAL_FLOAT(0.0f, model.state.innerPid[AXIS_PITCH].fScale);
+}
+
+void test_controller_poshold_uses_direct_gps_velocity()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(1000).Return(2000).AlwaysReturn(3000);
+  When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
+
+  Model model;
+  setup_poshold_controller(model);
+  model.config.gps.posHoldVelocityFilter = 0;
+  model.config.pid[FC_PID_POSR].I = 0;
+  model.config.pid[FC_PID_POSR].D = 0;
+
+  Controller controller(model);
+  controller.begin();
+  controller.update();
+
+  model.state.gps.velocity.raw.north = 1000; // direct NAV-PVT velN: 1 m/s
+  model.state.gps.lastMsgTs = 2000;
+  controller.update();
+  TEST_ASSERT_TRUE(model.state.setpoint.angle[AXIS_PITCH] < -0.05f);
+
+  model.state.gps.velocity.raw.north = 0;
+  model.state.gps.lastMsgTs = 3000;
+  controller.update();
+  TEST_ASSERT_FLOAT_WITHIN(0.01f, 0.0f, model.state.setpoint.angle[AXIS_PITCH]);
+}
+
+void test_controller_poshold_limits_position_velocity_vector()
+{
+  ArduinoFakeReset();
+  When(Method(ArduinoFake(), micros)).Return(1000).AlwaysReturn(2000);
+  When(Method(ArduinoFake(), millis)).AlwaysReturn(0);
+
+  Model model;
+  setup_poshold_controller(model);
+  model.config.gps.posHoldVelocityFilter = 0;
+  model.config.pid[FC_PID_POSR].I = 0;
+  model.config.pid[FC_PID_POSR].D = 0;
+
+  Controller controller(model);
+  controller.begin();
+  controller.update();
+
+  model.state.gps.location.raw.lat = -100000; // large north error
+  model.state.gps.lastMsgTs = 2000;
+  controller.update();
+
+  TEST_ASSERT_FLOAT_WITHIN(0.001f, Utils::toRad(model.config.gps.posHoldMaxAngle), model.state.setpoint.angle[AXIS_PITCH]);
 }
 
 void test_rates_betaflight()
@@ -803,6 +854,8 @@ int main(int argc, char **argv)
   RUN_TEST(test_controller_poshold_forces_angle_without_angle_mode);
   RUN_TEST(test_controller_poshold_stick_override_recaptures_hold_point);
   RUN_TEST(test_controller_poshold_bails_on_stale_gps);
+  RUN_TEST(test_controller_poshold_uses_direct_gps_velocity);
+  RUN_TEST(test_controller_poshold_limits_position_velocity_vector);
   RUN_TEST(test_rates_betaflight);
   RUN_TEST(test_rates_betaflight_expo);
   RUN_TEST(test_rates_raceflight);

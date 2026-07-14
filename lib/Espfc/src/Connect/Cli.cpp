@@ -450,6 +450,8 @@ const Cli::Param * Cli::initialize(ModelConfig& c)
     // Position hold tuning parameters (Phase 4)
     Param(PSTR("gps_poshold_max_angle"), &c.gps.posHoldMaxAngle),
     Param(PSTR("gps_poshold_deadband"), &c.gps.posHoldStickDeadband),
+    Param(PSTR("gps_poshold_max_velocity"), &c.gps.posHoldMaxVelocity),
+    Param(PSTR("gps_poshold_velocity_filter"), &c.gps.posHoldVelocityFilter),
     Param(PSTR("gps_poshold_max_horz_accuracy"), &c.gps.posHoldMaxHorizontalAccuracy),
     Param(PSTR("gps_poshold_gps_timeout"), &c.gps.posHoldGpsTimeout),
 

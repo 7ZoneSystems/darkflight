@@ -9,6 +9,12 @@
 
 namespace Espfc::Control {
 
+/*
+ * The POS/POSR cascade follows the control structure documented by INAV.
+ * Velocity limiting, sample-time handling, and saturation-aware integration
+ * are original adaptations of ideas documented in PX4 PositionControl. No
+ * source code is copied; see docs/GPS_POSITION_HOLD_REFERENCES.md.
+ */
 class PosHold
 {
 public:
@@ -71,10 +77,14 @@ public:
     {
       captureHoldPoint();
       resetPids();
+      _lastGpsTs = 0;
       _overrideActive = false;
     }
 
-    updateHoldAngles();
+    if (updateGpsSample())
+    {
+      updateHoldAngles();
+    }
     return true;
   }
 
@@ -84,7 +94,10 @@ public:
   }
 
 private:
-  static constexpr float MAX_TARGET_VELOCITY = 2.0f; // m/s
+  float maxTargetVelocity() const
+  {
+    return std::clamp((float)_model.config.gps.posHoldMaxVelocity * 0.01f, 0.2f, 10.0f);
+  }
 
   void beginPositionPid(size_t axis)
   {
@@ -96,10 +109,10 @@ private:
     pid.Ki = (float)pc.I * 0.01f;
     pid.Kd = 0.0f;
     pid.Kf = 0.0f;
-    pid.iLimitLow = -MAX_TARGET_VELOCITY;
-    pid.iLimitHigh = MAX_TARGET_VELOCITY;
-    pid.oLimitLow = -MAX_TARGET_VELOCITY;
-    pid.oLimitHigh = MAX_TARGET_VELOCITY;
+    pid.iLimitLow = -maxTargetVelocity();
+    pid.iLimitHigh = maxTargetVelocity();
+    pid.oLimitLow = -maxTargetVelocity();
+    pid.oLimitHigh = maxTargetVelocity();
     pid.rate = rate;
     pid.begin();
   }
@@ -128,7 +141,12 @@ private:
     _overrideActive = false;
     _holdLat = 0;
     _holdLon = 0;
+    _lastGpsTs = 0;
+    _velocityNorth = 0.0f;
+    _velocityEast = 0.0f;
+    _velocityValid = false;
     _wasClamped = false;
+    _wasVelocityClamped = false;
     resetPids();
   }
 
@@ -138,6 +156,8 @@ private:
     {
       _positionPid[i].resetIterm();
       _velocityPid[i].resetIterm();
+      _positionPid[i].outputSaturated = false;
+      _velocityPid[i].outputSaturated = false;
     }
   }
 
@@ -179,6 +199,51 @@ private:
     return micros() - gps.lastMsgTs <= (uint32_t)config.posHoldGpsTimeout * 1000u;
   }
 
+  bool updateGpsSample()
+  {
+    const auto& gps = _model.state.gps;
+    if (!gps.lastMsgTs || gps.lastMsgTs == _lastGpsTs)
+    {
+      return false;
+    }
+
+    uint32_t interval = _lastGpsTs ? gps.lastMsgTs - _lastGpsTs : gps.interval;
+    if (interval == 0)
+    {
+      interval = 100000;
+    }
+    const float dt = std::clamp(interval * 1e-6f, 0.02f, 2.0f);
+    _lastGpsTs = gps.lastMsgTs;
+
+    _positionPid[AXIS_ROLL].dt = dt;
+    _positionPid[AXIS_PITCH].dt = dt;
+    _positionPid[AXIS_ROLL].rate = 1.0f / dt;
+    _positionPid[AXIS_PITCH].rate = 1.0f / dt;
+    _velocityPid[AXIS_ROLL].dt = dt;
+    _velocityPid[AXIS_PITCH].dt = dt;
+    _velocityPid[AXIS_ROLL].rate = 1.0f / dt;
+    _velocityPid[AXIS_PITCH].rate = 1.0f / dt;
+
+    const float north = gps.velocity.raw.north * 0.001f;
+    const float east = gps.velocity.raw.east * 0.001f;
+    const float filterSeconds = _model.config.gps.posHoldVelocityFilter * 0.001f;
+    const float alpha = filterSeconds > 0.0f ? std::clamp(dt / (filterSeconds + dt), 0.0f, 1.0f) : 1.0f;
+
+    if (!_velocityValid)
+    {
+      _velocityNorth = north;
+      _velocityEast = east;
+      _velocityValid = true;
+    }
+    else
+    {
+      _velocityNorth += alpha * (north - _velocityNorth);
+      _velocityEast += alpha * (east - _velocityEast);
+    }
+
+    return true;
+  }
+
   void updateManualAngles()
   {
     const float angleLimit = Utils::toRad(_model.config.level.angleLimit);
@@ -195,15 +260,35 @@ private:
       _holdLon
     );
 
-    const float targetNorth = _positionPid[AXIS_ROLL].update(offset.north, 0.0f);
-    const float targetEast = _positionPid[AXIS_PITCH].update(offset.east, 0.0f);
+    float targetNorth = _positionPid[AXIS_ROLL].update(offset.north, 0.0f);
+    float targetEast = _positionPid[AXIS_PITCH].update(offset.east, 0.0f);
 
-    // velocity.raw is in mm/s from UBX NAV_PVT; convert to m/s for PID
+    const float targetVelocity = std::sqrt(targetNorth * targetNorth + targetEast * targetEast);
+    const float maxVelocity = maxTargetVelocity();
+    const bool velocityClamped = targetVelocity > maxVelocity && targetVelocity > 0.0f;
+    if (velocityClamped)
+    {
+      const float scale = maxVelocity / targetVelocity;
+      targetNorth *= scale;
+      targetEast *= scale;
+    }
+    _positionPid[AXIS_ROLL].outputSaturated = velocityClamped;
+    _positionPid[AXIS_PITCH].outputSaturated = velocityClamped;
+    if (velocityClamped != _wasVelocityClamped)
+    {
+      _model.logger.info().logln(velocityClamped ? F("GPS POSHOLD VEL LIMIT") : F("GPS POSHOLD VEL UNLIMIT"));
+      _wasVelocityClamped = velocityClamped;
+    }
+
+    // velocity.raw is the direct UBX NAV_PVT velN/velE measurement in mm/s;
+    // convert to m/s for the velocity PID. It is never derived from position.
     // Scaling verified: FC_PID_POSR P/I/D values use { P*10, I*100, D*1000 }
     // so velocity input in m/s gives angle output in degrees
-    const float velocityNorth = _model.state.gps.velocity.raw.north * 0.001f;
-    const float velocityEast = _model.state.gps.velocity.raw.east * 0.001f;
+    const float velocityNorth = _velocityNorth;
+    const float velocityEast = _velocityEast;
 
+    _velocityPid[AXIS_ROLL].outputSaturated = _wasClamped;
+    _velocityPid[AXIS_PITCH].outputSaturated = _wasClamped;
     float earthNorthAngle = Utils::toRad(_velocityPid[AXIS_ROLL].update(targetNorth, velocityNorth));
     float earthEastAngle = Utils::toRad(_velocityPid[AXIS_PITCH].update(targetEast, velocityEast));
 
@@ -248,7 +333,12 @@ private:
   bool _active = false;
   bool _overrideActive = false;
   bool _wasClamped = false;
+  bool _wasVelocityClamped = false;
   bool _fallbackAngle = false;
+  bool _velocityValid = false;
+  uint32_t _lastGpsTs = 0;
+  float _velocityNorth = 0.0f;
+  float _velocityEast = 0.0f;
   int32_t _holdLat = 0;
   int32_t _holdLon = 0;
 };

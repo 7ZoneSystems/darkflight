@@ -670,6 +670,8 @@ struct GpsConfig
   uint8_t setHomeOnce = 1;
   uint8_t posHoldMaxAngle = 10; // deg
   uint8_t posHoldStickDeadband = 10; // percent of roll/pitch stick travel
+  int16_t posHoldMaxVelocity = 200; // cm/s
+  int16_t posHoldVelocityFilter = 150; // ms, 0 disables filtering
   int16_t posHoldMaxHorizontalAccuracy = 5000; // mm
   int16_t posHoldGpsTimeout = 1500; // ms
 
