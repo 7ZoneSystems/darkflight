@@ -84,6 +84,12 @@ private:
   void handleReceive();
   void handleCfgValGet() const;
 
+  void handleNmeaSentence();      // non-const: writes into _nmeaMsg.payload in place
+  void handleNmeaGga(char** f, size_t n) const;
+  void handleNmeaRmc(char** f, size_t n) const;
+  void handleNmeaGsa(char** f, size_t n) const;
+  void handleNmeaGsv(char** f, size_t n) const;
+
   void checkSupport(const char* payload) const;
 
   void detectBaud();

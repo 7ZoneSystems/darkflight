@@ -98,6 +98,11 @@ void GpsSensor::processNmea(uint8_t c)
     if(!_model.isModeActive(MODE_ARMED)) _model.logger.err().logln("GPS RX Frame Err");
   }
 
+  if (_model.config.gps.provider == 0)
+  {
+    handleNmeaSentence();
+  }
+
   onMessage();
 
   _nmeaMsg = Gps::NmeaMessage();
@@ -107,7 +112,8 @@ void GpsSensor::onMessage()
 {
   if(_state == DETECT_BAUD)
   {
-    _state = GET_VERSION;
+    // NMEA-only receivers never speak UBX; skip version/config handshake.
+    _state = _model.config.gps.provider == 0 ? RECEIVE : GET_VERSION;
     _model.logger.info().log(F("GPS DET")).logln(_currentBaud);
   }
 }
@@ -851,6 +857,140 @@ void GpsSensor::handleNavSvInfo() const
     {
       _model.state.gps.svinfo[i] = GpsSatelite{};
     }
+  }
+}
+
+static int32_t nmeaCoordinateToRaw(const char* field, char hemisphere)
+{
+  // ddmm.mmmm (lat) / dddmm.mmmm (lon): degrees are all digits except the
+  // last two whole-minute digits before the decimal point.
+  const char* dot = std::strchr(field, '.');
+  if (!dot || dot - field < 2) return 0;
+
+  char degBuf[4] = {0};
+  const size_t degLen = (dot - field) - 2;
+  std::memcpy(degBuf, field, std::min(degLen, sizeof(degBuf) - 1));
+
+  const double degrees = std::atoi(degBuf);
+  const double minutes = std::atof(field + degLen);
+  double value = degrees + minutes / 60.0;
+  if (hemisphere == 'S' || hemisphere == 'W') value = -value;
+
+  return (int32_t)lrint(value * 1e7);
+}
+
+void GpsSensor::handleNmeaSentence()
+{
+  char* payload = _nmeaMsg.payload;
+  char* star = std::strchr(payload, '*');
+  if (star) *star = '\0'; // drop the checksum suffix before tokenizing
+
+  static constexpr size_t MAX_FIELDS = 20;
+  char* fields[MAX_FIELDS];
+  size_t count = 0;
+
+  char* tok = payload;
+  while (tok && count < MAX_FIELDS)
+  {
+    fields[count++] = tok;
+    char* comma = std::strchr(tok, ',');
+    if (!comma) break;
+    *comma = '\0';
+    tok = comma + 1;
+  }
+
+  if (count == 0 || std::strlen(fields[0]) < 5) return;
+  const char* type = fields[0] + 2; // skip 2-char talker id (GP/GN/GL/GA/GB)
+
+  if (std::strncmp(type, "GGA", 3) == 0)      handleNmeaGga(fields, count);
+  else if (std::strncmp(type, "RMC", 3) == 0) handleNmeaRmc(fields, count);
+  else if (std::strncmp(type, "GSA", 3) == 0) handleNmeaGsa(fields, count);
+  else if (std::strncmp(type, "GSV", 3) == 0) handleNmeaGsv(fields, count);
+}
+
+void GpsSensor::handleNmeaGga(char** f, size_t n) const
+{
+  if (n < 10) return;
+
+  const int fixQuality = std::atoi(f[6]); // 0=none,1=GPS,2=DGPS
+  _model.state.gps.fix = fixQuality > 0;
+  _model.state.gps.numSats = (uint8_t)std::atoi(f[7]);
+
+  if (fixQuality > 0 && f[2][0] && f[4][0])
+  {
+    _model.state.gps.location.raw.lat = nmeaCoordinateToRaw(f[2], f[3][0]);
+    _model.state.gps.location.raw.lon = nmeaCoordinateToRaw(f[4], f[5][0]);
+    _model.state.gps.location.raw.height = lrintf(std::atof(f[9]) * 1000.0f); // m -> mm
+
+    const uint32_t now = micros();
+    _model.state.gps.interval = now - _model.state.gps.lastMsgTs;
+    _model.state.gps.lastMsgTs = now;
+    calculateHomeVector();
+  }
+
+  // NMEA carries no direct accuracy figure; approximate horizontal accuracy
+  // from HDOP (~5m per HDOP unit, typical consumer-GPS UERE). Needs field
+  // verification against your module before relying on it for PosHold gating.
+  const float hdop = std::atof(f[8]);
+  _model.state.gps.accuracy.horizontal = (uint32_t)(hdop * 5000.0f);
+}
+
+void GpsSensor::handleNmeaRmc(char** f, size_t n) const
+{
+  if (n < 10) return;
+
+  if (f[2][0] == 'A') // 'A' = valid fix, 'V' = warning/invalid
+  {
+    const float speedMs = std::atof(f[7]) * 0.514444f; // knots -> m/s
+    const float courseDeg = std::atof(f[8]);
+    const float speedMmS = speedMs * 1000.0f;
+
+    _model.state.gps.velocity.raw.groundSpeed = lrintf(speedMmS);
+    _model.state.gps.velocity.raw.speed3d = lrintf(speedMmS);
+    _model.state.gps.velocity.raw.heading = lrintf(courseDeg * 1e5f);
+    // No native N/E velocity in NMEA; derive from ground speed + course.
+    // This is a trig decomposition of a directly-measured speed, not a
+    // position-delta estimate, so it stays consistent with PosHold's
+    // "velocity is a direct measurement" assumption.
+    _model.state.gps.velocity.raw.north = lrintf(speedMmS * cosf(Utils::toRad(courseDeg)));
+    _model.state.gps.velocity.raw.east  = lrintf(speedMmS * sinf(Utils::toRad(courseDeg)));
+  }
+
+  if (std::strlen(f[9]) >= 6)
+  {
+    _model.state.gps.dateTime.day   = (f[9][0] - '0') * 10 + (f[9][1] - '0');
+    _model.state.gps.dateTime.month = (f[9][2] - '0') * 10 + (f[9][3] - '0');
+    _model.state.gps.dateTime.year  = 2000 + (f[9][4] - '0') * 10 + (f[9][5] - '0');
+  }
+}
+
+void GpsSensor::handleNmeaGsa(char** f, size_t n) const
+{
+  if (n < 18) return;
+
+  const int fixType = std::atoi(f[2]); // 1=no fix, 2=2D, 3=3D
+  if (fixType > 0) _model.state.gps.fixType = (uint8_t)fixType;
+  _model.state.gps.accuracy.pDop = (uint32_t)(std::atof(f[15]) * 100.0f);
+}
+
+void GpsSensor::handleNmeaGsv(char** f, size_t n) const
+{
+  if (n < 4) return;
+
+  const uint8_t msgNum = (uint8_t)std::atoi(f[2]);
+  _model.state.gps.numCh = std::min<uint8_t>((uint8_t)std::atoi(f[3]), SAT_MAX);
+
+  const size_t base = (msgNum - 1) * 4;
+  for (size_t i = 0; i < 4; i++)
+  {
+    const size_t fi = 4 + i * 4;
+    const size_t si = base + i;
+    if (fi + 3 >= n || si >= SAT_MAX || si >= _model.state.gps.numCh) break;
+    if (!f[fi][0]) continue;
+
+    _model.state.gps.svinfo[si].id = (uint8_t)std::atoi(f[fi]);
+    _model.state.gps.svinfo[si].gnssId = 0;
+    _model.state.gps.svinfo[si].cno = (uint8_t)std::atoi(f[fi + 3]);
   }
 }
 

@@ -1588,9 +1588,9 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       break;
 
     case MSP_SET_GPS_CONFIG:
-      if(m.remain() >= 4)
+      if (m.remain() >= 4)
       {
-        _model.config.gps.provider = m.readU8();
+        _model.config.gps.provider = m.readU8();   // 0=NMEA, 1=UBLOX
         _model.config.gps.sbasMode = m.readU8();
         _model.config.gps.autoConfig = m.readU8();
         _model.config.gps.autoBaud = m.readU8();
@@ -1603,10 +1603,10 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       break;
 
     case MSP_GPS_CONFIG:
-      r.writeU8(_model.config.gps.provider); // provider
-      r.writeU8(_model.config.gps.sbasMode); // sbasMode, 0: auto
+      r.writeU8(_model.config.gps.provider);   // 0=NMEA, 1=UBLOX
+      r.writeU8(_model.config.gps.sbasMode);   // sbasMode, 0: auto
       r.writeU8(_model.config.gps.autoConfig); // autoConfig, 0: off, 1: on
-      r.writeU8(_model.config.gps.autoBaud); // autoBaud, 0: off, 1: on
+      r.writeU8(_model.config.gps.autoBaud);   // autoBaud, 0: off, 1: on
       // Added in API version 1.43
       r.writeU8(_model.config.gps.setHomeOnce); // gps_set_home_point_once
       r.writeU8(_model.config.gps.enableGalileo); // gps_ublox_use_galileo
