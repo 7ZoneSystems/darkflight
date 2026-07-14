@@ -9,6 +9,7 @@ namespace Gps {
 
 enum DeviceVersion {
   GPS_UNKNOWN,
+  GPS_M6,
   GPS_M8,
   GPS_M9,
   GPS_F9,
@@ -232,6 +233,82 @@ public:
   static constexpr MsgId ID = UBX_CFG_MSG;
   uint16_t msgId;
   uint8_t rate; // message output rate (0=disables, 1=every navigation solution, 2=every 2nd solution etc.)
+} __attribute__((packed));
+
+/**
+ * Legacy u-blox 6 navigation messages.  NAV-PVT and CFG-VALSET are not
+ * available on u-blox 6, so the receiver reports position and velocity in
+ * separate frames instead.
+ */
+class UbxNavPosLlh28
+{
+public:
+  static constexpr MsgId ID = UBX_NAV_POSLLH;
+  uint32_t iTow;
+  int32_t lon;       // deg x 1e-7
+  int32_t lat;       // deg x 1e-7
+  int32_t height;    // mm above ellipsoid
+  int32_t hMsl;      // mm above mean sea level
+  uint32_t hAcc;     // mm
+  uint32_t vAcc;     // mm
+} __attribute__((packed));
+
+class UbxNavVelned36
+{
+public:
+  static constexpr MsgId ID = UBX_NAV_VELNED;
+  uint32_t iTow;
+  int32_t velN;      // cm/s
+  int32_t velE;      // cm/s
+  int32_t velD;      // cm/s
+  int32_t speed;     // cm/s, 3D
+  uint32_t gSpeed;   // cm/s, 2D
+  int32_t heading;   // deg x 1e-5
+  uint32_t sAcc;     // cm/s
+  uint32_t cAcc;     // deg x 1e-5
+} __attribute__((packed));
+
+class UbxNavSol52
+{
+public:
+  static constexpr MsgId ID = UBX_NAV_SOL;
+  uint32_t iTow;
+  int32_t fTow;
+  int16_t week;
+  uint8_t gpsFix;
+  uint8_t flags;
+  int32_t ecefX;
+  int32_t ecefY;
+  int32_t ecefZ;
+  uint32_t pAcc;     // cm
+  int32_t ecefVX;
+  int32_t ecefVY;
+  int32_t ecefVZ;
+  uint32_t sAcc;     // cm/s
+  uint16_t pDOP;     // x 0.01
+  uint8_t reserved1;
+  uint8_t numSV;
+  uint8_t reserved2[4];
+} __attribute__((packed));
+
+class UbxNavSvInfo
+{
+public:
+  static constexpr MsgId ID = UBX_NAV_SVINFO;
+  uint32_t iTow;
+  uint8_t numCh;
+  uint8_t globalFlags;
+  uint16_t reserved;
+  struct {
+    uint8_t chn;
+    uint8_t svid;
+    uint8_t flags;
+    uint8_t quality;
+    uint8_t cno;
+    int8_t elev;
+    int16_t azim;
+    int32_t prRes;
+  } sats[];
 } __attribute__((packed));
 
 constexpr uint32_t CFG_MSGOUT_NMEA_GGA_UART1 = 0x209100bb; // NMEA GGA message output rate

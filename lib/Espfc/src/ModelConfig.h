@@ -307,6 +307,8 @@ struct SerialPortConfig
   int8_t id;
   int32_t functionMask;
   int32_t baud;
+  int32_t gpsBaud;
+  int32_t telemetryBaud;
   int32_t blackboxBaud;
 };
 
@@ -668,6 +670,10 @@ struct GpsConfig
 {
   uint8_t minSats = 8;
   uint8_t setHomeOnce = 1;
+  uint8_t provider = 1; // UBLOX, matching MSP_GPS_CONFIG
+  uint8_t sbasMode = 0; // automatic
+  uint8_t autoConfig = 1;
+  uint8_t autoBaud = 1;
   uint8_t posHoldMaxAngle = 10; // deg
   uint8_t posHoldStickDeadband = 10; // percent of roll/pitch stick travel
   int16_t posHoldMaxVelocity = 200; // cm/s
@@ -794,19 +800,19 @@ class ModelConfig
     };
     SerialPortConfig serial[SERIAL_UART_COUNT] = {
 #ifdef ESPFC_SERIAL_USB
-      [SERIAL_USB]    = { .id = SERIAL_ID_USB_VCP, .functionMask = ESPFC_SERIAL_USB_FN, .baud = SERIAL_SPEED_115200, .blackboxBaud = SERIAL_SPEED_NONE },
+      [SERIAL_USB]    = { .id = SERIAL_ID_USB_VCP, .functionMask = ESPFC_SERIAL_USB_FN, .baud = SERIAL_SPEED_115200, .gpsBaud = SERIAL_SPEED_NONE, .telemetryBaud = SERIAL_SPEED_NONE, .blackboxBaud = SERIAL_SPEED_NONE },
 #endif
 #ifdef ESPFC_SERIAL_0
-      [SERIAL_UART_0] = { .id = SERIAL_ID_UART_1, .functionMask = ESPFC_SERIAL_0_FN, .baud = ESPFC_SERIAL_0_BAUD, .blackboxBaud = ESPFC_SERIAL_0_BBAUD },
+      [SERIAL_UART_0] = { .id = SERIAL_ID_UART_1, .functionMask = ESPFC_SERIAL_0_FN, .baud = ESPFC_SERIAL_0_BAUD, .gpsBaud = SERIAL_SPEED_NONE, .telemetryBaud = SERIAL_SPEED_NONE, .blackboxBaud = ESPFC_SERIAL_0_BBAUD },
 #endif
 #ifdef ESPFC_SERIAL_1
-      [SERIAL_UART_1] = { .id = SERIAL_ID_UART_2, .functionMask = ESPFC_SERIAL_1_FN, .baud = ESPFC_SERIAL_1_BAUD, .blackboxBaud = ESPFC_SERIAL_1_BBAUD },
+      [SERIAL_UART_1] = { .id = SERIAL_ID_UART_2, .functionMask = ESPFC_SERIAL_1_FN, .baud = ESPFC_SERIAL_1_BAUD, .gpsBaud = SERIAL_SPEED_NONE, .telemetryBaud = SERIAL_SPEED_NONE, .blackboxBaud = ESPFC_SERIAL_1_BBAUD },
 #endif
 #ifdef ESPFC_SERIAL_2
-      [SERIAL_UART_2] = { .id = SERIAL_ID_UART_3, .functionMask = ESPFC_SERIAL_2_FN, .baud = ESPFC_SERIAL_2_BAUD, .blackboxBaud = ESPFC_SERIAL_2_BBAUD },
+      [SERIAL_UART_2] = { .id = SERIAL_ID_UART_3, .functionMask = ESPFC_SERIAL_2_FN, .baud = ESPFC_SERIAL_2_BAUD, .gpsBaud = SERIAL_SPEED_NONE, .telemetryBaud = SERIAL_SPEED_NONE, .blackboxBaud = ESPFC_SERIAL_2_BBAUD },
 #endif
 #ifdef ESPFC_SERIAL_SOFT_0
-      [SERIAL_SOFT_0] = { .id = SERIAL_ID_SOFTSERIAL_1, .functionMask = ESPFC_SERIAL_SOFT_0_FN, .baud = SERIAL_SPEED_115200, .blackboxBaud = SERIAL_SPEED_NONE },
+      [SERIAL_SOFT_0] = { .id = SERIAL_ID_SOFTSERIAL_1, .functionMask = ESPFC_SERIAL_SOFT_0_FN, .baud = SERIAL_SPEED_115200, .gpsBaud = SERIAL_SPEED_NONE, .telemetryBaud = SERIAL_SPEED_NONE, .blackboxBaud = SERIAL_SPEED_NONE },
 #endif
     };
 

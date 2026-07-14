@@ -345,6 +345,7 @@ struct VtxState
 enum GpsDeviceVersion
 {
   GPS_UNKNOWN,
+  GPS_M6,
   GPS_M8,
   GPS_M9,
   GPS_F9,

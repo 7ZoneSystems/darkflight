@@ -5,8 +5,14 @@
 #include <cmath>
 #include <cstdint>
 #include <Gps.hpp>
+#include <GpsParser.hpp>
 
 static constexpr float toRad(float deg) { return deg * (float)M_PI / 180.0f; }
+
+static_assert(sizeof(Gps::UbxNavPosLlh28) == 28, "u-blox legacy POSLLH layout");
+static_assert(sizeof(Gps::UbxNavVelned36) == 36, "u-blox legacy VELNED layout");
+static_assert(sizeof(Gps::UbxNavSol52) == 52, "u-blox legacy SOL layout");
+static_assert(sizeof(Gps::UbxNavSvInfo) == 8, "u-blox legacy SVINFO header layout");
 
 // ---------------------------------------------------------------------------
 
@@ -142,6 +148,39 @@ void test_local_offset_date_line_crossing_west()
   TEST_ASSERT_FLOAT_WITHIN(0.1f, -222.6f, offset.east);
 }
 
+void test_legacy_ubx_velocity_payload_layout()
+{
+  Gps::UbxNavVelned36 payload{
+    .iTow = 1234,
+    .velN = -25,
+    .velE = 40,
+    .velD = 3,
+    .speed = 50,
+    .gSpeed = 47,
+    .heading = 9000000,
+    .sAcc = 6,
+    .cAcc = 120000,
+  };
+  TEST_ASSERT_EQUAL_INT32(-25, payload.velN);
+  TEST_ASSERT_EQUAL_INT32(40, payload.velE);
+  TEST_ASSERT_EQUAL_UINT32(47, payload.gSpeed);
+  // NAV-VELNED is cm/s; GpsSensor converts this to the shared mm/s state.
+  TEST_ASSERT_EQUAL_INT32(-250, payload.velN * 10);
+  TEST_ASSERT_EQUAL_INT32(400, payload.velE * 10);
+}
+
+void test_legacy_ubx_sol_num_satellite_offset()
+{
+  Gps::UbxNavSol52 payload{};
+  payload.gpsFix = 3;
+  payload.flags = 1;
+  payload.pDOP = 125;
+  payload.numSV = 9;
+  TEST_ASSERT_EQUAL_UINT8(3, payload.gpsFix);
+  TEST_ASSERT_EQUAL_UINT8(1, payload.flags);
+  TEST_ASSERT_EQUAL_UINT8(9, payload.numSV);
+}
+
 // ---------------------------------------------------------------------------
 
 int main()
@@ -165,6 +204,8 @@ int main()
   RUN_TEST(test_date_line_crossing_bearing);
   RUN_TEST(test_local_offset_date_line_crossing_east);
   RUN_TEST(test_local_offset_date_line_crossing_west);
+  RUN_TEST(test_legacy_ubx_velocity_payload_layout);
+  RUN_TEST(test_legacy_ubx_sol_num_satellite_offset);
 
   return UNITY_END();
 }

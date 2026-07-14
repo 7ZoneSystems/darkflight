@@ -42,6 +42,10 @@ int SerialManager::begin()
 
     SerialDeviceConfig sdc;
     sdc.baud = spc.baud;
+    if(spc.functionMask & SERIAL_FUNCTION_GPS)
+    {
+      sdc.baud = spc.gpsBaud ? spc.gpsBaud : spc.baud;
+    }
 
 #ifdef ESPFC_SERIAL_USB
     const bool hasUsbPort = true;

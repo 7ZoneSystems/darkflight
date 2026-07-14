@@ -152,6 +152,10 @@ void Cli::Param::print(Stream& stream, const SerialPortConfig& sc) const
   stream.print(' ');
   stream.print(sc.baud);
   stream.print(' ');
+  stream.print(sc.gpsBaud);
+  stream.print(' ');
+  stream.print(sc.telemetryBaud);
+  stream.print(' ');
   stream.print(sc.blackboxBaud);
 }
 
@@ -293,7 +297,9 @@ void Cli::Param::write(SerialPortConfig& sc, const char ** args) const
 {
   if(args[2]) sc.functionMask = String(args[2]).toInt();
   if(args[3]) sc.baud = String(args[3]).toInt();
-  if(args[4]) sc.blackboxBaud = String(args[4]).toInt();
+  if(args[4]) sc.gpsBaud = String(args[4]).toInt();
+  if(args[5]) sc.telemetryBaud = String(args[5]).toInt();
+  if(args[6]) sc.blackboxBaud = String(args[6]).toInt();
 }
 
 void Cli::Param::write(const String& v) const
@@ -437,6 +443,10 @@ const Cli::Param * Cli::initialize(ModelConfig& c)
 
     Param(PSTR("gps_min_sats"), &c.gps.minSats),
     Param(PSTR("gps_set_home_once"), &c.gps.setHomeOnce),
+    Param(PSTR("gps_provider"), &c.gps.provider),
+    Param(PSTR("gps_sbas_mode"), &c.gps.sbasMode),
+    Param(PSTR("gps_auto_config"), &c.gps.autoConfig),
+    Param(PSTR("gps_auto_baud"), &c.gps.autoBaud),
     
     Param(PSTR("gps_gnss_mode"), &c.gps.gnssMode),
     Param(PSTR("gps_enable_dual_band"), &c.gps.enableDualBand),
@@ -683,14 +693,20 @@ const Cli::Param * Cli::initialize(ModelConfig& c)
 #if defined(ESPFC_SERIAL_0) && defined(ESPFC_SERIAL_REMAP_PINS)
     Param(PSTR("pin_serial_0_tx"), &c.pin[PIN_SERIAL_0_TX]),
     Param(PSTR("pin_serial_0_rx"), &c.pin[PIN_SERIAL_0_RX]),
+    Param(PSTR("pin_uart1_tx"), &c.pin[PIN_SERIAL_0_TX]),
+    Param(PSTR("pin_uart1_rx"), &c.pin[PIN_SERIAL_0_RX]),
 #endif
 #if defined(ESPFC_SERIAL_1) && defined(ESPFC_SERIAL_REMAP_PINS)
     Param(PSTR("pin_serial_1_tx"), &c.pin[PIN_SERIAL_1_TX]),
     Param(PSTR("pin_serial_1_rx"), &c.pin[PIN_SERIAL_1_RX]),
+    Param(PSTR("pin_uart2_tx"), &c.pin[PIN_SERIAL_1_TX]),
+    Param(PSTR("pin_uart2_rx"), &c.pin[PIN_SERIAL_1_RX]),
 #endif
 #if defined(ESPFC_SERIAL_2) && defined(ESPFC_SERIAL_REMAP_PINS)
     Param(PSTR("pin_serial_2_tx"), &c.pin[PIN_SERIAL_2_TX]),
     Param(PSTR("pin_serial_2_rx"), &c.pin[PIN_SERIAL_2_RX]),
+    Param(PSTR("pin_uart3_tx"), &c.pin[PIN_SERIAL_2_TX]),
+    Param(PSTR("pin_uart3_rx"), &c.pin[PIN_SERIAL_2_RX]),
 #endif
 #ifdef ESPFC_I2C_0
     Param(PSTR("pin_i2c_scl"), &c.pin[PIN_I2C_0_SCL]),
@@ -902,7 +918,7 @@ void Cli::execute(CliCmd& cmd, Stream& s)
       PSTR("available commands:"),
       PSTR(" help"), PSTR(" dump"), PSTR(" get param"), PSTR(" set param value ..."), PSTR(" cal [gyro]"),
       PSTR(" defaults"), PSTR(" save"), PSTR(" reboot"), PSTR(" scaler"), PSTR(" mixer"),
-      PSTR(" stats"), PSTR(" status"), PSTR(" devinfo"), PSTR(" version"), PSTR(" logs"), PSTR(" gps [set_home|clear_home]"),
+      PSTR(" stats"), PSTR(" status"), PSTR(" devinfo"), PSTR(" version"), PSTR(" logs"), PSTR(" gps [status|config|set_home|clear_home|port <UART1-3>]"),
       //PSTR(" load"), PSTR(" eeprom"),
       //PSTR(" fsinfo"), PSTR(" fsformat"), PSTR(" log"),
       nullptr
@@ -1097,6 +1113,53 @@ void Cli::execute(CliCmd& cmd, Stream& s)
     {
       _model.state.gps.homeSet = false;
       s.println(F("Home position cleared"));
+    }
+    else if(cmd.args[1] && strcmp_P(cmd.args[1], PSTR("config")) == 0)
+    {
+      s.print(F("GPS provider="));
+      s.print(_model.config.gps.provider);
+      s.print(F(" sbas_mode="));
+      s.print(_model.config.gps.sbasMode);
+      s.print(F(" auto_config="));
+      s.print(_model.config.gps.autoConfig);
+      s.print(F(" auto_baud="));
+      s.println(_model.config.gps.autoBaud);
+      for(size_t i = 0; i < SERIAL_UART_COUNT; i++)
+      {
+        const SerialPortConfig& spc = _model.config.serial[i];
+        if(spc.functionMask & SERIAL_FUNCTION_GPS)
+        {
+          s.print(F("GPS port="));
+          s.print(spc.id == SERIAL_ID_UART_1 ? F("UART1") : (spc.id == SERIAL_ID_UART_2 ? F("UART2") : (spc.id == SERIAL_ID_UART_3 ? F("UART3") : F("other"))));
+          s.print(F(" baud="));
+          s.print(spc.gpsBaud ? spc.gpsBaud : spc.baud);
+          s.println();
+        }
+      }
+    }
+    else if(cmd.args[1] && strcmp_P(cmd.args[1], PSTR("port")) == 0 && cmd.args[2])
+    {
+      const int requestedId = String(cmd.args[2]).toInt();
+      int id = requestedId;
+      if(strcasecmp_P(cmd.args[2], PSTR("UART1")) == 0) id = SERIAL_ID_UART_1;
+      else if(strcasecmp_P(cmd.args[2], PSTR("UART2")) == 0) id = SERIAL_ID_UART_2;
+      else if(strcasecmp_P(cmd.args[2], PSTR("UART3")) == 0) id = SERIAL_ID_UART_3;
+      else if(requestedId >= 1 && requestedId <= 3) id = requestedId - 1;
+
+      const int selected = _model.getSerialIndex((SerialPortId)id);
+      if(selected < 0)
+      {
+        s.println(F("Invalid or unavailable GPS UART"));
+      }
+      else
+      {
+        for(size_t i = 0; i < SERIAL_UART_COUNT; i++)
+        {
+          _model.config.serial[i].functionMask &= ~SERIAL_FUNCTION_GPS;
+        }
+        _model.config.serial[selected].functionMask |= SERIAL_FUNCTION_GPS;
+        s.println(F("GPS UART changed; save and reboot"));
+      }
     }
     else
     {
@@ -1584,6 +1647,14 @@ void Cli::printGpsStatus(Stream& s, bool full) const
   s.print(F(" km/h)"));
   s.println();
 
+  s.print(F("   Vel: N="));
+  s.print(_model.state.gps.velocity.raw.north);
+  s.print(F(" E="));
+  s.print(_model.state.gps.velocity.raw.east);
+  s.print(F(" D="));
+  s.print(_model.state.gps.velocity.raw.down);
+  s.println(F(" mm/s"));
+
   s.print(F("  Head: "));
   s.print(_model.state.gps.velocity.raw.heading);
   s.print(F(" ("));
@@ -1608,7 +1679,7 @@ void Cli::printGpsStatus(Stream& s, bool full) const
   s.println();
 
   s.print(F("  Rate: "));
-  s.print(1000000.0f / _model.state.gps.interval, 1);
+  s.print(_model.state.gps.interval ? 1000000.0f / _model.state.gps.interval : 0.0f, 1);
   s.println(F(" Hz"));
 
   s.print(F("  Sats: "));

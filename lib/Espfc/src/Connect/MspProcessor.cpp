@@ -642,8 +642,8 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         r.writeU8(_model.config.serial[i].id); // identifier
         r.writeU16(_model.config.serial[i].functionMask); // functionMask
         r.writeU8(toBaudIndex(_model.config.serial[i].baud)); // msp_baudrateIndex
-        r.writeU8(0); // gps_baudrateIndex
-        r.writeU8(0); // telemetry_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud)); // gps_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].telemetryBaud)); // telemetry_baudrateIndex
         r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud)); // blackbox_baudrateIndex
       }
       break;
@@ -663,8 +663,8 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
           r.writeU8(_model.config.serial[i].id); // identifier
           r.writeU32(_model.config.serial[i].functionMask); // functionMask
           r.writeU8(toBaudIndex(_model.config.serial[i].baud)); // msp_baudrateIndex
-          r.writeU8(0); // gps_baudrateIndex
-          r.writeU8(0); // telemetry_baudrateIndex
+          r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud)); // gps_baudrateIndex
+          r.writeU8(toBaudIndex(_model.config.serial[i].telemetryBaud)); // telemetry_baudrateIndex
           r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud)); // blackbox_baudrateIndex
         }
       }
@@ -684,8 +684,8 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
           _model.config.serial[k].id = id;
           _model.config.serial[k].functionMask = m.readU16();
           _model.config.serial[k].baud = fromBaudIndex((SerialSpeedIndex)m.readU8());
-          m.readU8();
-          m.readU8();
+          _model.config.serial[k].gpsBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
+          _model.config.serial[k].telemetryBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
           _model.config.serial[k].blackboxBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
         }
       }
@@ -709,8 +709,8 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
           _model.config.serial[k].id = id;
           _model.config.serial[k].functionMask = m.readU32();
           _model.config.serial[k].baud = fromBaudIndex((SerialSpeedIndex)m.readU8());
-          m.readU8();
-          m.readU8();
+          _model.config.serial[k].gpsBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
+          _model.config.serial[k].telemetryBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
           _model.config.serial[k].blackboxBaud = fromBaudIndex((SerialSpeedIndex)m.readU8());
         }
       }
@@ -1588,29 +1588,32 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       break;
 
     case MSP_SET_GPS_CONFIG:
-      m.readU8(); // provider
-      m.readU8(); // sbas mode
-      m.readU8(); // auto config
-      m.readU8(); // auto baud
+      if(m.remain() >= 4)
+      {
+        _model.config.gps.provider = m.readU8();
+        _model.config.gps.sbasMode = m.readU8();
+        _model.config.gps.autoConfig = m.readU8();
+        _model.config.gps.autoBaud = m.readU8();
+      }
       if (m.remain() >= 2) {
           // Added in API version 1.43
           _model.config.gps.setHomeOnce = m.readU8(); // gps_set_home_point_once
-          m.readU8(); // gps_ublox_use_galileo
+          _model.config.gps.enableGalileo = m.readU8(); // gps_ublox_use_galileo
       }
       break;
 
     case MSP_GPS_CONFIG:
-      r.writeU8(1); // provider
-      r.writeU8(0); // sbasMode, 0: auto
-      r.writeU8(1); // autoConfig, 0: off, 1: on
-      r.writeU8(1); // autoBaud, 0: off, 1: on
+      r.writeU8(_model.config.gps.provider); // provider
+      r.writeU8(_model.config.gps.sbasMode); // sbasMode, 0: auto
+      r.writeU8(_model.config.gps.autoConfig); // autoConfig, 0: off, 1: on
+      r.writeU8(_model.config.gps.autoBaud); // autoBaud, 0: off, 1: on
       // Added in API version 1.43
       r.writeU8(_model.config.gps.setHomeOnce); // gps_set_home_point_once
-      r.writeU8(1); // gps_ublox_use_galileo
+      r.writeU8(_model.config.gps.enableGalileo); // gps_ublox_use_galileo
       break;
 
   case MSP_RAW_GPS:
-      r.writeU8(_model.state.gps.fixType > 2); // STATE(GPS_FIX));
+      r.writeU8(_model.state.gps.fix && _model.state.gps.fixType >= 3); // STATE(GPS_FIX));
       r.writeU8(_model.state.gps.numSats); // numSat
       r.writeU32(_model.state.gps.location.raw.lat); // lat
       r.writeU32(_model.state.gps.location.raw.lon); // lon
