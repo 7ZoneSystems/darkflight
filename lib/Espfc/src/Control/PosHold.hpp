@@ -40,7 +40,7 @@ public:
       }
       if (_active)
       {
-        _model.logger.info().logln(F("GPS POSHOLD EXIT"));
+        _model.logger.info().logln("GPS POSHOLD EXIT");
       }
       reset();
       return false;
@@ -48,7 +48,7 @@ public:
 
     if (!isGpsHealthy())
     {
-      _model.logger.err().logln(F("GPS POSHOLD BAIL"));
+      _model.logger.err().logln("GPS POSHOLD BAIL");
       _model.clearMode(MODE_POSHOLD);
       _fallbackAngle = true;
       reset();
@@ -61,7 +61,7 @@ public:
       resetPids();
       _active = true;
       _fallbackAngle = false;
-      _model.logger.info().logln(F("GPS POSHOLD ENTER"));
+      _model.logger.info().logln("GPS POSHOLD ENTER");
     }
 
     if (isStickOverrideActive())
@@ -276,7 +276,7 @@ private:
     _positionPid[AXIS_PITCH].outputSaturated = velocityClamped;
     if (velocityClamped != _wasVelocityClamped)
     {
-      _model.logger.info().logln(velocityClamped ? F("GPS POSHOLD VEL LIMIT") : F("GPS POSHOLD VEL UNLIMIT"));
+      _model.logger.info().logln(velocityClamped ? "GPS POSHOLD VEL LIMIT" : "GPS POSHOLD VEL UNLIMIT");
       _wasVelocityClamped = velocityClamped;
     }
 
@@ -312,7 +312,7 @@ private:
 
     if (clamped != _wasClamped)
     {
-      _model.logger.info().logln(clamped ? F("GPS POSHOLD CLAMP") : F("GPS POSHOLD UNCLAMP"));
+      _model.logger.info().logln(clamped ? "GPS POSHOLD CLAMP" : "GPS POSHOLD UNCLAMP");
       _wasClamped = clamped;
     }
   }

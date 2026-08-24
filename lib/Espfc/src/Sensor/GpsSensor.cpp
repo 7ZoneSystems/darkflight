@@ -1,6 +1,8 @@
 #include "Sensor/GpsSensor.hpp"
 #include <Arduino.h>
 #include <Gps.hpp>
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <tuple>
