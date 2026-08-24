@@ -403,40 +403,30 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       size_t i = m.readU8();
       if (i < ACTUATOR_CONDITIONS)
       {
-        _model.config.conditions[i].id = m.readU8();
-        _model.config.conditions[i].ch = m.readU8() + AXIS_AUX_1;
-        _model.config.conditions[i].min = m.readU8() * 25 + 900;
-        _model.config.conditions[i].max = m.readU8() * 25 + 900;
-        if (m.remain() >= 2)
+        // incoming ids are Betaflight permanent box ids; map to internal modes
+        const uint8_t mode = fromMspBoxId(m.readU8());
+        const uint8_t ch = m.readU8() + AXIS_AUX_1;
+        const int16_t min = m.readU8() * 25 + 900;
+        const int16_t max = m.readU8() * 25 + 900;
+        if(mode < MODE_COUNT)
         {
-          const uint8_t mode = fromMspBoxId(m.readU8());
-          const uint8_t ch = m.readU8() + AXIS_AUX_1;
-          const int16_t min = m.readU8() * 25 + 900;
-          const int16_t max = m.readU8() * 25 + 900;
-          if(mode < MODE_COUNT)
-          {
-            _model.config.conditions[i].id = mode;
-            _model.config.conditions[i].ch = ch;
-            _model.config.conditions[i].min = min;
-            _model.config.conditions[i].max = max;
-          }
-          else
-          {
-            r.result = -1;
-          }
-          if(m.remain() >= 2) {
-            const uint8_t logicMode = m.readU8(); // mode logic
-            const uint8_t linkId = m.readU8(); // link to
-            if(mode < MODE_COUNT)
-            {
-              _model.config.conditions[i].logicMode = logicMode;
-              _model.config.conditions[i].linkId = linkId;
-            }
-          }
+          _model.config.conditions[i].id = mode;
+          _model.config.conditions[i].ch = ch;
+          _model.config.conditions[i].min = min;
+          _model.config.conditions[i].max = max;
         }
         else
         {
           r.result = -1;
+        }
+        if(m.remain() >= 2) {
+          const uint8_t logicMode = m.readU8(); // mode logic
+          const uint8_t linkId = m.readU8(); // link to
+          if(mode < MODE_COUNT)
+          {
+            _model.config.conditions[i].logicMode = logicMode;
+            _model.config.conditions[i].linkId = linkId;
+          }
         }
       }
       else

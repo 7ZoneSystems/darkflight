@@ -771,8 +771,8 @@ void Cli::execute(CliCmd& cmd, Stream& s)
                                         " status", " devinfo", " version", " logs",
                                         " gps [status|config|set_home|clear_home|port <UART1-3>]",
                                         //" load", " eeprom",
-                                         //" fsinfo", " fsformat", " log",
-                                         nullptr};
+                                        //" fsinfo", " fsformat", " log",
+                                        nullptr};
     for (const char* const* ptr = helps; *ptr; ptr++)
     {
       s.println(*ptr);
