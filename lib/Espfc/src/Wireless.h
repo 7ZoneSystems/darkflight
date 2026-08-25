@@ -14,34 +14,36 @@ namespace Espfc {
 
 class Wireless
 {
-  enum Status {
+  enum Status
+  {
     STOPPED,
     STARTED,
   };
-  public:
-    Wireless(Model& model);
 
-    int begin();
-    int update();
+public:
+  Wireless(Model& model);
 
-    void startAp();
-    int connect();
-    void wifiEventConnected(const String& ssid, int channel);
-    void wifiEventApConnected(const uint8_t* mac);
-    void wifiEventGotIp(const IPAddress& ip);
-    void wifiEventDisconnected();
+  int begin();
+  int update();
 
-  private:
-    Model& _model;
-    Status _status;
-    WiFiServer _server;
-    WiFiClient _client;
-    Device::SerialDeviceAdapter<WiFiClient> _adapter;
+  void startAp();
+  int connect();
+  void wifiEventConnected(const String& ssid, int channel);
+  void wifiEventApConnected(const uint8_t* mac);
+  void wifiEventGotIp(const IPAddress& ip);
+  void wifiEventDisconnected();
+
+private:
+  Model& _model;
+  Status _status;
+  WiFiServer _server;
+  WiFiClient _client;
+  Device::SerialDeviceAdapter<WiFiClient> _adapter;
 #ifdef ESPFC_WIFI_ALT
-    WiFiEventHandler _events[4];
+  WiFiEventHandler _events[4];
 #endif
 };
 
-}
+} // namespace Espfc
 
 #endif

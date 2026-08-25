@@ -8,13 +8,11 @@ namespace Espfc {
 
 namespace Target {
 
-void Queue::begin()
-{
-}
+void Queue::begin() {}
 
 void FAST_CODE_ATTR Queue::send(const Event& e)
 {
-  if(isFull()) return;
+  if (isFull()) return;
   _q.push(e);
 }
 
@@ -35,8 +33,8 @@ bool FAST_CODE_ATTR Queue::isFull() const
   return _q.isFull();
 }
 
-}
+} // namespace Target
 
-}
+} // namespace Espfc
 
 #endif

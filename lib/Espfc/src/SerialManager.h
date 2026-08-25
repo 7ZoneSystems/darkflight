@@ -23,13 +23,13 @@ public:
   int update();
 
 private:
-  static Device::SerialDevice * getSerialPortById(SerialPort portId);
+  static Device::SerialDevice* getSerialPortById(SerialPort portId);
   void processMsp(SerialPortState& ss);
 
   void next()
   {
     _current++;
-    if(_current >= SERIAL_UART_COUNT) _current = 0;
+    if (_current >= SERIAL_UART_COUNT) _current = 0;
   }
 
   Model& _model;
@@ -46,4 +46,4 @@ private:
 #endif
 };
 
-}
+} // namespace Espfc
