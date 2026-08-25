@@ -24,3 +24,7 @@ AllowShortLambdasOnASingleLine: true
 AlwaysBreakTemplateDeclarations: true
 SpaceAfterTemplateKeyword: false
 SpaceBeforeCtorInitializerColon: false
+# do not reorder includes: some sources rely on include order
+# (e.g. Arduino.h before Utils/MemoryHelper.h for IRAM_ATTR on ESP32)
+SortIncludes: Never
+IncludeBlocks: Preserve
