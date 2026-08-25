@@ -9,7 +9,8 @@
 
 namespace Espfc {
 
-enum TelemetryProtocol {
+enum TelemetryProtocol
+{
   TELEMETRY_PROTOCOL_TEXT,
   TELEMETRY_PROTOCOL_CRSF,
 };
@@ -28,4 +29,4 @@ private:
   Telemetry::TelemetryCRSF _crsf;
 };
 
-}
+} // namespace Espfc

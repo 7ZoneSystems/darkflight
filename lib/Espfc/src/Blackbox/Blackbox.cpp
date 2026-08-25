@@ -8,10 +8,12 @@ namespace Espfc {
 
 namespace Blackbox {
 
-static void updateModeFlag(boxBitmask_t *mask, boxId_e id, bool value)
+static void updateModeFlag(boxBitmask_t* mask, boxId_e id, bool value)
 {
-  if(value) bitArraySet(mask, id);
-  else bitArrayClr(mask, id);
+  if (value)
+    bitArraySet(mask, id);
+  else
+    bitArrayClr(mask, id);
 }
 
 Blackbox::Blackbox(Model& model): _model(model) {}
@@ -25,23 +27,23 @@ int Blackbox::begin()
   _model.logger.info().log("FLASHFS").log(res).logln(flashfsGetOffset());
 #endif
 
-  if(!_model.blackboxEnabled()) return 0;
+  if (!_model.blackboxEnabled()) return 0;
 
-  if(_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL)
+  if (_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL)
   {
     _serial = _model.getSerialStream(SERIAL_FUNCTION_BLACKBOX);
-    if(!_serial) return 0;
+    if (!_serial) return 0;
 
     _buffer.wrap(_serial);
     serialDeviceInit(&_buffer, 0);
-    //serialDeviceInit(_serial, 0);
+    // serialDeviceInit(_serial, 0);
   }
 
   systemConfigMutable()->activeRateProfile = 0;
   systemConfigMutable()->debug_mode = debugMode = _model.config.debug.mode;
 
-  controlRateConfig_t *rp = controlRateProfilesMutable(systemConfig()->activeRateProfile);
-  for(int i = 0; i < AXIS_COUNT_RPY; i++)
+  controlRateConfig_t* rp = controlRateProfilesMutable(systemConfig()->activeRateProfile);
+  for (int i = 0; i < AXIS_COUNT_RPY; i++)
   {
     rp->rcRates[i] = _model.config.input.rate[i];
     rp->rcExpo[i] = _model.config.input.expo[i];
@@ -54,14 +56,15 @@ int Blackbox::begin()
   rp->tpa_breakpoint = _model.config.controller.tpaBreakpoint;
   rp->rates_type = _model.config.input.rateType;
 
-  pidProfile_s * cp = currentPidProfile = &_pidProfile;
-  for(size_t i = 0; i < FC_PID_ITEM_COUNT; i++)
+  pidProfile_s* cp = currentPidProfile = &_pidProfile;
+  for (size_t i = 0; i < FC_PID_ITEM_COUNT; i++)
   {
     cp->pid[i].P = _model.config.pid[i].P;
     cp->pid[i].I = _model.config.pid[i].I;
     cp->pid[i].D = _model.config.pid[i].D;
     cp->pid[i].F = _model.config.pid[i].F;
-    if(i <= AXIS_YAW) {
+    if (i <= AXIS_YAW)
+    {
       cp->d_min[i] = _model.config.pid[i].D;
     }
   }
@@ -148,15 +151,15 @@ int Blackbox::begin()
 
   mixerConfigMutable()->mixer_type = 0;
 
-  if(_model.accelActive()) sensorsSet(SENSOR_ACC);
-  if(_model.magActive()) sensorsSet(SENSOR_MAG);
-  if(_model.baroActive()) sensorsSet(SENSOR_BARO);
+  if (_model.accelActive()) sensorsSet(SENSOR_ACC);
+  if (_model.magActive()) sensorsSet(SENSOR_MAG);
+  if (_model.baroActive()) sensorsSet(SENSOR_BARO);
 
   gyro.sampleLooptime = _model.state.gyro.timer.interval;
   targetPidLooptime = _model.state.loopTimer.interval;
   activePidLoopDenom = _model.config.loopSync;
 
-  if(_model.config.blackbox.pDenom >= 0 && _model.config.blackbox.pDenom <= 4)
+  if (_model.config.blackbox.pDenom >= 0 && _model.config.blackbox.pDenom <= 4)
   {
     blackboxConfigMutable()->sample_rate = _model.config.blackbox.pDenom;
   }
@@ -209,27 +212,27 @@ int Blackbox::begin()
 
 int FAST_CODE_ATTR Blackbox::update()
 {
-  if(!_model.blackboxEnabled()) return 0;
-  if(_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL && !_serial) return 0;
+  if (!_model.blackboxEnabled()) return 0;
+  if (_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL && !_serial) return 0;
 
   Utils::Stats::Measure measure(_model.state.stats, COUNTER_BLACKBOX);
 
   uint32_t startTime = micros();
   updateArmed();
   updateMode();
-  if(blackboxShouldLogIFrame() || blackboxShouldLogPFrame())
+  if (blackboxShouldLogIFrame() || blackboxShouldLogPFrame())
   {
     updateData();
   }
-  //PIN_DEBUG(HIGH);
+  // PIN_DEBUG(HIGH);
   blackboxUpdate(_model.state.loopTimer.last);
-  if(_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL)
+  if (_model.config.blackbox.dev == BLACKBOX_DEV_SERIAL)
   {
     _buffer.flush();
   }
-  //PIN_DEBUG(LOW);
+  // PIN_DEBUG(LOW);
 
-  if(_model.config.debug.mode == DEBUG_PIDLOOP)
+  if (_model.config.debug.mode == DEBUG_PIDLOOP)
   {
     _model.state.debug[5] = micros() - startTime;
   }
@@ -240,7 +243,7 @@ int FAST_CODE_ATTR Blackbox::update()
 void FAST_CODE_ATTR Blackbox::updateData()
 {
   auto accel = _model.state.accel.adc.fetch();
-  for(size_t i = 0; i < AXIS_COUNT_RPY; i++)
+  for (size_t i = 0; i < AXIS_COUNT_RPY; i++)
   {
     gyro.gyroADCf[i] = Utils::toDeg(_model.state.gyro.adc[i]);
     gyro.gyroADC[i] = Utils::toDeg(_model.state.gyro.scaled[i]);
@@ -249,28 +252,31 @@ void FAST_CODE_ATTR Blackbox::updateData()
     pidData[i].D = _model.state.innerPid[i].dTerm * 1000.f;
     pidData[i].F = _model.state.innerPid[i].fTerm * 1000.f;
     rcCommand[i] = (_model.state.input.buffer[i] - 1500) * (i == AXIS_YAW ? -1 : 1);
-    if(_model.accelActive()) {
+    if (_model.accelActive())
+    {
       acc.accADC[i] = accel[i] * ACCEL_G_INV * acc.dev.acc_1G;
     }
-    if(_model.magActive()) {
+    if (_model.magActive())
+    {
       mag.magADC[i] = _model.state.mag.adc[i] * 1090;
     }
-    if(_model.baroActive()) {
+    if (_model.baroActive())
+    {
       baro.altitude = lrintf(_model.state.baro.altitudeGround * 100.f); // cm
     }
   }
   rcCommand[AXIS_THRUST] = _model.state.input.buffer[AXIS_THRUST];
-  for(size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 4; i++)
   {
     motor[i] = std::clamp<int16_t>(_model.state.output.us[i], 1000, 2000);
-    if(_model.state.mixer.digitalOutput)
+    if (_model.state.mixer.digitalOutput)
     {
       motor[i] = PWM_TO_DSHOT(motor[i]);
     }
   }
-  if(_model.config.debug.mode != DEBUG_NONE && _model.config.debug.mode != DEBUG_BLACKBOX_OUTPUT)
+  if (_model.config.debug.mode != DEBUG_NONE && _model.config.debug.mode != DEBUG_BLACKBOX_OUTPUT)
   {
-    for(size_t i = 0; i < DEBUG_VALUE_COUNT; i++)
+    for (size_t i = 0; i < DEBUG_VALUE_COUNT; i++)
     {
       debug[i] = _model.state.debug[i];
     }
@@ -279,8 +285,8 @@ void FAST_CODE_ATTR Blackbox::updateData()
   GPS_home[1] = _model.state.gps.location.home.lon;
   gpsSol.llh.lat = _model.state.gps.location.raw.lat;
   gpsSol.llh.lon = _model.state.gps.location.raw.lon;
-  gpsSol.llh.altCm = (_model.state.gps.location.raw.height + 50) / 100; // 0.1 m
-  gpsSol.groundSpeed = (_model.state.gps.velocity.raw.groundSpeed + 5) / 10; // cm/s
+  gpsSol.llh.altCm = (_model.state.gps.location.raw.height + 50) / 100;         // 0.1 m
+  gpsSol.groundSpeed = (_model.state.gps.velocity.raw.groundSpeed + 5) / 10;    // cm/s
   gpsSol.groundCourse = (_model.state.gps.velocity.raw.heading + 5000) / 10000; // 0.1 deg
   gpsSol.numSat = _model.state.gps.numSats;
 }
@@ -289,7 +295,7 @@ void FAST_CODE_ATTR Blackbox::updateArmed()
 {
   // log arming beep event
   static uint32_t beep = 0;
-  if(beep != 0 && _model.state.loopTimer.last > beep)
+  if (beep != 0 && _model.state.loopTimer.last > beep)
   {
     setArmingBeepTimeMicros(_model.state.loopTimer.last);
     beep = 0;
@@ -297,15 +303,15 @@ void FAST_CODE_ATTR Blackbox::updateArmed()
 
   // stop logging
   static uint32_t stop = 0;
-  if(stop != 0 && _model.state.loopTimer.last > stop)
+  if (stop != 0 && _model.state.loopTimer.last > stop)
   {
     blackboxFinish();
     stop = 0;
   }
 
   bool armed = _model.isModeActive(MODE_ARMED);
-  if(armed == ARMING_FLAG(ARMED)) return;
-  if(armed)
+  if (armed == ARMING_FLAG(ARMED)) return;
+  if (armed)
   {
     ENABLE_ARMING_FLAG(ARMED);
     beep = _model.state.loopTimer.last + 200000; // schedule arming beep event ~200ms
@@ -331,6 +337,6 @@ void FAST_CODE_ATTR Blackbox::updateMode()
   updateModeFlag(&rcModeActivationMask, BOXBLACKBOXERASE, _model.isSwitchActive(MODE_BLACKBOX_ERASE));
 }
 
-}
+} // namespace Blackbox
 
-}
+} // namespace Espfc

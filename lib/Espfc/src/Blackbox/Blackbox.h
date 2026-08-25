@@ -13,22 +13,22 @@ namespace Blackbox {
 
 class Blackbox
 {
-  public:
-    Blackbox(Model& model);
-    int begin();
-    int update();
+public:
+  Blackbox(Model& model);
+  int begin();
+  int update();
 
-  private:
-    void updateData();
-    void updateArmed();
-    void updateMode();
+private:
+  void updateData();
+  void updateArmed();
+  void updateMode();
 
-    Model& _model;
-    pidProfile_s _pidProfile;
-    Device::SerialDevice * _serial;
-    BlackboxSerialBuffer _buffer;
+  Model& _model;
+  pidProfile_s _pidProfile;
+  Device::SerialDevice* _serial;
+  BlackboxSerialBuffer _buffer;
 };
 
-}
+} // namespace Blackbox
 
-}
+} // namespace Espfc
