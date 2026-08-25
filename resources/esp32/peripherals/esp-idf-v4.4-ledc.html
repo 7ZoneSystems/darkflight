@@ -1,0 +1,1672 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-132861133-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-132861133-1');
+        </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>LED Control (LEDC) - ESP32 -  &mdash; ESP-IDF Programming Guide v4.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+      <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+    
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/ledc';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v4.4';
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Motor Control Pulse Width Modulator (MCPWM)" href="mcpwm.html" />
+    <link rel="prev" title="LCD" href="lcd.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ESP-IDF Programming Guide
+          
+
+          
+            
+            <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;">
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;">
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc.html">Analog to Digital Converter (ADC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timer.html">General Purpose Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">LED Control (LEDC)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functionality-overview">Functionality Overview</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ledc-high-and-low-speed-mode">LEDC High and Low Speed Mode</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#supported-range-of-frequency-and-duty-resolutions">Supported Range of Frequency and Duty Resolutions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-example">Application Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rmt.html">Remote Control (RMT)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sigmadelta.html">Sigma-delta Modulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secure_element.html">ESP32-WROOM-32SE (Secure Element)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="touch_pad.html">Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig.html">Configuration Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">H/W Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">语言/Languages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="index.html">Peripherals API</a> &raquo;</li>
+        
+      <li>LED Control (LEDC)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/espressif/esp-idf/blob/v4.4/docs/en/api-reference/peripherals/ledc.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="led-control-ledc">
+<h1>LED Control (LEDC)<a class="headerlink" href="#led-control-ledc" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../../../../../zh_CN/v4.4/esp32/api-reference/peripherals/ledc.html">[中文]</a></p>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The LED control (LEDC) peripheral is primarily designed to control the intensity of LEDs, although it can also be used to generate PWM signals for other purposes.
+It has 16 channels which can generate independent waveforms that can be used, for example, to drive RGB LED devices.</p>
+<p>LEDC channels are divided into two groups of 8 channels each. One group of LEDC channels operates in high speed mode. This mode is implemented in hardware and offers automatic and glitch-free changing of the PWM duty cycle. The other group of channels operate in low speed mode, the PWM duty cycle must be changed by the driver in software. Each group of channels is also able to use different clock sources.</p>
+<p>The PWM controller can automatically increase or decrease the duty cycle gradually, allowing for fades without any processor interference.</p>
+</div>
+<div class="section" id="functionality-overview">
+<h2>Functionality Overview<a class="headerlink" href="#functionality-overview" title="Permalink to this headline">¶</a></h2>
+<p>Setting up a channel of the LEDC in either <a class="reference internal" href="#ledc-api-high-low-speed-mode"><span class="std std-ref">high or low speed mode</span></a> is done in three steps:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#ledc-api-configure-timer"><span class="std std-ref">Timer Configuration</span></a> by specifying the PWM signal’s frequency and duty cycle resolution.</p></li>
+<li><p><a class="reference internal" href="#ledc-api-configure-channel"><span class="std std-ref">Channel Configuration</span></a> by associating it with the timer and GPIO to output the PWM signal.</p></li>
+<li><p><a class="reference internal" href="#ledc-api-change-pwm-signal"><span class="std std-ref">Change PWM Signal</span></a> that drives the output in order to change LED’s intensity. This can be done under the full control of software or with hardware fading functions.</p></li>
+</ol>
+<p>As an optional step, it is also possible to set up an interrupt on fade end.</p>
+<div class="align-center figure" id="id4">
+<img alt="Key Settings of LED PWM Controller's API" src="../../_images/ledc-api-settings.jpg" />
+<p class="caption"><span class="caption-text">Key Settings of LED PWM Controller’s API</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<div class="section" id="timer-configuration">
+<span id="ledc-api-configure-timer"></span><h3>Timer Configuration<a class="headerlink" href="#timer-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Setting the timer is done by calling the function <a class="reference internal" href="#_CPPv417ledc_timer_configPK19ledc_timer_config_t" title="ledc_timer_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_config()</span></code></a> and passing the data structure <a class="reference internal" href="#_CPPv419ledc_timer_config_t" title="ledc_timer_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_timer_config_t</span></code></a> that contains the following configuration settings:</p>
+<p><ul class="simple">
+<li><p>Speed mode <a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_mode_t</span></code></a></p></li>
+<li><p>Timer number <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_timer_t</span></code></a></p></li>
+<li><p>PWM signal frequency</p></li>
+<li><p>Resolution of PWM duty</p></li>
+</ul>
+</p>
+<p>The frequency and the duty resolution are interdependent. The higher the PWM frequency, the lower the duty resolution which is available, and vice versa. This relationship might be important if you are planning to use this API for purposes other than changing the intensity of LEDs. For more details, see Section <a class="reference internal" href="#ledc-api-supported-range-frequency-duty-resolution"><span class="std std-ref">Supported Range of Frequency and Duty Resolutions</span></a>.</p>
+</div>
+<div class="section" id="channel-configuration">
+<span id="ledc-api-configure-channel"></span><h3>Channel Configuration<a class="headerlink" href="#channel-configuration" title="Permalink to this headline">¶</a></h3>
+<p>When the timer is set up, configure the desired channel (one out of <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_channel_t</span></code></a>). This is done by calling the function <a class="reference internal" href="#_CPPv419ledc_channel_configPK21ledc_channel_config_t" title="ledc_channel_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_channel_config()</span></code></a>.</p>
+<p>Similar to the timer configuration, the channel setup function should be passed a structure <a class="reference internal" href="#_CPPv421ledc_channel_config_t" title="ledc_channel_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_channel_config_t</span></code></a> that contains the channel’s configuration parameters.</p>
+<p>At this point, the channel should start operating and generating the PWM signal on the selected GPIO, as configured in <a class="reference internal" href="#_CPPv421ledc_channel_config_t" title="ledc_channel_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_channel_config_t</span></code></a>, with the frequency specified in the timer settings and the given duty cycle. The channel operation (signal generation) can be suspended at any time by calling the function <a class="reference internal" href="#_CPPv49ledc_stop11ledc_mode_t14ledc_channel_t8uint32_t" title="ledc_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_stop()</span></code></a>.</p>
+</div>
+<div class="section" id="change-pwm-signal">
+<span id="ledc-api-change-pwm-signal"></span><h3>Change PWM Signal<a class="headerlink" href="#change-pwm-signal" title="Permalink to this headline">¶</a></h3>
+<p>Once the channel starts operating and generating the PWM signal with the constant duty cycle and frequency, there are a couple of ways to change this signal. When driving LEDs, primarily the duty cycle is changed to vary the light intensity.</p>
+<p>The following two sections describe how to change the duty cycle using software and hardware fading. If required, the signal’s frequency can also be changed; it is covered in Section <a class="reference internal" href="#ledc-api-change-pwm-frequency"><span class="std std-ref">Change PWM Frequency</span></a>.</p>
+<div class="section" id="change-pwm-duty-cycle-using-software">
+<h4>Change PWM Duty Cycle Using Software<a class="headerlink" href="#change-pwm-duty-cycle-using-software" title="Permalink to this headline">¶</a></h4>
+<p>To set the duty cycle, use the dedicated function <a class="reference internal" href="#_CPPv413ledc_set_duty11ledc_mode_t14ledc_channel_t8uint32_t" title="ledc_set_duty"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_set_duty()</span></code></a>. After that, call <a class="reference internal" href="#_CPPv416ledc_update_duty11ledc_mode_t14ledc_channel_t" title="ledc_update_duty"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_update_duty()</span></code></a> to activate the changes. To check the currently set value, use the corresponding <code class="docutils literal notranslate"><span class="pre">_get_</span></code> function <a class="reference internal" href="#_CPPv413ledc_get_duty11ledc_mode_t14ledc_channel_t" title="ledc_get_duty"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_get_duty()</span></code></a>.</p>
+<p>Another way to set the duty cycle, as well as some other channel parameters, is by calling <a class="reference internal" href="#_CPPv419ledc_channel_configPK21ledc_channel_config_t" title="ledc_channel_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_channel_config()</span></code></a> covered in Section <a class="reference internal" href="#ledc-api-configure-channel"><span class="std std-ref">Channel Configuration</span></a>.</p>
+<p>The range of the duty cycle values passed to functions depends on selected <code class="docutils literal notranslate"><span class="pre">duty_resolution</span></code> and should be from <code class="docutils literal notranslate"><span class="pre">0</span></code> to <code class="docutils literal notranslate"><span class="pre">(2</span> <span class="pre">**</span> <span class="pre">duty_resolution)</span> <span class="pre">-</span> <span class="pre">1</span></code>. For example, if the selected duty resolution is 10, then the duty cycle values can range from 0 to 1023. This provides the resolution of ~0.1%.</p>
+</div>
+<div class="section" id="change-pwm-duty-cycle-using-hardware">
+<h4>Change PWM Duty Cycle using Hardware<a class="headerlink" href="#change-pwm-duty-cycle-using-hardware" title="Permalink to this headline">¶</a></h4>
+<p>The LEDC hardware provides the means to gradually transition from one duty cycle value to another. To use this functionality, enable fading with <a class="reference internal" href="#_CPPv422ledc_fade_func_installi" title="ledc_fade_func_install"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_fade_func_install()</span></code></a> and then configure it by calling one of the available fading functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv423ledc_set_fade_with_time11ledc_mode_t14ledc_channel_t8uint32_ti" title="ledc_set_fade_with_time"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_set_fade_with_time()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv423ledc_set_fade_with_step11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t" title="ledc_set_fade_with_step"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_set_fade_with_step()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv413ledc_set_fade11ledc_mode_t14ledc_channel_t8uint32_t21ledc_duty_direction_t8uint32_t8uint32_t8uint32_t" title="ledc_set_fade"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_set_fade()</span></code></a></p></li>
+</ul>
+<p>Finally start fading with <a class="reference internal" href="#_CPPv415ledc_fade_start11ledc_mode_t14ledc_channel_t16ledc_fade_mode_t" title="ledc_fade_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_fade_start()</span></code></a>.</p>
+<p>If not required anymore, fading and an associated interrupt can be disabled with <a class="reference internal" href="#_CPPv424ledc_fade_func_uninstallv" title="ledc_fade_func_uninstall"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_fade_func_uninstall()</span></code></a>.</p>
+</div>
+<div class="section" id="change-pwm-frequency">
+<span id="ledc-api-change-pwm-frequency"></span><h4>Change PWM Frequency<a class="headerlink" href="#change-pwm-frequency" title="Permalink to this headline">¶</a></h4>
+<p>The LEDC API provides several ways to change the PWM frequency “on the fly”:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Set the frequency by calling <a class="reference internal" href="#_CPPv413ledc_set_freq11ledc_mode_t12ledc_timer_t8uint32_t" title="ledc_set_freq"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_set_freq()</span></code></a>. There is a corresponding function <a class="reference internal" href="#_CPPv413ledc_get_freq11ledc_mode_t12ledc_timer_t" title="ledc_get_freq"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_get_freq()</span></code></a> to check the current frequency.</p></li>
+<li><p>Change the frequency and the duty resolution by calling <a class="reference internal" href="#_CPPv423ledc_bind_channel_timer11ledc_mode_t14ledc_channel_t12ledc_timer_t" title="ledc_bind_channel_timer"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_bind_channel_timer()</span></code></a> to bind some other timer to the channel.</p></li>
+<li><p>Change the channel’s timer by calling <a class="reference internal" href="#_CPPv419ledc_channel_configPK21ledc_channel_config_t" title="ledc_channel_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_channel_config()</span></code></a>.</p></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="more-control-over-pwm">
+<h4>More Control Over PWM<a class="headerlink" href="#more-control-over-pwm" title="Permalink to this headline">¶</a></h4>
+<p>There are several lower level timer-specific functions that can be used to change PWM settings:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#_CPPv414ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t" title="ledc_timer_set"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_set()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv414ledc_timer_rst11ledc_mode_t12ledc_timer_t" title="ledc_timer_rst"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_rst()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv416ledc_timer_pause11ledc_mode_t12ledc_timer_t" title="ledc_timer_pause"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_pause()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#_CPPv417ledc_timer_resume11ledc_mode_t12ledc_timer_t" title="ledc_timer_resume"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_resume()</span></code></a></p></li>
+</ul>
+<p>The first two functions are called “behind the scenes” by <a class="reference internal" href="#_CPPv419ledc_channel_configPK21ledc_channel_config_t" title="ledc_channel_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_channel_config()</span></code></a> to provide a startup of a timer after it is configured.</p>
+</div>
+</div>
+<div class="section" id="use-interrupts">
+<h3>Use Interrupts<a class="headerlink" href="#use-interrupts" title="Permalink to this headline">¶</a></h3>
+<p>When configuring an LEDC channel, one of the parameters selected within <a class="reference internal" href="#_CPPv421ledc_channel_config_t" title="ledc_channel_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_channel_config_t</span></code></a> is <a class="reference internal" href="#_CPPv416ledc_intr_type_t" title="ledc_intr_type_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_intr_type_t</span></code></a> which triggers an interrupt on fade completion.</p>
+<p>For registration of a handler to address this interrupt, call <a class="reference internal" href="#_CPPv417ledc_isr_registerPFvPvEPviP17ledc_isr_handle_t" title="ledc_isr_register"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_isr_register()</span></code></a>.</p>
+</div>
+</div>
+<div class="section" id="ledc-high-and-low-speed-mode">
+<span id="ledc-api-high-low-speed-mode"></span><h2>LEDC High and Low Speed Mode<a class="headerlink" href="#ledc-high-and-low-speed-mode" title="Permalink to this headline">¶</a></h2>
+<p>High speed mode enables a glitch-free changeover of timer settings. This means that if the timer settings are modified, the changes will be applied automatically on the next overflow interrupt of the timer. In contrast, when updating the low-speed timer, the change of settings should be explicitly triggered by software. The LEDC driver handles it in the background, e.g., when <a class="reference internal" href="#_CPPv417ledc_timer_configPK19ledc_timer_config_t" title="ledc_timer_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_config()</span></code></a> or <a class="reference internal" href="#_CPPv414ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t" title="ledc_timer_set"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">ledc_timer_set()</span></code></a> is called.</p>
+<p>For additional details regarding speed modes, see <em>ESP32 Technical Reference Manual</em> &gt; <em>LED PWM Controller (LEDC)</em> [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#ledpwm">PDF</a>]. Please note that the support for <code class="docutils literal notranslate"><span class="pre">SLOW_CLOCK</span></code> mentioned in this manual is not yet supported in the LEDC driver.</p>
+</div>
+<div class="section" id="supported-range-of-frequency-and-duty-resolutions">
+<span id="ledc-api-supported-range-frequency-duty-resolution"></span><h2>Supported Range of Frequency and Duty Resolutions<a class="headerlink" href="#supported-range-of-frequency-and-duty-resolutions" title="Permalink to this headline">¶</a></h2>
+<p>The LED PWM Controller is designed primarily to drive LEDs. It provides a large flexibility of PWM duty cycle settings. For instance, the PWM frequency of 5 kHz can have the maximum duty resolution of 13 bits. This means that the duty can be set anywhere from 0 to 100% with a resolution of ~0.012% (2 ** 13 = 8192 discrete levels of the LED intensity). Note, however, that these parameters depend on the clock signal clocking the LED PWM Controller timer which in turn clocks the channel (see <a class="reference internal" href="#ledc-api-configure-timer"><span class="std std-ref">timer configuration</span></a> and the <em>ESP32 Technical Reference Manual</em> &gt; <em>LED PWM Controller (LEDC)</em> [<a class="reference external" href="https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf#ledpwm">PDF</a>]).</p>
+<p>The LEDC can be used for generating signals at much higher frequencies that are sufficient enough to clock other devices, e.g., a digital camera module. In this case, the maximum available frequency is 40 MHz with duty resolution of 1 bit. This means that the duty cycle is fixed at 50% and cannot be adjusted.</p>
+<p>The LEDC API is designed to report an error when trying to set a frequency and a duty resolution that exceed the range of LEDC’s hardware. For example, an attempt to set the frequency to 20 MHz and the duty resolution to 3 bits will result in the following error reported on a serial monitor:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>E (196) ledc: requested frequency and duty resolution cannot be achieved, try reducing freq_hz or duty_resolution. div_param=128
+</pre></div>
+</div>
+<p>In such a situation, either the duty resolution or the frequency must be reduced. For example, setting the duty resolution to 2 will resolve this issue and will make it possible to set the duty cycle at 25% steps, i.e., at 25%, 50% or 75%.</p>
+<p>The LEDC driver will also capture and report attempts to configure frequency / duty resolution combinations that are below the supported minimum, e.g.:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>E (196) ledc: requested frequency and duty resolution cannot be achieved, try increasing freq_hz or duty_resolution. div_param=128000000
+</pre></div>
+</div>
+<p>The duty resolution is normally set using <a class="reference internal" href="#_CPPv416ledc_timer_bit_t" title="ledc_timer_bit_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">ledc_timer_bit_t</span></code></a>. This enumeration covers the range from 10 to 15 bits. If a smaller duty resolution is required (from 10 down to 1), enter the equivalent numeric values directly.</p>
+</div>
+<div class="section" id="application-example">
+<h2>Application Example<a class="headerlink" href="#application-example" title="Permalink to this headline">¶</a></h2>
+<p>The LEDC change duty cycle and fading control example: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/ledc/ledc_fade">peripherals/ledc/ledc_fade</a>.</p>
+<p>The LEDC basic example: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/ledc/ledc_basic">peripherals/ledc/ledc_basic</a>.</p>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v4.4/components/driver/include/driver/ledc.h">components/driver/include/driver/ledc.h</a></p></li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="_CPPv419ledc_channel_configPK21ledc_channel_config_t">
+<span id="_CPPv319ledc_channel_configPK21ledc_channel_config_t"></span><span id="_CPPv219ledc_channel_configPK21ledc_channel_config_t"></span><span id="ledc_channel_config__ledc_channel_config_tCP"></span><span class="target" id="ledc_8h_1a1f64acaab8033c9de1dde3f4c111fb6d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_channel_config</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv421ledc_channel_config_t" title="ledc_channel_config_t">ledc_channel_config_t</a> *<em>ledc_conf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419ledc_channel_configPK21ledc_channel_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel configuration Configure LEDC channel with the given channel/output gpio_num/interrupt/source timer/frequency(Hz)/LEDC duty resolution. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ledc_conf</span></code>: Pointer of LEDC channel configure struct</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417ledc_timer_configPK19ledc_timer_config_t">
+<span id="_CPPv317ledc_timer_configPK19ledc_timer_config_t"></span><span id="_CPPv217ledc_timer_configPK19ledc_timer_config_t"></span><span id="ledc_timer_config__ledc_timer_config_tCP"></span><span class="target" id="ledc_8h_1ac03b21c3f48674c5017d09808a7eaf7b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_timer_config</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv419ledc_timer_config_t" title="ledc_timer_config_t">ledc_timer_config_t</a> *<em>timer_conf</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417ledc_timer_configPK19ledc_timer_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer configuration Configure LEDC timer with the given source timer/frequency(Hz)/duty_resolution. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_FAIL Can not find a proper pre-divider number base on the given frequency and the current duty_resolution. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_conf</span></code>: Pointer of LEDC timer configure struct</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416ledc_update_duty11ledc_mode_t14ledc_channel_t">
+<span id="_CPPv316ledc_update_duty11ledc_mode_t14ledc_channel_t"></span><span id="_CPPv216ledc_update_duty11ledc_mode_t14ledc_channel_t"></span><span id="ledc_update_duty__ledc_mode_t.ledc_channel_t"></span><span class="target" id="ledc_8h_1a919a48a0b2456c07be9cac72fc6c8b4a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_update_duty</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416ledc_update_duty11ledc_mode_t14ledc_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC update channel parameters. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call this function to activate the LEDC updated parameters. After ledc_set_duty, we need to call this function to update the settings. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>ledc_set_duty, ledc_set_duty_with_hpoint and ledc_update_duty are not thread-safe, do not call these functions to control one LEDC channel in different tasks at the same time. A thread-safe version of API is ledc_set_duty_and_update </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv412ledc_set_pini11ledc_mode_t14ledc_channel_t">
+<span id="_CPPv312ledc_set_pini11ledc_mode_t14ledc_channel_t"></span><span id="_CPPv212ledc_set_pini11ledc_mode_t14ledc_channel_t"></span><span id="ledc_set_pin__i.ledc_mode_t.ledc_channel_t"></span><span class="target" id="ledc_8h_1a95fc818db213fe711da07cc01c1e8dc5"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_pin</code><span class="sig-paren">(</span>int <em>gpio_num</em>, <a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>ledc_channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412ledc_set_pini11ledc_mode_t14ledc_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set LEDC output gpio. </p>
+<p></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gpio_num</span></code>: The LEDC output gpio </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ledc_channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv49ledc_stop11ledc_mode_t14ledc_channel_t8uint32_t">
+<span id="_CPPv39ledc_stop11ledc_mode_t14ledc_channel_t8uint32_t"></span><span id="_CPPv29ledc_stop11ledc_mode_t14ledc_channel_t8uint32_t"></span><span id="ledc_stop__ledc_mode_t.ledc_channel_t.uint32_t"></span><span class="target" id="ledc_8h_1a02fb746e2bf7d82f6f898c5c994905bb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_stop</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>idle_level</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49ledc_stop11ledc_mode_t14ledc_channel_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC stop. Disable LEDC output, and set idle level. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idle_level</span></code>: Set output idle level after LEDC stops.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv413ledc_set_freq11ledc_mode_t12ledc_timer_t8uint32_t">
+<span id="_CPPv313ledc_set_freq11ledc_mode_t12ledc_timer_t8uint32_t"></span><span id="_CPPv213ledc_set_freq11ledc_mode_t12ledc_timer_t8uint32_t"></span><span id="ledc_set_freq__ledc_mode_t.ledc_timer_t.uint32_t"></span><span class="target" id="ledc_8h_1a7bdc64f3f9050c0b2e6f5f4775688185"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_freq</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_num</em>, uint32_t <em>freq_hz</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413ledc_set_freq11ledc_mode_t12ledc_timer_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC set channel frequency (Hz) </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_FAIL Can not find a proper pre-divider number base on the given frequency and the current duty_resolution. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_num</span></code>: LEDC timer index (0-3), select from ledc_timer_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">freq_hz</span></code>: Set the LEDC frequency</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv413ledc_get_freq11ledc_mode_t12ledc_timer_t">
+<span id="_CPPv313ledc_get_freq11ledc_mode_t12ledc_timer_t"></span><span id="_CPPv213ledc_get_freq11ledc_mode_t12ledc_timer_t"></span><span id="ledc_get_freq__ledc_mode_t.ledc_timer_t"></span><span class="target" id="ledc_8h_1a6f7858d4dc181b403cc53925510c2885"></span>uint32_t <code class="sig-name descname">ledc_get_freq</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_num</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413ledc_get_freq11ledc_mode_t12ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC get channel frequency (Hz) </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>0 error</p></li>
+<li><p>Others Current LEDC frequency </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_num</span></code>: LEDC timer index (0-3), select from ledc_timer_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv425ledc_set_duty_with_hpoint11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t">
+<span id="_CPPv325ledc_set_duty_with_hpoint11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t"></span><span id="_CPPv225ledc_set_duty_with_hpoint11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t"></span><span id="ledc_set_duty_with_hpoint__ledc_mode_t.ledc_channel_t.uint32_t.uint32_t"></span><span class="target" id="ledc_8h_1a35eec67317e9705769124947de72c55a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_duty_with_hpoint</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>duty</em>, uint32_t <em>hpoint</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv425ledc_set_duty_with_hpoint11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC set duty and hpoint value Only after calling ledc_update_duty will the duty update. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>ledc_set_duty, ledc_set_duty_with_hpoint and ledc_update_duty are not thread-safe, do not call these functions to control one LEDC channel in different tasks at the same time. A thread-safe version of API is ledc_set_duty_and_update </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty</span></code>: Set the LEDC duty, the range of duty setting is [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hpoint</span></code>: Set the LEDC hpoint value(max: 0xfffff)</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv415ledc_get_hpoint11ledc_mode_t14ledc_channel_t">
+<span id="_CPPv315ledc_get_hpoint11ledc_mode_t14ledc_channel_t"></span><span id="_CPPv215ledc_get_hpoint11ledc_mode_t14ledc_channel_t"></span><span id="ledc_get_hpoint__ledc_mode_t.ledc_channel_t"></span><span class="target" id="ledc_8h_1a5e1a594ff94b73a0490e7f473cd70e15"></span>int <code class="sig-name descname">ledc_get_hpoint</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415ledc_get_hpoint11ledc_mode_t14ledc_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC get hpoint value, the counter value when the output is set high level. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>LEDC_ERR_VAL if parameter error</p></li>
+<li><p>Others Current hpoint value of LEDC channel </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv413ledc_set_duty11ledc_mode_t14ledc_channel_t8uint32_t">
+<span id="_CPPv313ledc_set_duty11ledc_mode_t14ledc_channel_t8uint32_t"></span><span id="_CPPv213ledc_set_duty11ledc_mode_t14ledc_channel_t8uint32_t"></span><span id="ledc_set_duty__ledc_mode_t.ledc_channel_t.uint32_t"></span><span class="target" id="ledc_8h_1a1a4d1fbfae9233199a2d463c58551235"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_duty</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>duty</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413ledc_set_duty11ledc_mode_t14ledc_channel_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC set duty This function do not change the hpoint value of this channel. if needed, please call ledc_set_duty_with_hpoint. only after calling ledc_update_duty will the duty update. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>ledc_set_duty, ledc_set_duty_with_hpoint and ledc_update_duty are not thread-safe, do not call these functions to control one LEDC channel in different tasks at the same time. A thread-safe version of API is ledc_set_duty_and_update. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty</span></code>: Set the LEDC duty, the range of duty setting is [0, (2**duty_resolution) - 1]</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv413ledc_get_duty11ledc_mode_t14ledc_channel_t">
+<span id="_CPPv313ledc_get_duty11ledc_mode_t14ledc_channel_t"></span><span id="_CPPv213ledc_get_duty11ledc_mode_t14ledc_channel_t"></span><span id="ledc_get_duty__ledc_mode_t.ledc_channel_t"></span><span class="target" id="ledc_8h_1a8d4c556bf272b09dd0be1e23612dabb1"></span>uint32_t <code class="sig-name descname">ledc_get_duty</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413ledc_get_duty11ledc_mode_t14ledc_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC get duty. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>LEDC_ERR_DUTY if parameter error</p></li>
+<li><p>Others Current LEDC duty </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv413ledc_set_fade11ledc_mode_t14ledc_channel_t8uint32_t21ledc_duty_direction_t8uint32_t8uint32_t8uint32_t">
+<span id="_CPPv313ledc_set_fade11ledc_mode_t14ledc_channel_t8uint32_t21ledc_duty_direction_t8uint32_t8uint32_t8uint32_t"></span><span id="_CPPv213ledc_set_fade11ledc_mode_t14ledc_channel_t8uint32_t21ledc_duty_direction_t8uint32_t8uint32_t8uint32_t"></span><span id="ledc_set_fade__ledc_mode_t.ledc_channel_t.uint32_t.ledc_duty_direction_t.uint32_t.uint32_t.uint32_t"></span><span class="target" id="ledc_8h_1ae005698dd5817f51ca6a52e290c2c534"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_fade</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>duty</em>, <a class="reference internal" href="#_CPPv421ledc_duty_direction_t" title="ledc_duty_direction_t">ledc_duty_direction_t</a> <em>fade_direction</em>, uint32_t <em>step_num</em>, uint32_t <em>duty_cycle_num</em>, uint32_t <em>duty_scale</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv413ledc_set_fade11ledc_mode_t14ledc_channel_t8uint32_t21ledc_duty_direction_t8uint32_t8uint32_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC set gradient Set LEDC gradient, After the function calls the ledc_update_duty function, the function can take effect. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty</span></code>: Set the start of the gradient duty, the range of duty setting is [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fade_direction</span></code>: Set the direction of the gradient </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">step_num</span></code>: Set the number of the gradient </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty_cycle_num</span></code>: Set how many LEDC tick each time the gradient lasts </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty_scale</span></code>: Set gradient change amplitude</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417ledc_isr_registerPFvPvEPviP17ledc_isr_handle_t">
+<span id="_CPPv317ledc_isr_registerPFvPvEPviP17ledc_isr_handle_t"></span><span id="_CPPv217ledc_isr_registerPFvPvEPviP17ledc_isr_handle_t"></span><span class="target" id="ledc_8h_1a7e4351ccddf31bdc2746fc765a7aa093"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_isr_register</code><span class="sig-paren">(</span>void (*<em>fn</em>)<span class="sig-paren">(</span>void *<span class="sig-paren">)</span>, void *<em>arg</em>, int <em>intr_alloc_flags</em>, <a class="reference internal" href="#_CPPv417ledc_isr_handle_t" title="ledc_isr_handle_t">ledc_isr_handle_t</a> *<em>handle</em>, <span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417ledc_isr_registerPFvPvEPviP17ledc_isr_handle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Register LEDC interrupt handler, the handler is an ISR. The handler will be attached to the same CPU core that this function is running on. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Function pointer error. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fn</span></code>: Interrupt handler function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arg</span></code>: User-supplied argument passed to the handler function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">intr_alloc_flags</span></code>: Flags used to allocate the interrupt. One or multiple (ORred) ESP_INTR_FLAG_* values. See esp_intr_alloc.h for more info. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>: Pointer to return handle. If non-NULL, a handle for the interrupt will be returned here.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv414ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t">
+<span id="_CPPv314ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t"></span><span id="_CPPv214ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t"></span><span id="ledc_timer_set__ledc_mode_t.ledc_timer_t.uint32_t.uint32_t.ledc_clk_src_t"></span><span class="target" id="ledc_8h_1a8da9975541b73aadd73e1f1393bf7506"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_timer_set</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_sel</em>, uint32_t <em>clock_divider</em>, uint32_t <em>duty_resolution</em>, <a class="reference internal" href="#_CPPv414ledc_clk_src_t" title="ledc_clk_src_t">ledc_clk_src_t</a> <em>clk_src</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414ledc_timer_set11ledc_mode_t12ledc_timer_t8uint32_t8uint32_t14ledc_clk_src_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configure LEDC settings. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>(-1) Parameter error</p></li>
+<li><p>Other Current LEDC duty </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_sel</span></code>: Timer index (0-3), there are 4 timers in LEDC module </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clock_divider</span></code>: Timer clock divide value, the timer clock is divided from the selected clock source </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty_resolution</span></code>: Resolution of duty setting in number of bits. The range of duty values is [0, (2**duty_resolution)] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clk_src</span></code>: Select LEDC source clock.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv414ledc_timer_rst11ledc_mode_t12ledc_timer_t">
+<span id="_CPPv314ledc_timer_rst11ledc_mode_t12ledc_timer_t"></span><span id="_CPPv214ledc_timer_rst11ledc_mode_t12ledc_timer_t"></span><span id="ledc_timer_rst__ledc_mode_t.ledc_timer_t"></span><span class="target" id="ledc_8h_1ada330d71de367792482d25613c066a50"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_timer_rst</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_sel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414ledc_timer_rst11ledc_mode_t12ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reset LEDC timer. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_sel</span></code>: LEDC timer index (0-3), select from ledc_timer_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416ledc_timer_pause11ledc_mode_t12ledc_timer_t">
+<span id="_CPPv316ledc_timer_pause11ledc_mode_t12ledc_timer_t"></span><span id="_CPPv216ledc_timer_pause11ledc_mode_t12ledc_timer_t"></span><span id="ledc_timer_pause__ledc_mode_t.ledc_timer_t"></span><span class="target" id="ledc_8h_1aa7b15d41a522a1ee128c07fa2b23abb0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_timer_pause</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_sel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416ledc_timer_pause11ledc_mode_t12ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Pause LEDC timer counter. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_sel</span></code>: LEDC timer index (0-3), select from ledc_timer_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417ledc_timer_resume11ledc_mode_t12ledc_timer_t">
+<span id="_CPPv317ledc_timer_resume11ledc_mode_t12ledc_timer_t"></span><span id="_CPPv217ledc_timer_resume11ledc_mode_t12ledc_timer_t"></span><span id="ledc_timer_resume__ledc_mode_t.ledc_timer_t"></span><span class="target" id="ledc_8h_1a29a74fca7ec05bb12211f486d8108639"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_timer_resume</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_sel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417ledc_timer_resume11ledc_mode_t12ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Resume LEDC timer. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_sel</span></code>: LEDC timer index (0-3), select from ledc_timer_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv423ledc_bind_channel_timer11ledc_mode_t14ledc_channel_t12ledc_timer_t">
+<span id="_CPPv323ledc_bind_channel_timer11ledc_mode_t14ledc_channel_t12ledc_timer_t"></span><span id="_CPPv223ledc_bind_channel_timer11ledc_mode_t14ledc_channel_t12ledc_timer_t"></span><span id="ledc_bind_channel_timer__ledc_mode_t.ledc_channel_t.ledc_timer_t"></span><span class="target" id="ledc_8h_1a07e567e69b9c5c77823f30fa53852e71"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_bind_channel_timer</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <em>timer_sel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423ledc_bind_channel_timer11ledc_mode_t14ledc_channel_t12ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Bind LEDC channel with the selected timer. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">timer_sel</span></code>: LEDC timer index (0-3), select from ledc_timer_t</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv423ledc_set_fade_with_step11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t">
+<span id="_CPPv323ledc_set_fade_with_step11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t"></span><span id="_CPPv223ledc_set_fade_with_step11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t"></span><span id="ledc_set_fade_with_step__ledc_mode_t.ledc_channel_t.uint32_t.uint32_t.uint32_t"></span><span class="target" id="ledc_8h_1a370a1718af5ee9893c5f501813a3d4fc"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_fade_with_step</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>target_duty</em>, uint32_t <em>scale</em>, uint32_t <em>cycle_num</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423ledc_set_fade_with_step11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set LEDC fade function. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call ledc_fade_func_install() once before calling this function. Call ledc_fade_start() after this to start fading. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>ledc_set_fade_with_step, ledc_set_fade_with_time and ledc_fade_start are not thread-safe, do not call these functions to control one LEDC channel in different tasks at the same time. A thread-safe version of API is ledc_set_fade_step_and_start </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_FAIL Fade function init error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. , </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_duty</span></code>: Target duty of fading [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>: Controls the increase or decrease step scale. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycle_num</span></code>: increase or decrease the duty every cycle_num cycles</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv423ledc_set_fade_with_time11ledc_mode_t14ledc_channel_t8uint32_ti">
+<span id="_CPPv323ledc_set_fade_with_time11ledc_mode_t14ledc_channel_t8uint32_ti"></span><span id="_CPPv223ledc_set_fade_with_time11ledc_mode_t14ledc_channel_t8uint32_ti"></span><span id="ledc_set_fade_with_time__ledc_mode_t.ledc_channel_t.uint32_t.i"></span><span class="target" id="ledc_8h_1af35385dd4fa465758f1b4a17798c627d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_fade_with_time</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>target_duty</em>, int <em>max_fade_time_ms</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv423ledc_set_fade_with_time11ledc_mode_t14ledc_channel_t8uint32_ti" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set LEDC fade function, with a limited time. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call ledc_fade_func_install() once before calling this function. Call ledc_fade_start() after this to start fading. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>ledc_set_fade_with_step, ledc_set_fade_with_time and ledc_fade_start are not thread-safe, do not call these functions to control one LEDC channel in different tasks at the same time. A thread-safe version of API is ledc_set_fade_step_and_start </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_FAIL Fade function init error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. , </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_duty</span></code>: Target duty of fading [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_fade_time_ms</span></code>: The maximum time of the fading ( ms ).</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422ledc_fade_func_installi">
+<span id="_CPPv322ledc_fade_func_installi"></span><span id="_CPPv222ledc_fade_func_installi"></span><span id="ledc_fade_func_install__i"></span><span class="target" id="ledc_8h_1ae96eee7a81d019cfc0f2c3d74c047004"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_fade_func_install</code><span class="sig-paren">(</span>int <em>intr_alloc_flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422ledc_fade_func_installi" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Install LEDC fade function. This function will occupy interrupt of LEDC module. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function already installed. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">intr_alloc_flags</span></code>: Flags used to allocate the interrupt. One or multiple (ORred) ESP_INTR_FLAG_* values. See esp_intr_alloc.h for more info.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv424ledc_fade_func_uninstallv">
+<span id="_CPPv324ledc_fade_func_uninstallv"></span><span id="_CPPv224ledc_fade_func_uninstallv"></span><span id="ledc_fade_func_uninstall__void"></span><span class="target" id="ledc_8h_1ae9f8062a6f0c065d855925021722f1f9"></span>void <code class="sig-name descname">ledc_fade_func_uninstall</code><span class="sig-paren">(</span>void<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424ledc_fade_func_uninstallv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Uninstall LEDC fade function. </p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv415ledc_fade_start11ledc_mode_t14ledc_channel_t16ledc_fade_mode_t">
+<span id="_CPPv315ledc_fade_start11ledc_mode_t14ledc_channel_t16ledc_fade_mode_t"></span><span id="_CPPv215ledc_fade_start11ledc_mode_t14ledc_channel_t16ledc_fade_mode_t"></span><span id="ledc_fade_start__ledc_mode_t.ledc_channel_t.ledc_fade_mode_t"></span><span class="target" id="ledc_8h_1ab08f273c6d9047c84d6cfd7f1efcab10"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_fade_start</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv416ledc_fade_mode_t" title="ledc_fade_mode_t">ledc_fade_mode_t</a> <em>fade_mode</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415ledc_fade_start11ledc_mode_t14ledc_channel_t16ledc_fade_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Start LEDC fading. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call ledc_fade_func_install() once before calling this function. Call this API right after ledc_set_fade_with_time or ledc_set_fade_with_step before to start fading. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel number </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fade_mode</span></code>: Whether to block until fading done.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv424ledc_set_duty_and_update11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t">
+<span id="_CPPv324ledc_set_duty_and_update11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t"></span><span id="_CPPv224ledc_set_duty_and_update11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t"></span><span id="ledc_set_duty_and_update__ledc_mode_t.ledc_channel_t.uint32_t.uint32_t"></span><span class="target" id="ledc_8h_1a0d71d0d94ad3949e248dfbfd27637aba"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_duty_and_update</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>duty</em>, uint32_t <em>hpoint</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424ledc_set_duty_and_update11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A thread-safe API to set duty for LEDC channel and return when duty updated. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished.</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duty</span></code>: Set the LEDC duty, the range of duty setting is [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hpoint</span></code>: Set the LEDC hpoint value(max: 0xfffff) </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv428ledc_set_fade_time_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t16ledc_fade_mode_t">
+<span id="_CPPv328ledc_set_fade_time_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t16ledc_fade_mode_t"></span><span id="_CPPv228ledc_set_fade_time_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t16ledc_fade_mode_t"></span><span id="ledc_set_fade_time_and_start__ledc_mode_t.ledc_channel_t.uint32_t.uint32_t.ledc_fade_mode_t"></span><span class="target" id="ledc_8h_1a3bf3eb1190b453e32f9c73b0b424a623"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_fade_time_and_start</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>target_duty</em>, uint32_t <em>max_fade_time_ms</em>, <a class="reference internal" href="#_CPPv416ledc_fade_mode_t" title="ledc_fade_mode_t">ledc_fade_mode_t</a> <em>fade_mode</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428ledc_set_fade_time_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t16ledc_fade_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A thread-safe API to set and start LEDC fade function, with a limited time. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call ledc_fade_func_install() once, before calling this function. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_FAIL Fade function init error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_duty</span></code>: Target duty of fading [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max_fade_time_ms</span></code>: The maximum time of the fading ( ms ). </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fade_mode</span></code>: choose blocking or non-blocking mode </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv428ledc_set_fade_step_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t16ledc_fade_mode_t">
+<span id="_CPPv328ledc_set_fade_step_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t16ledc_fade_mode_t"></span><span id="_CPPv228ledc_set_fade_step_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t16ledc_fade_mode_t"></span><span id="ledc_set_fade_step_and_start__ledc_mode_t.ledc_channel_t.uint32_t.uint32_t.uint32_t.ledc_fade_mode_t"></span><span class="target" id="ledc_8h_1aeca8471c458c5ad11ee60e32b1fb427e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_set_fade_step_and_start</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, uint32_t <em>target_duty</em>, uint32_t <em>scale</em>, uint32_t <em>cycle_num</em>, <a class="reference internal" href="#_CPPv416ledc_fade_mode_t" title="ledc_fade_mode_t">ledc_fade_mode_t</a> <em>fade_mode</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428ledc_set_fade_step_and_start11ledc_mode_t14ledc_channel_t8uint32_t8uint32_t8uint32_t16ledc_fade_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>A thread-safe API to set and start LEDC fade function. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Call ledc_fade_func_install() once before calling this function. </p>
+</dd>
+<dt><strong>Note</strong></dt><dd><p>If a fade operation is running in progress on that channel, the driver would not allow it to be stopped. Other duty operations will have to wait until the fade operation has finished. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_FAIL Fade function init error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">target_duty</span></code>: Target duty of fading [0, (2**duty_resolution) - 1] </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">scale</span></code>: Controls the increase or decrease step scale. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cycle_num</span></code>: increase or decrease the duty every cycle_num cycles </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fade_mode</span></code>: choose blocking or non-blocking mode </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416ledc_cb_register11ledc_mode_t14ledc_channel_tP10ledc_cbs_tPv">
+<span id="_CPPv316ledc_cb_register11ledc_mode_t14ledc_channel_tP10ledc_cbs_tPv"></span><span id="_CPPv216ledc_cb_register11ledc_mode_t14ledc_channel_tP10ledc_cbs_tPv"></span><span id="ledc_cb_register__ledc_mode_t.ledc_channel_t.ledc_cbs_tP.voidP"></span><span class="target" id="ledc_8h_1a2a52a47a74186acb7337b0f637b42e10"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">ledc_cb_register</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <em>speed_mode</em>, <a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv410ledc_cbs_t" title="ledc_cbs_t">ledc_cbs_t</a> *<em>cbs</em>, void *<em>user_arg</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416ledc_cb_register11ledc_mode_t14ledc_channel_tP10ledc_cbs_tPv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC callback registration function. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>The callback is called from an ISR, it must never attempt to block, and any FreeRTOS API called must be ISR capable. </p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_STATE Fade function not installed.</p></li>
+<li><p>ESP_FAIL Fade function init error </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">speed_mode</span></code>: Select the LEDC channel group with specified speed mode. Note that not all targets support high speed mode. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: LEDC channel index (0 - LEDC_CHANNEL_MAX-1), select from ledc_channel_t </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cbs</span></code>: Group of LEDC callback functions </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_arg</span></code>: user registered data for the callback function </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="section" id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="_CPPv415ledc_cb_param_t">
+<span id="_CPPv315ledc_cb_param_t"></span><span id="_CPPv215ledc_cb_param_t"></span><span id="ledc_cb_param_t"></span><span class="target" id="structledc__cb__param__t"></span><em class="property">struct </em><code class="sig-name descname">ledc_cb_param_t</code><a class="headerlink" href="#_CPPv415ledc_cb_param_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC callback parameter. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N15ledc_cb_param_t5eventE">
+<span id="_CPPv3N15ledc_cb_param_t5eventE"></span><span id="_CPPv2N15ledc_cb_param_t5eventE"></span><span id="ledc_cb_param_t::event__ledc_cb_event_t"></span><span class="target" id="structledc__cb__param__t_1a509c3ba3560c9cb39d381c3f901b62da"></span><a class="reference internal" href="#_CPPv415ledc_cb_event_t" title="ledc_cb_event_t">ledc_cb_event_t</a> <code class="sig-name descname">event</code><a class="headerlink" href="#_CPPv4N15ledc_cb_param_t5eventE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Event name </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15ledc_cb_param_t10speed_modeE">
+<span id="_CPPv3N15ledc_cb_param_t10speed_modeE"></span><span id="_CPPv2N15ledc_cb_param_t10speed_modeE"></span><span id="ledc_cb_param_t::speed_mode__uint32_t"></span><span class="target" id="structledc__cb__param__t_1a0ad4d08a2725799d8f17f23cc416d937"></span>uint32_t <code class="sig-name descname">speed_mode</code><a class="headerlink" href="#_CPPv4N15ledc_cb_param_t10speed_modeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Speed mode of the LEDC channel group </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15ledc_cb_param_t7channelE">
+<span id="_CPPv3N15ledc_cb_param_t7channelE"></span><span id="_CPPv2N15ledc_cb_param_t7channelE"></span><span id="ledc_cb_param_t::channel__uint32_t"></span><span class="target" id="structledc__cb__param__t_1a27eca8cc6a77e5ed5d04b78a23b8630a"></span>uint32_t <code class="sig-name descname">channel</code><a class="headerlink" href="#_CPPv4N15ledc_cb_param_t7channelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel (0 - LEDC_CHANNEL_MAX-1) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15ledc_cb_param_t4dutyE">
+<span id="_CPPv3N15ledc_cb_param_t4dutyE"></span><span id="_CPPv2N15ledc_cb_param_t4dutyE"></span><span id="ledc_cb_param_t::duty__uint32_t"></span><span class="target" id="structledc__cb__param__t_1a0ab3a9f0f7d29ab686b72a7f3c608402"></span>uint32_t <code class="sig-name descname">duty</code><a class="headerlink" href="#_CPPv4N15ledc_cb_param_t4dutyE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC current duty of the channel, the range of duty is [0, (2**duty_resolution) - 1] </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv410ledc_cbs_t">
+<span id="_CPPv310ledc_cbs_t"></span><span id="_CPPv210ledc_cbs_t"></span><span id="ledc_cbs_t"></span><span class="target" id="structledc__cbs__t"></span><em class="property">struct </em><code class="sig-name descname">ledc_cbs_t</code><a class="headerlink" href="#_CPPv410ledc_cbs_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Group of supported LEDC callbacks. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>The callbacks are all running under ISR environment </p>
+</dd>
+</dl>
+</p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N10ledc_cbs_t7fade_cbE">
+<span id="_CPPv3N10ledc_cbs_t7fade_cbE"></span><span id="_CPPv2N10ledc_cbs_t7fade_cbE"></span><span id="ledc_cbs_t::fade_cb__ledc_cb_t"></span><span class="target" id="structledc__cbs__t_1a9ecafecbaa4ed2f522e937928e65c9a4"></span><a class="reference internal" href="#_CPPv49ledc_cb_t" title="ledc_cb_t">ledc_cb_t</a> <code class="sig-name descname">fade_cb</code><a class="headerlink" href="#_CPPv4N10ledc_cbs_t7fade_cbE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC fade_end callback function </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h3>
+<dl class="macro">
+<dt id="c.LEDC_APB_CLK_HZ">
+<span class="target" id="ledc_8h_1a40e090c9594bdb281f7372d1b441ee0f"></span><code class="sig-name descname">LEDC_APB_CLK_HZ</code><a class="headerlink" href="#c.LEDC_APB_CLK_HZ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.LEDC_REF_CLK_HZ">
+<span class="target" id="ledc_8h_1aeee81c19262c9085f3669d585cd1c3b9"></span><code class="sig-name descname">LEDC_REF_CLK_HZ</code><a class="headerlink" href="#c.LEDC_REF_CLK_HZ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.LEDC_ERR_DUTY">
+<span class="target" id="ledc_8h_1a0a073158866a1fc3fcdb00d1862158d1"></span><code class="sig-name descname">LEDC_ERR_DUTY</code><a class="headerlink" href="#c.LEDC_ERR_DUTY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="macro">
+<dt id="c.LEDC_ERR_VAL">
+<span class="target" id="ledc_8h_1ad47031cecad4fa6c50de710ac7c6a017"></span><code class="sig-name descname">LEDC_ERR_VAL</code><a class="headerlink" href="#c.LEDC_ERR_VAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this headline">¶</a></h3>
+<dl class="type">
+<dt id="_CPPv417ledc_isr_handle_t">
+<span id="_CPPv317ledc_isr_handle_t"></span><span id="_CPPv217ledc_isr_handle_t"></span><span id="ledc_isr_handle_t"></span><span class="target" id="ledc_8h_1a33b61cea1dc6d110eb4f2a879a8ba362"></span><em class="property">typedef </em><a class="reference internal" href="../system/intr_alloc.html#_CPPv413intr_handle_t" title="intr_handle_t">intr_handle_t</a> <code class="sig-name descname">ledc_isr_handle_t</code><a class="headerlink" href="#_CPPv417ledc_isr_handle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="type">
+<dt id="_CPPv49ledc_cb_t">
+<span id="_CPPv39ledc_cb_t"></span><span id="_CPPv29ledc_cb_t"></span><span id="ledc_cb_t"></span><span class="target" id="ledc_8h_1a9b854f4a2a7f0cc48badb890854aeb65"></span><em class="property">typedef </em>bool (*<code class="sig-name descname">ledc_cb_t</code>)<span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv415ledc_cb_param_t" title="ledc_cb_param_t">ledc_cb_param_t</a> *param, void *user_arg<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49ledc_cb_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Type of LEDC event callback. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">param</span></code>: LEDC callback parameter </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">user_arg</span></code>: User registered data </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="section" id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this headline">¶</a></h3>
+<dl class="enum">
+<dt id="_CPPv415ledc_cb_event_t">
+<span id="_CPPv315ledc_cb_event_t"></span><span id="_CPPv215ledc_cb_event_t"></span><span class="target" id="ledc_8h_1ae21ee55339939adc7466b023a4a6310d"></span><em class="property">enum </em><code class="sig-name descname">ledc_cb_event_t</code><a class="headerlink" href="#_CPPv415ledc_cb_event_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC callback event type. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_FADE_END_EVT">
+<span id="_CPPv317LEDC_FADE_END_EVT"></span><span id="_CPPv217LEDC_FADE_END_EVT"></span><span class="target" id="ledc_8h_1ae21ee55339939adc7466b023a4a6310da0de067b77ea07134108c2f05d9137844"></span><code class="sig-name descname">LEDC_FADE_END_EVT</code><a class="headerlink" href="#_CPPv417LEDC_FADE_END_EVT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC fade end event </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v4.4/components/hal/include/hal/ledc_types.h">components/hal/include/hal/ledc_types.h</a></p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Structures<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="_CPPv421ledc_channel_config_t">
+<span id="_CPPv321ledc_channel_config_t"></span><span id="_CPPv221ledc_channel_config_t"></span><span id="ledc_channel_config_t"></span><span class="target" id="structledc__channel__config__t"></span><em class="property">struct </em><code class="sig-name descname">ledc_channel_config_t</code><a class="headerlink" href="#_CPPv421ledc_channel_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configuration parameters of LEDC channel for ledc_channel_config function. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t8gpio_numE">
+<span id="_CPPv3N21ledc_channel_config_t8gpio_numE"></span><span id="_CPPv2N21ledc_channel_config_t8gpio_numE"></span><span id="ledc_channel_config_t::gpio_num__i"></span><span class="target" id="structledc__channel__config__t_1ad69c29cb102e80c3c5bb011b1ab993d6"></span>int <code class="sig-name descname">gpio_num</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t8gpio_numE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>the LEDC output gpio_num, if you want to use gpio16, gpio_num = 16 </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t10speed_modeE">
+<span id="_CPPv3N21ledc_channel_config_t10speed_modeE"></span><span id="_CPPv2N21ledc_channel_config_t10speed_modeE"></span><span id="ledc_channel_config_t::speed_mode__ledc_mode_t"></span><span class="target" id="structledc__channel__config__t_1a7098560390ebe7e4750e06e5ff69b201"></span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <code class="sig-name descname">speed_mode</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t10speed_modeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC speed speed_mode, high-speed mode or low-speed mode </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t7channelE">
+<span id="_CPPv3N21ledc_channel_config_t7channelE"></span><span id="_CPPv2N21ledc_channel_config_t7channelE"></span><span id="ledc_channel_config_t::channel__ledc_channel_t"></span><span class="target" id="structledc__channel__config__t_1a962f53cbba8210341f230c5b081c2d80"></span><a class="reference internal" href="#_CPPv414ledc_channel_t" title="ledc_channel_t">ledc_channel_t</a> <code class="sig-name descname">channel</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t7channelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel (0 - 7) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t9intr_typeE">
+<span id="_CPPv3N21ledc_channel_config_t9intr_typeE"></span><span id="_CPPv2N21ledc_channel_config_t9intr_typeE"></span><span id="ledc_channel_config_t::intr_type__ledc_intr_type_t"></span><span class="target" id="structledc__channel__config__t_1a4aeef3d13d26c6597559117a93851cae"></span><a class="reference internal" href="#_CPPv416ledc_intr_type_t" title="ledc_intr_type_t">ledc_intr_type_t</a> <code class="sig-name descname">intr_type</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t9intr_typeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>configure interrupt, Fade interrupt enable or Fade interrupt disable </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t9timer_selE">
+<span id="_CPPv3N21ledc_channel_config_t9timer_selE"></span><span id="_CPPv2N21ledc_channel_config_t9timer_selE"></span><span id="ledc_channel_config_t::timer_sel__ledc_timer_t"></span><span class="target" id="structledc__channel__config__t_1a133e2b1f0d6a5e38cba8954c54589f26"></span><a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <code class="sig-name descname">timer_sel</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t9timer_selE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Select the timer source of channel (0 - 3) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t4dutyE">
+<span id="_CPPv3N21ledc_channel_config_t4dutyE"></span><span id="_CPPv2N21ledc_channel_config_t4dutyE"></span><span id="ledc_channel_config_t::duty__uint32_t"></span><span class="target" id="structledc__channel__config__t_1aef9ca51094fc6d0c30e26614d58558b6"></span>uint32_t <code class="sig-name descname">duty</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t4dutyE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel duty, the range of duty setting is [0, (2**duty_resolution)] </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t6hpointE">
+<span id="_CPPv3N21ledc_channel_config_t6hpointE"></span><span id="_CPPv2N21ledc_channel_config_t6hpointE"></span><span id="ledc_channel_config_t::hpoint__i"></span><span class="target" id="structledc__channel__config__t_1a6601a83659de9421ef5d459805a42113"></span>int <code class="sig-name descname">hpoint</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t6hpointE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel hpoint value, the max value is 0xfffff </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t13output_invertE">
+<span id="_CPPv3N21ledc_channel_config_t13output_invertE"></span><span id="_CPPv2N21ledc_channel_config_t13output_invertE"></span><span id="ledc_channel_config_t::output_invert__unsigned-i"></span><span class="target" id="structledc__channel__config__t_1a08c3875a7064ae4d138bada890ead072"></span>unsigned int <code class="sig-name descname">output_invert</code> : 1<a class="headerlink" href="#_CPPv4N21ledc_channel_config_t13output_invertE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Enable (1) or disable (0) gpio output invert </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21ledc_channel_config_t5flagsE">
+<span id="_CPPv3N21ledc_channel_config_t5flagsE"></span><span id="_CPPv2N21ledc_channel_config_t5flagsE"></span><span class="target" id="structledc__channel__config__t_1a8f90654fa9d8c6992b5ab93c96ff00f2"></span><em class="property">struct</em> <a class="reference internal" href="#_CPPv421ledc_channel_config_t" title="ledc_channel_config_t">ledc_channel_config_t</a>::<strong>[anonymous]</strong> <code class="sig-name descname">flags</code><a class="headerlink" href="#_CPPv4N21ledc_channel_config_t5flagsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC flags </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv419ledc_timer_config_t">
+<span id="_CPPv319ledc_timer_config_t"></span><span id="_CPPv219ledc_timer_config_t"></span><span id="ledc_timer_config_t"></span><span class="target" id="structledc__timer__config__t"></span><em class="property">struct </em><code class="sig-name descname">ledc_timer_config_t</code><a class="headerlink" href="#_CPPv419ledc_timer_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configuration parameters of LEDC Timer timer for ledc_timer_config function. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t10speed_modeE">
+<span id="_CPPv3N19ledc_timer_config_t10speed_modeE"></span><span id="_CPPv2N19ledc_timer_config_t10speed_modeE"></span><span id="ledc_timer_config_t::speed_mode__ledc_mode_t"></span><span class="target" id="structledc__timer__config__t_1af1f186144a7e57cac952ab493c897d8d"></span><a class="reference internal" href="#_CPPv411ledc_mode_t" title="ledc_mode_t">ledc_mode_t</a> <code class="sig-name descname">speed_mode</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t10speed_modeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC speed speed_mode, high-speed mode or low-speed mode </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t15duty_resolutionE">
+<span id="_CPPv3N19ledc_timer_config_t15duty_resolutionE"></span><span id="_CPPv2N19ledc_timer_config_t15duty_resolutionE"></span><span id="ledc_timer_config_t::duty_resolution__ledc_timer_bit_t"></span><span class="target" id="structledc__timer__config__t_1a0365bfe9339c9c892ac7b03c7971c15c"></span><a class="reference internal" href="#_CPPv416ledc_timer_bit_t" title="ledc_timer_bit_t">ledc_timer_bit_t</a> <code class="sig-name descname">duty_resolution</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t15duty_resolutionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel duty resolution </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t7bit_numE">
+<span id="_CPPv3N19ledc_timer_config_t7bit_numE"></span><span id="_CPPv2N19ledc_timer_config_t7bit_numE"></span><span id="ledc_timer_config_t::bit_num__ledc_timer_bit_t"></span><span class="target" id="structledc__timer__config__t_1a66ad55bc38a430075302172dfd0b9932"></span><a class="reference internal" href="#_CPPv416ledc_timer_bit_t" title="ledc_timer_bit_t">ledc_timer_bit_t</a> <code class="sig-name descname">bit_num</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t7bit_numE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Deprecated in ESP-IDF 3.0. This is an alias to ‘duty_resolution’ for backward compatibility with ESP-IDF 2.1 </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t9timer_numE">
+<span id="_CPPv3N19ledc_timer_config_t9timer_numE"></span><span id="_CPPv2N19ledc_timer_config_t9timer_numE"></span><span id="ledc_timer_config_t::timer_num__ledc_timer_t"></span><span class="target" id="structledc__timer__config__t_1a14571db6fe9f9e22c0471fe02599692e"></span><a class="reference internal" href="#_CPPv412ledc_timer_t" title="ledc_timer_t">ledc_timer_t</a> <code class="sig-name descname">timer_num</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t9timer_numE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The timer source of channel (0 - 3) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t7freq_hzE">
+<span id="_CPPv3N19ledc_timer_config_t7freq_hzE"></span><span id="_CPPv2N19ledc_timer_config_t7freq_hzE"></span><span id="ledc_timer_config_t::freq_hz__uint32_t"></span><span class="target" id="structledc__timer__config__t_1a27b385dff9641001d6ed3270e5a9bc24"></span>uint32_t <code class="sig-name descname">freq_hz</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t7freq_hzE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer frequency (Hz) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N19ledc_timer_config_t7clk_cfgE">
+<span id="_CPPv3N19ledc_timer_config_t7clk_cfgE"></span><span id="_CPPv2N19ledc_timer_config_t7clk_cfgE"></span><span id="ledc_timer_config_t::clk_cfg__ledc_clk_cfg_t"></span><span class="target" id="structledc__timer__config__t_1a3be47a376787a495fc283a84a4cc3380"></span><a class="reference internal" href="#_CPPv414ledc_clk_cfg_t" title="ledc_clk_cfg_t">ledc_clk_cfg_t</a> <code class="sig-name descname">clk_cfg</code><a class="headerlink" href="#_CPPv4N19ledc_timer_config_t7clk_cfgE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configure LEDC source clock. For low speed channels and high speed channels, you can specify the source clock using LEDC_USE_REF_TICK, LEDC_USE_APB_CLK or LEDC_AUTO_CLK. For low speed channels, you can also specify the source clock using LEDC_USE_RTC8M_CLK, in this case, all low speed channel’s source clock must be RTC8M_CLK </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="id3">
+<h3>Enumerations<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<dl class="enum">
+<dt id="_CPPv411ledc_mode_t">
+<span id="_CPPv311ledc_mode_t"></span><span id="_CPPv211ledc_mode_t"></span><span class="target" id="ledc__types_8h_1ae616b8a24f8435adc6de4a58137ac2eb"></span><em class="property">enum </em><code class="sig-name descname">ledc_mode_t</code><a class="headerlink" href="#_CPPv411ledc_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv420LEDC_HIGH_SPEED_MODE">
+<span id="_CPPv320LEDC_HIGH_SPEED_MODE"></span><span id="_CPPv220LEDC_HIGH_SPEED_MODE"></span><span class="target" id="ledc__types_8h_1ae616b8a24f8435adc6de4a58137ac2eba021acd657fb0ce2f1aa4ee2deb638ce6"></span><code class="sig-name descname">LEDC_HIGH_SPEED_MODE</code> = 0<a class="headerlink" href="#_CPPv420LEDC_HIGH_SPEED_MODE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC high speed speed_mode </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv419LEDC_LOW_SPEED_MODE">
+<span id="_CPPv319LEDC_LOW_SPEED_MODE"></span><span id="_CPPv219LEDC_LOW_SPEED_MODE"></span><span class="target" id="ledc__types_8h_1ae616b8a24f8435adc6de4a58137ac2ebafcfe5f49b0f79bbbe4c9280fc74152b3"></span><code class="sig-name descname">LEDC_LOW_SPEED_MODE</code><a class="headerlink" href="#_CPPv419LEDC_LOW_SPEED_MODE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC low speed speed_mode </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv419LEDC_SPEED_MODE_MAX">
+<span id="_CPPv319LEDC_SPEED_MODE_MAX"></span><span id="_CPPv219LEDC_SPEED_MODE_MAX"></span><span class="target" id="ledc__types_8h_1ae616b8a24f8435adc6de4a58137ac2eba191093a6fb2a83230b35791a6e0e27d3"></span><code class="sig-name descname">LEDC_SPEED_MODE_MAX</code><a class="headerlink" href="#_CPPv419LEDC_SPEED_MODE_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC speed limit </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv416ledc_intr_type_t">
+<span id="_CPPv316ledc_intr_type_t"></span><span id="_CPPv216ledc_intr_type_t"></span><span class="target" id="ledc__types_8h_1aa33653720bd6aeb1678c9cf7b2d6f8e8"></span><em class="property">enum </em><code class="sig-name descname">ledc_intr_type_t</code><a class="headerlink" href="#_CPPv416ledc_intr_type_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_INTR_DISABLE">
+<span id="_CPPv317LEDC_INTR_DISABLE"></span><span id="_CPPv217LEDC_INTR_DISABLE"></span><span class="target" id="ledc__types_8h_1aa33653720bd6aeb1678c9cf7b2d6f8e8a4272c7465cfca9a2f1d49ce38fca0f7d"></span><code class="sig-name descname">LEDC_INTR_DISABLE</code> = 0<a class="headerlink" href="#_CPPv417LEDC_INTR_DISABLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Disable LEDC interrupt </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv418LEDC_INTR_FADE_END">
+<span id="_CPPv318LEDC_INTR_FADE_END"></span><span id="_CPPv218LEDC_INTR_FADE_END"></span><span class="target" id="ledc__types_8h_1aa33653720bd6aeb1678c9cf7b2d6f8e8ab8b3dcd36f575e7952de8e031ac63042"></span><code class="sig-name descname">LEDC_INTR_FADE_END</code><a class="headerlink" href="#_CPPv418LEDC_INTR_FADE_END" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Enable LEDC interrupt </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413LEDC_INTR_MAX">
+<span id="_CPPv313LEDC_INTR_MAX"></span><span id="_CPPv213LEDC_INTR_MAX"></span><span class="target" id="ledc__types_8h_1aa33653720bd6aeb1678c9cf7b2d6f8e8aafe88bc8f4bf0d8b635f8b55185bdce2"></span><code class="sig-name descname">LEDC_INTR_MAX</code><a class="headerlink" href="#_CPPv413LEDC_INTR_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv421ledc_duty_direction_t">
+<span id="_CPPv321ledc_duty_direction_t"></span><span id="_CPPv221ledc_duty_direction_t"></span><span class="target" id="ledc__types_8h_1acb5f6cb3a14c476459f05012ffebb95d"></span><em class="property">enum </em><code class="sig-name descname">ledc_duty_direction_t</code><a class="headerlink" href="#_CPPv421ledc_duty_direction_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv422LEDC_DUTY_DIR_DECREASE">
+<span id="_CPPv322LEDC_DUTY_DIR_DECREASE"></span><span id="_CPPv222LEDC_DUTY_DIR_DECREASE"></span><span class="target" id="ledc__types_8h_1acb5f6cb3a14c476459f05012ffebb95dacf31a0b3c23b76f46bdbfc25618a7173"></span><code class="sig-name descname">LEDC_DUTY_DIR_DECREASE</code> = 0<a class="headerlink" href="#_CPPv422LEDC_DUTY_DIR_DECREASE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC duty decrease direction </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv422LEDC_DUTY_DIR_INCREASE">
+<span id="_CPPv322LEDC_DUTY_DIR_INCREASE"></span><span id="_CPPv222LEDC_DUTY_DIR_INCREASE"></span><span class="target" id="ledc__types_8h_1acb5f6cb3a14c476459f05012ffebb95daa1a12417d1d26248ef4ae7f6c3a0301d"></span><code class="sig-name descname">LEDC_DUTY_DIR_INCREASE</code> = 1<a class="headerlink" href="#_CPPv422LEDC_DUTY_DIR_INCREASE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC duty increase direction </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_DUTY_DIR_MAX">
+<span id="_CPPv317LEDC_DUTY_DIR_MAX"></span><span id="_CPPv217LEDC_DUTY_DIR_MAX"></span><span class="target" id="ledc__types_8h_1acb5f6cb3a14c476459f05012ffebb95dae46bc080426547b4fd63b6e58cdbc03a"></span><code class="sig-name descname">LEDC_DUTY_DIR_MAX</code><a class="headerlink" href="#_CPPv417LEDC_DUTY_DIR_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv419ledc_slow_clk_sel_t">
+<span id="_CPPv319ledc_slow_clk_sel_t"></span><span id="_CPPv219ledc_slow_clk_sel_t"></span><span class="target" id="ledc__types_8h_1a1aa26a11d56a4fe0c7dc970427287646"></span><em class="property">enum </em><code class="sig-name descname">ledc_slow_clk_sel_t</code><a class="headerlink" href="#_CPPv419ledc_slow_clk_sel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv419LEDC_SLOW_CLK_RTC8M">
+<span id="_CPPv319LEDC_SLOW_CLK_RTC8M"></span><span id="_CPPv219LEDC_SLOW_CLK_RTC8M"></span><span class="target" id="ledc__types_8h_1a1aa26a11d56a4fe0c7dc970427287646a5e2fbd025c66aa32c98bfd865edbec0d"></span><code class="sig-name descname">LEDC_SLOW_CLK_RTC8M</code> = 0<a class="headerlink" href="#_CPPv419LEDC_SLOW_CLK_RTC8M" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC low speed timer clock source is 8MHz RTC clock </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_SLOW_CLK_APB">
+<span id="_CPPv317LEDC_SLOW_CLK_APB"></span><span id="_CPPv217LEDC_SLOW_CLK_APB"></span><span class="target" id="ledc__types_8h_1a1aa26a11d56a4fe0c7dc970427287646a3ca5011c53f91d9c66ea7628218b3ce6"></span><code class="sig-name descname">LEDC_SLOW_CLK_APB</code><a class="headerlink" href="#_CPPv417LEDC_SLOW_CLK_APB" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC low speed timer clock source is 80MHz APB clock </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv414ledc_clk_cfg_t">
+<span id="_CPPv314ledc_clk_cfg_t"></span><span id="_CPPv214ledc_clk_cfg_t"></span><span class="target" id="ledc__types_8h_1a4a7b6592441c3dff076a050d8f82aedd"></span><em class="property">enum </em><code class="sig-name descname">ledc_clk_cfg_t</code><a class="headerlink" href="#_CPPv414ledc_clk_cfg_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv413LEDC_AUTO_CLK">
+<span id="_CPPv313LEDC_AUTO_CLK"></span><span id="_CPPv213LEDC_AUTO_CLK"></span><span class="target" id="ledc__types_8h_1a4a7b6592441c3dff076a050d8f82aeddac7506046745a74241d00cda2dba56a96"></span><code class="sig-name descname">LEDC_AUTO_CLK</code> = 0<a class="headerlink" href="#_CPPv413LEDC_AUTO_CLK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>The driver will automatically select the source clock(REF_TICK or APB) based on the giving resolution and duty parameter when init the timer </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_USE_REF_TICK">
+<span id="_CPPv317LEDC_USE_REF_TICK"></span><span id="_CPPv217LEDC_USE_REF_TICK"></span><span class="target" id="ledc__types_8h_1a4a7b6592441c3dff076a050d8f82aeddabbb44509497f1b3d5255e2ee7bb37e3c"></span><code class="sig-name descname">LEDC_USE_REF_TICK</code><a class="headerlink" href="#_CPPv417LEDC_USE_REF_TICK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer select REF_TICK clock as source clock </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_USE_APB_CLK">
+<span id="_CPPv316LEDC_USE_APB_CLK"></span><span id="_CPPv216LEDC_USE_APB_CLK"></span><span class="target" id="ledc__types_8h_1a4a7b6592441c3dff076a050d8f82aedda12e8d70c9384372d1c035beb657e795c"></span><code class="sig-name descname">LEDC_USE_APB_CLK</code><a class="headerlink" href="#_CPPv416LEDC_USE_APB_CLK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer select APB clock as source clock </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv418LEDC_USE_RTC8M_CLK">
+<span id="_CPPv318LEDC_USE_RTC8M_CLK"></span><span id="_CPPv218LEDC_USE_RTC8M_CLK"></span><span class="target" id="ledc__types_8h_1a4a7b6592441c3dff076a050d8f82aedda747f552531283dc73c184d6ee796d92e"></span><code class="sig-name descname">LEDC_USE_RTC8M_CLK</code><a class="headerlink" href="#_CPPv418LEDC_USE_RTC8M_CLK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer select RTC8M_CLK as source clock. Only for low speed channels and this parameter must be the same for all low speed channels </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv414ledc_clk_src_t">
+<span id="_CPPv314ledc_clk_src_t"></span><span id="_CPPv214ledc_clk_src_t"></span><span class="target" id="ledc__types_8h_1a9a24e35dee453ccea765abc99e60bd29"></span><em class="property">enum </em><code class="sig-name descname">ledc_clk_src_t</code><a class="headerlink" href="#_CPPv414ledc_clk_src_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv413LEDC_REF_TICK">
+<span id="_CPPv313LEDC_REF_TICK"></span><span id="_CPPv213LEDC_REF_TICK"></span><span class="target" id="ledc__types_8h_1a9a24e35dee453ccea765abc99e60bd29aa490689e4ea686afa6fd2d22e3059dfe"></span><code class="sig-name descname">LEDC_REF_TICK</code> = <a class="reference internal" href="#_CPPv417LEDC_USE_REF_TICK" title="LEDC_USE_REF_TICK">LEDC_USE_REF_TICK</a><a class="headerlink" href="#_CPPv413LEDC_REF_TICK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer clock divided from reference tick (1Mhz) </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv412LEDC_APB_CLK">
+<span id="_CPPv312LEDC_APB_CLK"></span><span id="_CPPv212LEDC_APB_CLK"></span><span class="target" id="ledc__types_8h_1a9a24e35dee453ccea765abc99e60bd29a5e1b3f1ccc9888b8932cc28938b847e4"></span><code class="sig-name descname">LEDC_APB_CLK</code> = <a class="reference internal" href="#_CPPv416LEDC_USE_APB_CLK" title="LEDC_USE_APB_CLK">LEDC_USE_APB_CLK</a><a class="headerlink" href="#_CPPv412LEDC_APB_CLK" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer clock divided from APB clock (80Mhz) </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv412ledc_timer_t">
+<span id="_CPPv312ledc_timer_t"></span><span id="_CPPv212ledc_timer_t"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1"></span><em class="property">enum </em><code class="sig-name descname">ledc_timer_t</code><a class="headerlink" href="#_CPPv412ledc_timer_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv412LEDC_TIMER_0">
+<span id="_CPPv312LEDC_TIMER_0"></span><span id="_CPPv212LEDC_TIMER_0"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1ac9c2423e227b329d45d71f2bb5128784"></span><code class="sig-name descname">LEDC_TIMER_0</code> = 0<a class="headerlink" href="#_CPPv412LEDC_TIMER_0" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer 0 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv412LEDC_TIMER_1">
+<span id="_CPPv312LEDC_TIMER_1"></span><span id="_CPPv212LEDC_TIMER_1"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1a799b14cf24788afd4e9c2ea362667542"></span><code class="sig-name descname">LEDC_TIMER_1</code><a class="headerlink" href="#_CPPv412LEDC_TIMER_1" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer 1 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv412LEDC_TIMER_2">
+<span id="_CPPv312LEDC_TIMER_2"></span><span id="_CPPv212LEDC_TIMER_2"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1ac17bc78e2dd4665575367975cc80abe2"></span><code class="sig-name descname">LEDC_TIMER_2</code><a class="headerlink" href="#_CPPv412LEDC_TIMER_2" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer 2 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv412LEDC_TIMER_3">
+<span id="_CPPv312LEDC_TIMER_3"></span><span id="_CPPv212LEDC_TIMER_3"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1a03c18803d938840f35a63dec70f82c06"></span><code class="sig-name descname">LEDC_TIMER_3</code><a class="headerlink" href="#_CPPv412LEDC_TIMER_3" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC timer 3 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_TIMER_MAX">
+<span id="_CPPv314LEDC_TIMER_MAX"></span><span id="_CPPv214LEDC_TIMER_MAX"></span><span class="target" id="ledc__types_8h_1a6f9e3fd6afdb8694fb154649350d0df1a88168c1cb854841176c37bd67d53a058"></span><code class="sig-name descname">LEDC_TIMER_MAX</code><a class="headerlink" href="#_CPPv414LEDC_TIMER_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv414ledc_channel_t">
+<span id="_CPPv314ledc_channel_t"></span><span id="_CPPv214ledc_channel_t"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556ea"></span><em class="property">enum </em><code class="sig-name descname">ledc_channel_t</code><a class="headerlink" href="#_CPPv414ledc_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_0">
+<span id="_CPPv314LEDC_CHANNEL_0"></span><span id="_CPPv214LEDC_CHANNEL_0"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaa6a18d0611a1f4cb17bd91ddba1bd2117"></span><code class="sig-name descname">LEDC_CHANNEL_0</code> = 0<a class="headerlink" href="#_CPPv414LEDC_CHANNEL_0" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 0 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_1">
+<span id="_CPPv314LEDC_CHANNEL_1"></span><span id="_CPPv214LEDC_CHANNEL_1"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaae7fa327298017d31b08c8df1c8d7dee8"></span><code class="sig-name descname">LEDC_CHANNEL_1</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_1" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 1 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_2">
+<span id="_CPPv314LEDC_CHANNEL_2"></span><span id="_CPPv214LEDC_CHANNEL_2"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaa80cae19289dcf782415e7aec704a3fba"></span><code class="sig-name descname">LEDC_CHANNEL_2</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_2" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 2 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_3">
+<span id="_CPPv314LEDC_CHANNEL_3"></span><span id="_CPPv214LEDC_CHANNEL_3"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaaaca5b13071194a080a13e0de4a031d5a"></span><code class="sig-name descname">LEDC_CHANNEL_3</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_3" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 3 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_4">
+<span id="_CPPv314LEDC_CHANNEL_4"></span><span id="_CPPv214LEDC_CHANNEL_4"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaa825dcc306519fdb595d818ead00039ac"></span><code class="sig-name descname">LEDC_CHANNEL_4</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_4" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 4 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_5">
+<span id="_CPPv314LEDC_CHANNEL_5"></span><span id="_CPPv214LEDC_CHANNEL_5"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaa83f1070787a95e0ab16aa2583379f052"></span><code class="sig-name descname">LEDC_CHANNEL_5</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_5" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 5 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_6">
+<span id="_CPPv314LEDC_CHANNEL_6"></span><span id="_CPPv214LEDC_CHANNEL_6"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaa24281f01886f8d901f857e11ab95ac48"></span><code class="sig-name descname">LEDC_CHANNEL_6</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_6" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 6 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv414LEDC_CHANNEL_7">
+<span id="_CPPv314LEDC_CHANNEL_7"></span><span id="_CPPv214LEDC_CHANNEL_7"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaaae32fdc872c3a718e2fd590dfcdd71da"></span><code class="sig-name descname">LEDC_CHANNEL_7</code><a class="headerlink" href="#_CPPv414LEDC_CHANNEL_7" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC channel 7 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_CHANNEL_MAX">
+<span id="_CPPv316LEDC_CHANNEL_MAX"></span><span id="_CPPv216LEDC_CHANNEL_MAX"></span><span class="target" id="ledc__types_8h_1af6237b463971a06592035a2970d556eaaa0e5d88122c4f1583ff600fd8b9328cb"></span><code class="sig-name descname">LEDC_CHANNEL_MAX</code><a class="headerlink" href="#_CPPv416LEDC_CHANNEL_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv416ledc_timer_bit_t">
+<span id="_CPPv316ledc_timer_bit_t"></span><span id="_CPPv216ledc_timer_bit_t"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236a"></span><em class="property">enum </em><code class="sig-name descname">ledc_timer_bit_t</code><a class="headerlink" href="#_CPPv416ledc_timer_bit_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_1_BIT">
+<span id="_CPPv316LEDC_TIMER_1_BIT"></span><span id="_CPPv216LEDC_TIMER_1_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aab998a15d8e5bdc1cff874550125d9532"></span><code class="sig-name descname">LEDC_TIMER_1_BIT</code> = 1<a class="headerlink" href="#_CPPv416LEDC_TIMER_1_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 1 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_2_BIT">
+<span id="_CPPv316LEDC_TIMER_2_BIT"></span><span id="_CPPv216LEDC_TIMER_2_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa7435d6b114add27bd997d10d2dcc0829"></span><code class="sig-name descname">LEDC_TIMER_2_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_2_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 2 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_3_BIT">
+<span id="_CPPv316LEDC_TIMER_3_BIT"></span><span id="_CPPv216LEDC_TIMER_3_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa97f76490cfcf01cb60d1e4086cf90dd4"></span><code class="sig-name descname">LEDC_TIMER_3_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_3_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 3 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_4_BIT">
+<span id="_CPPv316LEDC_TIMER_4_BIT"></span><span id="_CPPv216LEDC_TIMER_4_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa3d61fb097f373668fd03e8445953ef3e"></span><code class="sig-name descname">LEDC_TIMER_4_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_4_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 4 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_5_BIT">
+<span id="_CPPv316LEDC_TIMER_5_BIT"></span><span id="_CPPv216LEDC_TIMER_5_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa1f26da87beab3c00ff8853321a6a87ef"></span><code class="sig-name descname">LEDC_TIMER_5_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_5_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 5 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_6_BIT">
+<span id="_CPPv316LEDC_TIMER_6_BIT"></span><span id="_CPPv216LEDC_TIMER_6_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa4c63c6ea955ef4cc34b55a3558103d76"></span><code class="sig-name descname">LEDC_TIMER_6_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_6_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 6 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_7_BIT">
+<span id="_CPPv316LEDC_TIMER_7_BIT"></span><span id="_CPPv216LEDC_TIMER_7_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa5efa1ab90d5fce129fb16911dd749106"></span><code class="sig-name descname">LEDC_TIMER_7_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_7_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 7 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_8_BIT">
+<span id="_CPPv316LEDC_TIMER_8_BIT"></span><span id="_CPPv216LEDC_TIMER_8_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa8e31eeeaa821679cbe80d12d572be263"></span><code class="sig-name descname">LEDC_TIMER_8_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_8_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 8 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416LEDC_TIMER_9_BIT">
+<span id="_CPPv316LEDC_TIMER_9_BIT"></span><span id="_CPPv216LEDC_TIMER_9_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aafb5a689fd7a913ac0cc40f6c5f22fc09"></span><code class="sig-name descname">LEDC_TIMER_9_BIT</code><a class="headerlink" href="#_CPPv416LEDC_TIMER_9_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 9 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_10_BIT">
+<span id="_CPPv317LEDC_TIMER_10_BIT"></span><span id="_CPPv217LEDC_TIMER_10_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa95671dae3bf776fb9f0cbccec067cf35"></span><code class="sig-name descname">LEDC_TIMER_10_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_10_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 10 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_11_BIT">
+<span id="_CPPv317LEDC_TIMER_11_BIT"></span><span id="_CPPv217LEDC_TIMER_11_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aab4db3570312c4cdbcb9f1b564a9faa20"></span><code class="sig-name descname">LEDC_TIMER_11_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_11_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 11 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_12_BIT">
+<span id="_CPPv317LEDC_TIMER_12_BIT"></span><span id="_CPPv217LEDC_TIMER_12_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa63f62770862f8b9a468f4117f83beb7c"></span><code class="sig-name descname">LEDC_TIMER_12_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_12_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 12 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_13_BIT">
+<span id="_CPPv317LEDC_TIMER_13_BIT"></span><span id="_CPPv217LEDC_TIMER_13_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa6bc7d4200e7501c7a589053b82d672de"></span><code class="sig-name descname">LEDC_TIMER_13_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_13_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 13 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_14_BIT">
+<span id="_CPPv317LEDC_TIMER_14_BIT"></span><span id="_CPPv217LEDC_TIMER_14_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa2fe0d5fdacd8bba78c8b3a1a266003df"></span><code class="sig-name descname">LEDC_TIMER_14_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_14_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 14 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_15_BIT">
+<span id="_CPPv317LEDC_TIMER_15_BIT"></span><span id="_CPPv217LEDC_TIMER_15_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa3c4a5de9dc77b5fdb86520e51b5ef24e"></span><code class="sig-name descname">LEDC_TIMER_15_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_15_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 15 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_16_BIT">
+<span id="_CPPv317LEDC_TIMER_16_BIT"></span><span id="_CPPv217LEDC_TIMER_16_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa3fcecee5ea41a83785e768825ca7be40"></span><code class="sig-name descname">LEDC_TIMER_16_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_16_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 16 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_17_BIT">
+<span id="_CPPv317LEDC_TIMER_17_BIT"></span><span id="_CPPv217LEDC_TIMER_17_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa6f36acf260a80e94417394a872dc93a4"></span><code class="sig-name descname">LEDC_TIMER_17_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_17_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 17 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_18_BIT">
+<span id="_CPPv317LEDC_TIMER_18_BIT"></span><span id="_CPPv217LEDC_TIMER_18_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aad8b58ec686fb9d7b757a37fdae72ac32"></span><code class="sig-name descname">LEDC_TIMER_18_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_18_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 18 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_19_BIT">
+<span id="_CPPv317LEDC_TIMER_19_BIT"></span><span id="_CPPv217LEDC_TIMER_19_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aac54ef84e783572267a21bf0fadb19e70"></span><code class="sig-name descname">LEDC_TIMER_19_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_19_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 19 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_TIMER_20_BIT">
+<span id="_CPPv317LEDC_TIMER_20_BIT"></span><span id="_CPPv217LEDC_TIMER_20_BIT"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aabeab68e7aa8e48ec9302e30af78625bc"></span><code class="sig-name descname">LEDC_TIMER_20_BIT</code><a class="headerlink" href="#_CPPv417LEDC_TIMER_20_BIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC PWM duty resolution of 20 bits </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv418LEDC_TIMER_BIT_MAX">
+<span id="_CPPv318LEDC_TIMER_BIT_MAX"></span><span id="_CPPv218LEDC_TIMER_BIT_MAX"></span><span class="target" id="ledc__types_8h_1ad2c24e5b3eab8d194f605f0f2316236aa88b5e8e6d7033a30f4872e8aa1076ea7"></span><code class="sig-name descname">LEDC_TIMER_BIT_MAX</code><a class="headerlink" href="#_CPPv418LEDC_TIMER_BIT_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv416ledc_fade_mode_t">
+<span id="_CPPv316ledc_fade_mode_t"></span><span id="_CPPv216ledc_fade_mode_t"></span><span class="target" id="ledc__types_8h_1aeb6cf53dd6e52f05f8a1f33592773499"></span><em class="property">enum </em><code class="sig-name descname">ledc_fade_mode_t</code><a class="headerlink" href="#_CPPv416ledc_fade_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv417LEDC_FADE_NO_WAIT">
+<span id="_CPPv317LEDC_FADE_NO_WAIT"></span><span id="_CPPv217LEDC_FADE_NO_WAIT"></span><span class="target" id="ledc__types_8h_1aeb6cf53dd6e52f05f8a1f33592773499ad6a5c64f47f29216bb0b71938807103c"></span><code class="sig-name descname">LEDC_FADE_NO_WAIT</code> = 0<a class="headerlink" href="#_CPPv417LEDC_FADE_NO_WAIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC fade function will return immediately </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv419LEDC_FADE_WAIT_DONE">
+<span id="_CPPv319LEDC_FADE_WAIT_DONE"></span><span id="_CPPv219LEDC_FADE_WAIT_DONE"></span><span class="target" id="ledc__types_8h_1aeb6cf53dd6e52f05f8a1f33592773499a702f753ac8b1aa6317f8d087f5abb4c6"></span><code class="sig-name descname">LEDC_FADE_WAIT_DONE</code><a class="headerlink" href="#_CPPv419LEDC_FADE_WAIT_DONE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>LEDC fade function will block until fading to the target duty </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413LEDC_FADE_MAX">
+<span id="_CPPv313LEDC_FADE_MAX"></span><span id="_CPPv213LEDC_FADE_MAX"></span><span class="target" id="ledc__types_8h_1aeb6cf53dd6e52f05f8a1f33592773499ad74122c73b37c858241fe189efa60aaa"></span><code class="sig-name descname">LEDC_FADE_MAX</code><a class="headerlink" href="#_CPPv413LEDC_FADE_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+           <div class="articleComments">
+            
+<p style="text-align:center"><a href="https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=LED Control (LEDC) (api-reference/peripherals/ledc)&version=esp32 v4.4 (v4.4)">Provide feedback about this document</a></p>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="mcpwm.html" class="btn btn-neutral float-right" title="Motor Control Pulse Width Modulator (MCPWM)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lcd.html" class="btn btn-neutral float-left" title="LCD" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016 - 2021, Espressif Systems (Shanghai) Co., Ltd
+
+    </p>
+  </div>
+
+  <ul class="footer">
+    <li>
+      
+      
+      Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+    </li>
+
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v4.4-esp32.pdf" class="fa fa-file-pdf-o"> Download PDF</a>
+    </li>
+
+  </ul> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

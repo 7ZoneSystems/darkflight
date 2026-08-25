@@ -7,11 +7,34 @@ Repository: fork of rtlopez/esp-fc (`upstream` read-only). All work below is com
 
 | Check | Result |
 |---|---|
-| `pio test -e native` | **194/194 passed** (re-run after every change) |
+| `pio test -e native` | **197/197 passed** (re-run after every change) |
 | `pio run -t check_format` (CI gate, `src/` + `lib/Espfc/src`, 178 files) | **Success** |
 | `bin/format-check.sh` (full repo) | 16 findings, all vendored third-party (`lib/betaflight` ×13, `lib/printf`, `lib/MultiButton`) — intentionally not reformatted |
 | `pio check` (cppcheck 2.13) | PASSED (~4 min); findings are pre-existing codebase characteristics |
 | Formatter | clang-format **20.1.7** (repo pin), `.clang-format` with `SortIncludes: Never` |
+
+## Deep hardware/GPS audit — 2026-08-25
+
+Second audit pass driven by official Espressif documentation
+(`resources/esp32/`, full index + constraint checklist) targeting GPS,
+navigation and motor-output paths. Full details in `resources/BUG-AUDIT.md`.
+
+Newly found and fixed (commit `87d6f4a`, regression tests added):
+
+| ID | Defect (short) | Severity | Status | Regression test |
+|---|---|---|---|---|
+| DF-001 | NAV-PVT velocities/sAcc stored cm/s into mm/s state → GPS hold corrected drift 10× too weakly; MSP/blackbox speeds wrong for PVT receivers | HIGH | FIXED LOCALLY (`87d6f4a`) | `test_pvt_velocity_units_mm_s`, `test_pvt_and_velned_paths_agree_on_units` |
+| DF-002 | NAV-SAT parsed without length validation → stale bytes reported as satellites on malformed frames | LOW-MEDIUM | FIXED LOCALLY (`87d6f4a`) | `test_nav_sat_count_clamped_to_delivered_payload` |
+
+Investigated and ruled out with evidence: firmware-side cause of the historical
+"motor 4 / D4" misbehavior (output stack unchanged functionally since baseline;
+GPIO4 is an ordinary digital IO per official docs; no RMT/pin/NVS-config
+corruption mechanism exists). Residual suspects are hardware/configuration-side;
+bench checklist in BUG-AUDIT §6.
+
+Potential issues requiring hardware-in-the-loop testing: PosHold earth→body
+rotation sign/heading-source convention; async RMT ISR jitter under load.
+
 
 ## Code tidy pass — 2026-08-25
 

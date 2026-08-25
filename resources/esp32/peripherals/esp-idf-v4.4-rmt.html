@@ -1,0 +1,2021 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-132861133-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-132861133-1');
+        </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Remote Control (RMT) - ESP32 -  &mdash; ESP-IDF Programming Guide v4.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script type="text/javascript" src="../../_static/clipboard.min.js"></script>
+        <script type="text/javascript" src="../../_static/copybutton.js"></script>
+      <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+    
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-reference/peripherals/rmt';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v4.4';
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="SD Pull-up Requirements" href="sd_pullup_requirements.html" />
+    <link rel="prev" title="Pulse Counter (PCNT)" href="pcnt.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> ESP-IDF Programming Guide
+          
+
+          
+            
+            <img src="../../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;">
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;">
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../bluetooth/index.html">Bluetooth</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/index.html">Networking</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Peripherals</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="adc.html">Analog to Digital Converter (ADC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="dac.html">Digital To Analog Converter (DAC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="timer.html">General Purpose Timer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gpio.html">GPIO &amp; RTC GPIO</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">Inter-Integrated Circuit (I2C)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2s.html">Inter-IC Sound (I2S)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="lcd.html">LCD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ledc.html">LED Control (LEDC)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mcpwm.html">Motor Control Pulse Width Modulator (MCPWM)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pcnt.html">Pulse Counter (PCNT)</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Remote Control (RMT)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configure-driver">Configure Driver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transmit-data">Transmit Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#receive-data">Receive Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#change-operation-parameters">Change Operation Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#use-interrupts">Use Interrupts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uninstall-driver">Uninstall Driver</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#application-examples">Application Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sd_pullup_requirements.html">SD Pull-up Requirements</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdmmc_host.html">SDMMC Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdspi_host.html">SD SPI Host Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdio_slave.html">SDIO Card Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sigmadelta.html">Sigma-delta Modulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_master.html">SPI Master Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi_slave.html">SPI Slave Driver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="secure_element.html">ESP32-WROOM-32SE (Secure Element)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="touch_pad.html">Touch Sensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="twai.html">Two-Wire Automotive Interface (TWAI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">Universal Asynchronous Receiver/Transmitter (UART)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../protocols/index.html">Protocols</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../provisioning/index.html">Provisioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../storage/index.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../system/index.html">System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api-conventions.html">API Conventions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../kconfig.html">Configuration Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../error-codes.html">Error Codes Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hw-reference/index.html">H/W Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-guides/index.html">API Guides</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute/index.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../versions.html">Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../COPYRIGHT.html">Copyrights</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../languages.html">语言/Languages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">ESP-IDF Programming Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">API Reference</a> &raquo;</li>
+        
+          <li><a href="index.html">Peripherals API</a> &raquo;</li>
+        
+      <li>Remote Control (RMT)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/espressif/esp-idf/blob/v4.4/docs/en/api-reference/peripherals/rmt.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="remote-control-rmt">
+<h1>Remote Control (RMT)<a class="headerlink" href="#remote-control-rmt" title="Permalink to this headline">¶</a></h1>
+<p>The RMT (Remote Control) module driver can be used to send and receive infrared remote control signals. Due to flexibility of RMT module, the driver can also be used to generate or receive many other types of signals.</p>
+<p>The signal, which consists of a series of pulses, is generated by RMT’s transmitter based on a list of values. The values define the pulse duration and a binary level, see below. The transmitter can also provide a carrier and modulate it with provided pulses.</p>
+<div class="figure align-center" id="id3">
+<div><a class="reference internal image-reference" href="../../_images/blockdiag-390c28871cbe50b6f74bb23894ab10a712b07a61.png"><img height="240.0" src="../../_images/blockdiag-390c28871cbe50b6f74bb23894ab10a712b07a61.png" width="804.0" /></a></div><p class="caption"><span class="caption-text">RMT Transmitter Overview</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p>The reverse operation is performed by the receiver, where a series of pulses is decoded into a list of values containing the pulse duration and binary level. A filter may be applied to remove high frequency noise from the input signal.</p>
+<div class="figure align-center" id="id4">
+<div><a class="reference internal image-reference" href="../../_images/blockdiag-3b04f747e2e71e7b37cde97a9b9ff52abea2664d.png"><img height="216.0" src="../../_images/blockdiag-3b04f747e2e71e7b37cde97a9b9ff52abea2664d.png" width="594.0" /></a></div><p class="caption"><span class="caption-text">RMT Receiver Overview</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</div>
+<p>There couple of typical steps to setup and operate the RMT and they are discussed in the following sections:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#configure-driver">Configure Driver</a></p></li>
+<li><p><a class="reference internal" href="#transmit-data">Transmit Data</a> or <a class="reference internal" href="#receive-data">Receive Data</a></p></li>
+<li><p><a class="reference internal" href="#change-operation-parameters">Change Operation Parameters</a></p></li>
+<li><p><a class="reference internal" href="#use-interrupts">Use Interrupts</a></p></li>
+</ol>
+<p>The RMT has eight channels numbered from zero to seven. Each channel is able to independently transmit or receive data. They are referred to using indexes defined in structure <a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_channel_t</span></code></a>.</p>
+<div class="section" id="configure-driver">
+<h2>Configure Driver<a class="headerlink" href="#configure-driver" title="Permalink to this headline">¶</a></h2>
+<p>There are several parameters that define how particular channel operates. Most of these parameters are configured by setting specific members of <a class="reference internal" href="#_CPPv412rmt_config_t" title="rmt_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_config_t</span></code></a> structure. Some of the parameters are common to both transmit or receive mode, and some are mode specific. They are all discussed below.</p>
+<div class="section" id="common-parameters">
+<h3>Common Parameters<a class="headerlink" href="#common-parameters" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p>The <strong>channel</strong> to be configured, select one from the <a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_channel_t</span></code></a> enumerator.</p></li>
+<li><p>The RMT <strong>operation mode</strong> - whether this channel is used to transmit or receive data, selected by setting a <strong>rmt_mode</strong> members to one of the values from <a class="reference internal" href="#_CPPv410rmt_mode_t" title="rmt_mode_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_mode_t</span></code></a>.</p></li>
+<li><p>What is the <strong>pin number</strong> to transmit or receive RMT signals, selected by setting <strong>gpio_num</strong>.</p></li>
+<li><p>How many <strong>memory blocks</strong> will be used by the channel, set with <strong>mem_block_num</strong>.</p></li>
+<li><p>Extra miscellaneous parameters for the channel can be set in the <strong>flags</strong>.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>When <strong>RMT_CHANNEL_FLAGS_AWARE_DFS</strong> is set, RMT channel will take REF_TICK or XTAL as source clock. The benefit is, RMT channel can continue work even when APB clock is changing. See <a class="reference internal" href="../system/power_management.html"><span class="doc">power_management</span></a> for more information.</p></li>
+<li><p>When <strong>RMT_CHANNEL_FLAGS_INVERT_SIG</strong> is set, the driver will invert the RMT signal sending to or receiving from the channel. It just works like an external inverter connected to the GPIO of certain RMT channel.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>A <strong>clock divider</strong>, that will determine the range of pulse length generated by the RMT transmitter or discriminated by the receiver. Selected by setting <strong>clk_div</strong> to a value within [1 .. 255] range. The RMT source clock is typically APB CLK, 80Mhz by default. But when <strong>RMT_CHANNEL_FLAGS_AWARE_DFS</strong> is set in <strong>flags</strong>, RMT source clock is changed to REF_TICK or XTAL.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The period of a square wave after the clock divider is called a ‘tick’. The length of the pulses generated by the RMT transmitter or discriminated by the receiver is configured in number of ‘ticks’.</p>
+</div>
+<p>There are also couple of specific parameters that should be set up depending if selected channel is configured in <a class="reference internal" href="#transmit-mode">Transmit Mode</a> or <a class="reference internal" href="#receive-mode">Receive Mode</a>:</p>
+</div>
+<div class="section" id="transmit-mode">
+<h3>Transmit Mode<a class="headerlink" href="#transmit-mode" title="Permalink to this headline">¶</a></h3>
+<p>When configuring channel in transmit mode, set <strong>tx_config</strong> and the following members of <a class="reference internal" href="#_CPPv415rmt_tx_config_t" title="rmt_tx_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_tx_config_t</span></code></a>:</p>
+<p><ul class="simple">
+<li><p>Transmit the currently configured data items in a loop - <strong>loop_en</strong></p></li>
+<li><p>Enable the RMT carrier signal - <strong>carrier_en</strong></p></li>
+<li><p>Frequency of the carrier in Hz - <strong>carrier_freq_hz</strong></p></li>
+<li><p>Duty cycle of the carrier signal in percent (%) - <strong>carrier_duty_percent</strong></p></li>
+<li><p>Level of the RMT output, when the carrier is applied - <strong>carrier_level</strong></p></li>
+<li><p>Enable the RMT output if idle - <strong>idle_output_en</strong></p></li>
+<li><p>Set the signal level on the RMT output if idle - <strong>idle_level</strong></p></li>
+</ul>
+</p>
+</div>
+<div class="section" id="receive-mode">
+<h3>Receive Mode<a class="headerlink" href="#receive-mode" title="Permalink to this headline">¶</a></h3>
+<p>In receive mode, set <strong>rx_config</strong> and the following members of <a class="reference internal" href="#_CPPv415rmt_rx_config_t" title="rmt_rx_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_rx_config_t</span></code></a>:</p>
+<p><ul class="simple">
+<li><p>Enable a filter on the input of the RMT receiver - <strong>filter_en</strong></p></li>
+<li><p>A threshold of the filter, set in the number of ticks - <strong>filter_ticks_thresh</strong>. Pulses shorter than this setting will be filtered out. Note, that the range of entered tick values is [0..255].</p></li>
+<li><p>A pulse length threshold that will turn the RMT receiver idle, set in number of ticks - <strong>idle_threshold</strong>. The receiver will ignore pulses longer than this setting.</p></li>
+</ul>
+</p>
+</div>
+<div class="section" id="finalize-configuration">
+<h3>Finalize Configuration<a class="headerlink" href="#finalize-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Once the <a class="reference internal" href="#_CPPv412rmt_config_t" title="rmt_config_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_config_t</span></code></a> structure is populated with parameters, it should be then invoked with <a class="reference internal" href="#_CPPv410rmt_configPK12rmt_config_t" title="rmt_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_config()</span></code></a> to make the configuration effective.</p>
+<p>The last configuration step is installation of the driver in memory by calling <a class="reference internal" href="#_CPPv418rmt_driver_install13rmt_channel_t6size_ti" title="rmt_driver_install"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_driver_install()</span></code></a>. If <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rx_buf_size</span></code> parameter of this function is &gt; 0, then a ring buffer for incoming data will be allocated. A default ISR handler will be installed, see a note in <a class="reference internal" href="#use-interrupts">Use Interrupts</a>.</p>
+<p>Now, depending on how the channel is configured, we are ready to either <a class="reference internal" href="#transmit-data">Transmit Data</a> or <a class="reference internal" href="#receive-data">Receive Data</a>. This is described in next two sections.</p>
+</div>
+</div>
+<div class="section" id="transmit-data">
+<h2>Transmit Data<a class="headerlink" href="#transmit-data" title="Permalink to this headline">¶</a></h2>
+<p>Before being able to transmit some RMT pulses, we need to define the pulse pattern. The minimum pattern recognized by the RMT controller, later called an ‘item’, is provided in a structure <code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_item32_t</span></code>. Each item consists of two pairs of two values. The first value in a pair describes the signal duration in ticks and is 15 bits long, the second provides the signal level (high or low) and is contained in a single bit. A block of couple of items and the structure of an item is presented below.</p>
+<div class="figure align-center" id="id5">
+<div><img height="216" src="../../_images/packetdiag-59f8dfb24b2a48a7510db982a562db54c1979679.png" width="448" /></div><p class="caption"><span class="caption-text">Structure of RMT items (L - signal level)</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<p>For a simple example how to define a block of items see <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/morse_code">peripherals/rmt/morse_code</a>.</p>
+<p>The items are provided to the RMT controller by calling function <a class="reference internal" href="#_CPPv415rmt_write_items13rmt_channel_tPK12rmt_item32_tib" title="rmt_write_items"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_write_items()</span></code></a>. This function also automatically triggers start of transmission. It may be called to wait for transmission completion or exit just after transmission start. In such case you can wait for the transmission end by calling <a class="reference internal" href="#_CPPv416rmt_wait_tx_done13rmt_channel_t10TickType_t" title="rmt_wait_tx_done"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_wait_tx_done()</span></code></a>. This function does not limit the number of data items to transmit. It is using an interrupt to successively copy the new data chunks to RMT’s internal memory as previously provided data are sent out.</p>
+<p>Another way to provide data for transmission is by calling <a class="reference internal" href="#_CPPv417rmt_fill_tx_items13rmt_channel_tPK12rmt_item32_t8uint16_t8uint16_t" title="rmt_fill_tx_items"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_fill_tx_items()</span></code></a>. In this case transmission is not started automatically. To control the transmission process use <a class="reference internal" href="#_CPPv412rmt_tx_start13rmt_channel_tb" title="rmt_tx_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_tx_start()</span></code></a> and <a class="reference internal" href="#_CPPv411rmt_tx_stop13rmt_channel_t" title="rmt_tx_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_tx_stop()</span></code></a>. The number of items to sent is restricted by the size of memory blocks allocated in the RMT controller’s internal memory, see <a class="reference internal" href="#_CPPv421rmt_set_mem_block_num13rmt_channel_t7uint8_t" title="rmt_set_mem_block_num"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_mem_block_num()</span></code></a>.</p>
+</div>
+<div class="section" id="receive-data">
+<h2>Receive Data<a class="headerlink" href="#receive-data" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>RMT RX channel can’t receive packet whose items are larger than its memory block size. If you set the memory block number to 1, then this RX channel can’t receive packet with more than 64 items. This is a hardware limitation.</p>
+</div>
+<p>Before starting the receiver we need some storage for incoming items. The RMT controller has 512 x 32-bits of internal RAM shared between all eight channels.</p>
+<p>In typical scenarios it is not enough as an ultimate storage for all incoming (and outgoing) items. Therefore this API supports retrieval of incoming items on the fly to save them in a ring buffer of a size defined by the user. The size is provided when calling <a class="reference internal" href="#_CPPv418rmt_driver_install13rmt_channel_t6size_ti" title="rmt_driver_install"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_driver_install()</span></code></a> discussed above. To get a handle to this buffer call <a class="reference internal" href="#_CPPv422rmt_get_ringbuf_handle13rmt_channel_tP15RingbufHandle_t" title="rmt_get_ringbuf_handle"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_get_ringbuf_handle()</span></code></a>.</p>
+<p>With the above steps complete we can start the receiver by calling <a class="reference internal" href="#_CPPv412rmt_rx_start13rmt_channel_tb" title="rmt_rx_start"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_rx_start()</span></code></a> and then move to checking what’s inside the buffer. To do so, you can use common FreeRTOS functions that interact with the ring buffer. Please see an example how to do it in <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/ir_protocols">peripherals/rmt/ir_protocols</a>.</p>
+<p>To stop the receiver, call <a class="reference internal" href="#_CPPv411rmt_rx_stop13rmt_channel_t" title="rmt_rx_stop"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_rx_stop()</span></code></a>.</p>
+</div>
+<div class="section" id="change-operation-parameters">
+<h2>Change Operation Parameters<a class="headerlink" href="#change-operation-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Previously described function <a class="reference internal" href="#_CPPv410rmt_configPK12rmt_config_t" title="rmt_config"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_config()</span></code></a> provides a convenient way to set several configuration parameters in one shot. This is usually done on application start. Then, when the application is running, the API provides an alternate way to update individual parameters by calling dedicated functions. Each function refers to the specific RMT channel provided as the first input parameter. Most of the functions have <cite>_get_</cite> counterpart to read back the currently configured value.</p>
+<div class="section" id="parameters-common-to-transmit-and-receive-mode">
+<h3>Parameters Common to Transmit and Receive Mode<a class="headerlink" href="#parameters-common-to-transmit-and-receive-mode" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Selection of a GPIO pin number on the input or output of the RMT - <a class="reference internal" href="#_CPPv412rmt_set_gpio13rmt_channel_t10rmt_mode_t10gpio_num_tb" title="rmt_set_gpio"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_gpio()</span></code></a></p></li>
+<li><p>Number of memory blocks allocated for the incoming or outgoing data - <a class="reference internal" href="#_CPPv414rmt_set_mem_pd13rmt_channel_tb" title="rmt_set_mem_pd"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_mem_pd()</span></code></a></p></li>
+<li><p>Setting of the clock divider - <a class="reference internal" href="#_CPPv415rmt_set_clk_div13rmt_channel_t7uint8_t" title="rmt_set_clk_div"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_clk_div()</span></code></a></p></li>
+<li><p>Selection of the clock source, note that currently one clock source is supported, the APB clock which is 80Mhz - <a class="reference internal" href="#_CPPv418rmt_set_source_clk13rmt_channel_t16rmt_source_clk_t" title="rmt_set_source_clk"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_source_clk()</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="transmit-mode-parameters">
+<h3>Transmit Mode Parameters<a class="headerlink" href="#transmit-mode-parameters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Enable or disable the loop back mode for the transmitter - <a class="reference internal" href="#_CPPv420rmt_set_tx_loop_mode13rmt_channel_tb" title="rmt_set_tx_loop_mode"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_tx_loop_mode()</span></code></a></p></li>
+<li><p>Binary level on the output to apply the carrier - <a class="reference internal" href="#_CPPv418rmt_set_tx_carrier13rmt_channel_tb8uint16_t8uint16_t19rmt_carrier_level_t" title="rmt_set_tx_carrier"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_tx_carrier()</span></code></a>, selected from <a class="reference internal" href="#_CPPv419rmt_carrier_level_t" title="rmt_carrier_level_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_carrier_level_t</span></code></a></p></li>
+<li><p>Determines the binary level on the output when transmitter is idle - <a class="reference internal" href="#_CPPv418rmt_set_idle_level13rmt_channel_tb16rmt_idle_level_t" title="rmt_set_idle_level"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_idle_level()</span></code></a>, selected from <a class="reference internal" href="#_CPPv416rmt_idle_level_t" title="rmt_idle_level_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_idle_level_t</span></code></a></p></li>
+</ul>
+</div>
+<div class="section" id="receive-mode-parameters">
+<h3>Receive Mode Parameters<a class="headerlink" href="#receive-mode-parameters" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The filter setting - <a class="reference internal" href="#_CPPv417rmt_set_rx_filter13rmt_channel_tb7uint8_t" title="rmt_set_rx_filter"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_rx_filter()</span></code></a></p></li>
+<li><p>The receiver threshold setting - <a class="reference internal" href="#_CPPv422rmt_set_rx_idle_thresh13rmt_channel_t8uint16_t" title="rmt_set_rx_idle_thresh"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_rx_idle_thresh()</span></code></a></p></li>
+<li><p>Whether the transmitter or receiver is entitled to access RMT’s memory - <a class="reference internal" href="#_CPPv420rmt_set_memory_owner13rmt_channel_t15rmt_mem_owner_t" title="rmt_set_memory_owner"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_memory_owner()</span></code></a>, selection is from <a class="reference internal" href="#_CPPv415rmt_mem_owner_t" title="rmt_mem_owner_t"><code class="xref cpp cpp-type docutils literal notranslate"><span class="pre">rmt_mem_owner_t</span></code></a>.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="use-interrupts">
+<h2>Use Interrupts<a class="headerlink" href="#use-interrupts" title="Permalink to this headline">¶</a></h2>
+<p>Registering of an interrupt handler for the RMT controller is done be calling <a class="reference internal" href="#_CPPv416rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t" title="rmt_isr_register"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_isr_register()</span></code></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When calling <a class="reference internal" href="#_CPPv418rmt_driver_install13rmt_channel_t6size_ti" title="rmt_driver_install"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_driver_install()</span></code></a> to use the system RMT driver, a default ISR is being installed. In such a case you cannot register a generic ISR handler with <a class="reference internal" href="#_CPPv416rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t" title="rmt_isr_register"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_isr_register()</span></code></a>.</p>
+</div>
+<p>The RMT controller triggers interrupts on four specific events describes below. To enable interrupts on these events, the following functions are provided:</p>
+<ul class="simple">
+<li><p>The RMT receiver has finished receiving a signal - <a class="reference internal" href="#_CPPv418rmt_set_rx_intr_en13rmt_channel_tb" title="rmt_set_rx_intr_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_rx_intr_en()</span></code></a></p></li>
+<li><p>The RMT transmitter has finished transmitting the signal - <a class="reference internal" href="#_CPPv418rmt_set_tx_intr_en13rmt_channel_tb" title="rmt_set_tx_intr_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_tx_intr_en()</span></code></a></p></li>
+<li><p>The number of events the transmitter has sent matches a threshold value <a class="reference internal" href="#_CPPv422rmt_set_tx_thr_intr_en13rmt_channel_tb8uint16_t" title="rmt_set_tx_thr_intr_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_tx_thr_intr_en()</span></code></a></p></li>
+<li><p>Ownership to the RMT memory block has been violated - <a class="reference internal" href="#_CPPv419rmt_set_err_intr_en13rmt_channel_tb" title="rmt_set_err_intr_en"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_err_intr_en()</span></code></a></p></li>
+</ul>
+<p>Setting or clearing an interrupt enable mask for specific channels and events may be also done by calling <a class="reference internal" href="#_CPPv424rmt_set_intr_enable_mask8uint32_t" title="rmt_set_intr_enable_mask"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_set_intr_enable_mask()</span></code></a> or <a class="reference internal" href="#_CPPv424rmt_clr_intr_enable_mask8uint32_t" title="rmt_clr_intr_enable_mask"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_clr_intr_enable_mask()</span></code></a>.</p>
+<p>When servicing an interrupt within an ISR, the interrupt need to explicitly cleared. To do so, set specific bits described as <code class="docutils literal notranslate"><span class="pre">RMT.int_clr.val.chN_event_name</span></code> and defined as a <code class="docutils literal notranslate"><span class="pre">volatile</span> <span class="pre">struct</span></code> in <a class="reference external" href="https://github.com/espressif/esp-idf/blob/v4.4/components/soc/esp32/include/soc/rmt_struct.h">soc/esp32/include/soc/rmt_struct.h</a>, where N is the RMT channel number [0, n] and the <code class="docutils literal notranslate"><span class="pre">event_name</span></code> is one of four events described above.</p>
+<p>If you do not need an ISR anymore, you can deregister it by calling a function <a class="reference internal" href="#_CPPv418rmt_isr_deregister16rmt_isr_handle_t" title="rmt_isr_deregister"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_isr_deregister()</span></code></a>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>It’s not recommended for users to register an interrupt handler in their applications. RMT driver is highly dependent on interrupt, especially when doing transaction in a ping-pong way, so the driver itself has registered a default handler called <code class="docutils literal notranslate"><span class="pre">rmt_driver_isr_default</span></code>.
+Instead, if what you want is to get a notification when transaction is done, go ahead with <a class="reference internal" href="#_CPPv428rmt_register_tx_end_callback15rmt_tx_end_fn_tPv" title="rmt_register_tx_end_callback"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_register_tx_end_callback()</span></code></a>.</p>
+</div>
+</div>
+<div class="section" id="uninstall-driver">
+<h2>Uninstall Driver<a class="headerlink" href="#uninstall-driver" title="Permalink to this headline">¶</a></h2>
+<p>If the RMT driver has been installed with <a class="reference internal" href="#_CPPv418rmt_driver_install13rmt_channel_t6size_ti" title="rmt_driver_install"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_driver_install()</span></code></a> for some specific period of time and then not required, the driver may be removed to free allocated resources by calling <a class="reference internal" href="#_CPPv420rmt_driver_uninstall13rmt_channel_t" title="rmt_driver_uninstall"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">rmt_driver_uninstall()</span></code></a>.</p>
+</div>
+<div class="section" id="application-examples">
+<h2>Application Examples<a class="headerlink" href="#application-examples" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Using RMT to send morse code: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/morse_code">peripherals/rmt/morse_code</a>.</p></li>
+<li><p>Using RMT to drive RGB LED strip: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/led_strip">peripherals/rmt/led_strip</a>.</p></li>
+<li><p>NEC remote control TX and RX example: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/ir_protocols">peripherals/rmt/ir_protocols</a>.</p></li>
+<li><p>Musical buzzer example: <a class="reference external" href="https://github.com/espressif/esp-idf/tree/v4.4/examples/peripherals/rmt/musical_buzzer">peripherals/rmt/musical_buzzer</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="header-file">
+<h3>Header File<a class="headerlink" href="#header-file" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v4.4/components/driver/include/driver/rmt.h">components/driver/include/driver/rmt.h</a></p></li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="_CPPv415rmt_set_clk_div13rmt_channel_t7uint8_t">
+<span id="_CPPv315rmt_set_clk_div13rmt_channel_t7uint8_t"></span><span id="_CPPv215rmt_set_clk_div13rmt_channel_t7uint8_t"></span><span id="rmt_set_clk_div__rmt_channel_t.uint8_t"></span><span class="target" id="rmt_8h_1a1d24d23122b404ffc2a2145226f11283"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_clk_div</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint8_t <em>div_cnt</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415rmt_set_clk_div13rmt_channel_t7uint8_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT clock divider, channel clock is divided from source clock. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">div_cnt</span></code>: RMT counter clock divider</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv415rmt_get_clk_div13rmt_channel_tP7uint8_t">
+<span id="_CPPv315rmt_get_clk_div13rmt_channel_tP7uint8_t"></span><span id="_CPPv215rmt_get_clk_div13rmt_channel_tP7uint8_t"></span><span id="rmt_get_clk_div__rmt_channel_t.uint8_tP"></span><span class="target" id="rmt_8h_1a2f3e59f83c3c7a4b263e7525fa30d5fd"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_clk_div</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint8_t *<em>div_cnt</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415rmt_get_clk_div13rmt_channel_tP7uint8_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT clock divider, channel clock is divided from source clock. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">div_cnt</span></code>: pointer to accept RMT counter divider</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422rmt_set_rx_idle_thresh13rmt_channel_t8uint16_t">
+<span id="_CPPv322rmt_set_rx_idle_thresh13rmt_channel_t8uint16_t"></span><span id="_CPPv222rmt_set_rx_idle_thresh13rmt_channel_t8uint16_t"></span><span id="rmt_set_rx_idle_thresh__rmt_channel_t.uint16_t"></span><span class="target" id="rmt_8h_1a7ce9b15cbb10d2e7afabfe1f63d0f702"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_rx_idle_thresh</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint16_t <em>thresh</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422rmt_set_rx_idle_thresh13rmt_channel_t8uint16_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT RX idle threshold value. </p>
+<p>In receive mode, when no edge is detected on the input signal for longer than idle_thres channel clock cycles, the receive process is finished.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thresh</span></code>: RMT RX idle threshold</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422rmt_get_rx_idle_thresh13rmt_channel_tP8uint16_t">
+<span id="_CPPv322rmt_get_rx_idle_thresh13rmt_channel_tP8uint16_t"></span><span id="_CPPv222rmt_get_rx_idle_thresh13rmt_channel_tP8uint16_t"></span><span id="rmt_get_rx_idle_thresh__rmt_channel_t.uint16_tP"></span><span class="target" id="rmt_8h_1a2a450167de9271aba6ba823a8a9c90f1"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_rx_idle_thresh</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint16_t *<em>thresh</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422rmt_get_rx_idle_thresh13rmt_channel_tP8uint16_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT idle threshold value. </p>
+<p>In receive mode, when no edge is detected on the input signal for longer than idle_thres channel clock cycles, the receive process is finished.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thresh</span></code>: pointer to accept RMT RX idle threshold value</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv421rmt_set_mem_block_num13rmt_channel_t7uint8_t">
+<span id="_CPPv321rmt_set_mem_block_num13rmt_channel_t7uint8_t"></span><span id="_CPPv221rmt_set_mem_block_num13rmt_channel_t7uint8_t"></span><span id="rmt_set_mem_block_num__rmt_channel_t.uint8_t"></span><span class="target" id="rmt_8h_1a3f59be4a88dd6393f00802a5f47b5fe3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_mem_block_num</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint8_t <em>rmt_mem_num</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421rmt_set_mem_block_num13rmt_channel_t7uint8_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT memory block number for RMT channel. </p>
+<p>This function is used to configure the amount of memory blocks allocated to channel n The 8 channels share a 512x32-bit RAM block which can be read and written by the processor cores over the APB bus, as well as read by the transmitters and written by the receivers.</p>
+<p>The RAM address range for channel n is start_addr_CHn to end_addr_CHn, which are defined by: Memory block start address is RMT_CHANNEL_MEM(n) (in soc/rmt_reg.h), that is, start_addr_chn = RMT base address + 0x800 + 64 ∗ 4 ∗ n, and end_addr_chn = RMT base address + 0x800 + 64 ∗ 4 ∗ n + 64 ∗ 4 ∗ RMT_MEM_SIZE_CHn mod 512 ∗ 4</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>If memory block number of one channel is set to a value greater than 1, this channel will occupy the memory block of the next channel. Channel 0 can use at most 8 blocks of memory, accordingly channel 7 can only use one memory block.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_mem_num</span></code>: RMT RX memory block number, one block has 64 * 32 bits.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv421rmt_get_mem_block_num13rmt_channel_tP7uint8_t">
+<span id="_CPPv321rmt_get_mem_block_num13rmt_channel_tP7uint8_t"></span><span id="_CPPv221rmt_get_mem_block_num13rmt_channel_tP7uint8_t"></span><span id="rmt_get_mem_block_num__rmt_channel_t.uint8_tP"></span><span class="target" id="rmt_8h_1a75386282b28d4df0e8401e3303f738fd"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_mem_block_num</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint8_t *<em>rmt_mem_num</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421rmt_get_mem_block_num13rmt_channel_tP7uint8_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT memory block number. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_mem_num</span></code>: Pointer to accept RMT RX memory block number</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_set_tx_carrier13rmt_channel_tb8uint16_t8uint16_t19rmt_carrier_level_t">
+<span id="_CPPv318rmt_set_tx_carrier13rmt_channel_tb8uint16_t8uint16_t19rmt_carrier_level_t"></span><span id="_CPPv218rmt_set_tx_carrier13rmt_channel_tb8uint16_t8uint16_t19rmt_carrier_level_t"></span><span id="rmt_set_tx_carrier__rmt_channel_t.b.uint16_t.uint16_t.rmt_carrier_level_t"></span><span class="target" id="rmt_8h_1af9bffb8227f6c938daaac894c00614d3"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_tx_carrier</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>carrier_en</em>, uint16_t <em>high_level</em>, uint16_t <em>low_level</em>, <a class="reference internal" href="#_CPPv419rmt_carrier_level_t" title="rmt_carrier_level_t">rmt_carrier_level_t</a> <em>carrier_level</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_set_tx_carrier13rmt_channel_tb8uint16_t8uint16_t19rmt_carrier_level_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configure RMT carrier for TX signal. </p>
+<p>Set different values for carrier_high and carrier_low to set different frequency of carrier. The unit of carrier_high/low is the source clock tick, not the divided channel counter clock.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">carrier_en</span></code>: Whether to enable output carrier. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">high_level</span></code>: High level duration of carrier </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">low_level</span></code>: Low level duration of carrier. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">carrier_level</span></code>: Configure the way carrier wave is modulated for channel.<ul>
+<li><p>1’b1:transmit on low output level</p></li>
+<li><p>1’b0:transmit on high output level</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv414rmt_set_mem_pd13rmt_channel_tb">
+<span id="_CPPv314rmt_set_mem_pd13rmt_channel_tb"></span><span id="_CPPv214rmt_set_mem_pd13rmt_channel_tb"></span><span id="rmt_set_mem_pd__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1aa82f3e2534cef501e53f4085a0702fa2"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_mem_pd</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>pd_en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414rmt_set_mem_pd13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT memory in low power mode. </p>
+<p>Reduce power consumed by memory. 1:memory is in low power state.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pd_en</span></code>: RMT memory low power enable.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv414rmt_get_mem_pd13rmt_channel_tPb">
+<span id="_CPPv314rmt_get_mem_pd13rmt_channel_tPb"></span><span id="_CPPv214rmt_get_mem_pd13rmt_channel_tPb"></span><span id="rmt_get_mem_pd__rmt_channel_t.bP"></span><span class="target" id="rmt_8h_1af4d76e631e0e446b4698e2e715acf67d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_mem_pd</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool *<em>pd_en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414rmt_get_mem_pd13rmt_channel_tPb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT memory low power mode. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pd_en</span></code>: Pointer to accept RMT memory low power mode.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv412rmt_tx_start13rmt_channel_tb">
+<span id="_CPPv312rmt_tx_start13rmt_channel_tb"></span><span id="_CPPv212rmt_tx_start13rmt_channel_tb"></span><span id="rmt_tx_start__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1a643e963bfc4501aa1ae32d9bfea7bf5b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_tx_start</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>tx_idx_rst</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412rmt_tx_start13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT start sending data from memory. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tx_idx_rst</span></code>: Set true to reset memory index for TX. Otherwise, transmitter will continue sending from the last index in memory.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv411rmt_tx_stop13rmt_channel_t">
+<span id="_CPPv311rmt_tx_stop13rmt_channel_t"></span><span id="_CPPv211rmt_tx_stop13rmt_channel_t"></span><span id="rmt_tx_stop__rmt_channel_t"></span><span class="target" id="rmt_8h_1a6cf07085c3234dbb0e188204404c19b9"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_tx_stop</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411rmt_tx_stop13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT stop sending. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv412rmt_rx_start13rmt_channel_tb">
+<span id="_CPPv312rmt_rx_start13rmt_channel_tb"></span><span id="_CPPv212rmt_rx_start13rmt_channel_tb"></span><span id="rmt_rx_start__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1a14bfb853b4dc0efc945f57ce65ba7597"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_rx_start</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>rx_idx_rst</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412rmt_rx_start13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT start receiving data. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rx_idx_rst</span></code>: Set true to reset memory index for receiver. Otherwise, receiver will continue receiving data to the last index in memory.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv411rmt_rx_stop13rmt_channel_t">
+<span id="_CPPv311rmt_rx_stop13rmt_channel_t"></span><span id="_CPPv211rmt_rx_stop13rmt_channel_t"></span><span id="rmt_rx_stop__rmt_channel_t"></span><span class="target" id="rmt_8h_1a460748b15a8c102237d9563ccbba29fb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_rx_stop</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411rmt_rx_stop13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT stop receiving data. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv419rmt_tx_memory_reset13rmt_channel_t">
+<span id="_CPPv319rmt_tx_memory_reset13rmt_channel_t"></span><span id="_CPPv219rmt_tx_memory_reset13rmt_channel_t"></span><span id="rmt_tx_memory_reset__rmt_channel_t"></span><span class="target" id="rmt_8h_1a5801882fedaa046c44d543e21eab58f8"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_tx_memory_reset</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419rmt_tx_memory_reset13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reset RMT TX memory. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv419rmt_rx_memory_reset13rmt_channel_t">
+<span id="_CPPv319rmt_rx_memory_reset13rmt_channel_t"></span><span id="_CPPv219rmt_rx_memory_reset13rmt_channel_t"></span><span id="rmt_rx_memory_reset__rmt_channel_t"></span><span class="target" id="rmt_8h_1a2028297e3831a66334ce17f4b7000d67"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_rx_memory_reset</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419rmt_rx_memory_reset13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reset RMT RX memory. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv420rmt_set_memory_owner13rmt_channel_t15rmt_mem_owner_t">
+<span id="_CPPv320rmt_set_memory_owner13rmt_channel_t15rmt_mem_owner_t"></span><span id="_CPPv220rmt_set_memory_owner13rmt_channel_t15rmt_mem_owner_t"></span><span id="rmt_set_memory_owner__rmt_channel_t.rmt_mem_owner_t"></span><span class="target" id="rmt_8h_1afd8176f8433e55926cc642899bad28da"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_memory_owner</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv415rmt_mem_owner_t" title="rmt_mem_owner_t">rmt_mem_owner_t</a> <em>owner</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420rmt_set_memory_owner13rmt_channel_t15rmt_mem_owner_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT memory owner. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Setting memroy is only valid for RX channel.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">owner</span></code>: To set when the transmitter or receiver can process the memory of channel.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv420rmt_get_memory_owner13rmt_channel_tP15rmt_mem_owner_t">
+<span id="_CPPv320rmt_get_memory_owner13rmt_channel_tP15rmt_mem_owner_t"></span><span id="_CPPv220rmt_get_memory_owner13rmt_channel_tP15rmt_mem_owner_t"></span><span id="rmt_get_memory_owner__rmt_channel_t.rmt_mem_owner_tP"></span><span class="target" id="rmt_8h_1af74eaac21cbf3182912f63b734a02bc6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_memory_owner</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv415rmt_mem_owner_t" title="rmt_mem_owner_t">rmt_mem_owner_t</a> *<em>owner</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420rmt_get_memory_owner13rmt_channel_tP15rmt_mem_owner_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT memory owner. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">owner</span></code>: Pointer to get memory owner.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv420rmt_set_tx_loop_mode13rmt_channel_tb">
+<span id="_CPPv320rmt_set_tx_loop_mode13rmt_channel_tb"></span><span id="_CPPv220rmt_set_tx_loop_mode13rmt_channel_tb"></span><span id="rmt_set_tx_loop_mode__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1a4fb5c69f876d1adcbcd32fcb59198a50"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_tx_loop_mode</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>loop_en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420rmt_set_tx_loop_mode13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT tx loop mode. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loop_en</span></code>: Enable RMT transmitter loop sending mode. If set true, transmitter will continue sending from the first data to the last data in channel over and over again in a loop.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv420rmt_get_tx_loop_mode13rmt_channel_tPb">
+<span id="_CPPv320rmt_get_tx_loop_mode13rmt_channel_tPb"></span><span id="_CPPv220rmt_get_tx_loop_mode13rmt_channel_tPb"></span><span id="rmt_get_tx_loop_mode__rmt_channel_t.bP"></span><span class="target" id="rmt_8h_1a4c9791141400d7a51f79f58b761ca099"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_tx_loop_mode</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool *<em>loop_en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420rmt_get_tx_loop_mode13rmt_channel_tPb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT tx loop mode. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">loop_en</span></code>: Pointer to accept RMT transmitter loop sending mode.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417rmt_set_rx_filter13rmt_channel_tb7uint8_t">
+<span id="_CPPv317rmt_set_rx_filter13rmt_channel_tb7uint8_t"></span><span id="_CPPv217rmt_set_rx_filter13rmt_channel_tb7uint8_t"></span><span id="rmt_set_rx_filter__rmt_channel_t.b.uint8_t"></span><span class="target" id="rmt_8h_1ab357a77c9a604f7e62d4af65507b35cd"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_rx_filter</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>rx_filter_en</em>, uint8_t <em>thresh</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417rmt_set_rx_filter13rmt_channel_tb7uint8_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT RX filter. </p>
+<p>In receive mode, channel will ignore input pulse when the pulse width is smaller than threshold. Counted in source clock, not divided counter clock.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rx_filter_en</span></code>: To enable RMT receiver filter. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thresh</span></code>: Threshold of pulse width for receiver.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_set_source_clk13rmt_channel_t16rmt_source_clk_t">
+<span id="_CPPv318rmt_set_source_clk13rmt_channel_t16rmt_source_clk_t"></span><span id="_CPPv218rmt_set_source_clk13rmt_channel_t16rmt_source_clk_t"></span><span id="rmt_set_source_clk__rmt_channel_t.rmt_source_clk_t"></span><span class="target" id="rmt_8h_1a3f644c17ffe5c2b1f46415002c4df878"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_source_clk</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv416rmt_source_clk_t" title="rmt_source_clk_t">rmt_source_clk_t</a> <em>base_clk</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_set_source_clk13rmt_channel_t16rmt_source_clk_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT source clock. </p>
+<p>RMT module has two clock sources:<ol class="arabic simple">
+<li><p>APB clock which is 80Mhz</p></li>
+<li><p>REF tick clock, which would be 1Mhz (not supported in this version).</p></li>
+</ol>
+</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">base_clk</span></code>: To choose source clock for RMT module.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_get_source_clk13rmt_channel_tP16rmt_source_clk_t">
+<span id="_CPPv318rmt_get_source_clk13rmt_channel_tP16rmt_source_clk_t"></span><span id="_CPPv218rmt_get_source_clk13rmt_channel_tP16rmt_source_clk_t"></span><span id="rmt_get_source_clk__rmt_channel_t.rmt_source_clk_tP"></span><span class="target" id="rmt_8h_1a0b84ce35ce9149caef958b579360d496"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_source_clk</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv416rmt_source_clk_t" title="rmt_source_clk_t">rmt_source_clk_t</a> *<em>src_clk</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_get_source_clk13rmt_channel_tP16rmt_source_clk_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT source clock. </p>
+<p>RMT module has two clock sources:<ol class="arabic simple">
+<li><p>APB clock which is 80Mhz</p></li>
+<li><p>REF tick clock, which would be 1Mhz (not supported in this version).</p></li>
+</ol>
+</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src_clk</span></code>: Pointer to accept source clock for RMT module.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_set_idle_level13rmt_channel_tb16rmt_idle_level_t">
+<span id="_CPPv318rmt_set_idle_level13rmt_channel_tb16rmt_idle_level_t"></span><span id="_CPPv218rmt_set_idle_level13rmt_channel_tb16rmt_idle_level_t"></span><span id="rmt_set_idle_level__rmt_channel_t.b.rmt_idle_level_t"></span><span class="target" id="rmt_8h_1a14879704eea06a4ece05033e70f6e116"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_idle_level</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>idle_out_en</em>, <a class="reference internal" href="#_CPPv416rmt_idle_level_t" title="rmt_idle_level_t">rmt_idle_level_t</a> <em>level</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_set_idle_level13rmt_channel_tb16rmt_idle_level_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT idle output level for transmitter. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idle_out_en</span></code>: To enable idle level output. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code>: To set the output signal’s level for channel in idle state.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_get_idle_level13rmt_channel_tPbP16rmt_idle_level_t">
+<span id="_CPPv318rmt_get_idle_level13rmt_channel_tPbP16rmt_idle_level_t"></span><span id="_CPPv218rmt_get_idle_level13rmt_channel_tPbP16rmt_idle_level_t"></span><span id="rmt_get_idle_level__rmt_channel_t.bP.rmt_idle_level_tP"></span><span class="target" id="rmt_8h_1a7f4312c0ac683079d8b4b9e3c654c82b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_idle_level</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool *<em>idle_out_en</em>, <a class="reference internal" href="#_CPPv416rmt_idle_level_t" title="rmt_idle_level_t">rmt_idle_level_t</a> *<em>level</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_get_idle_level13rmt_channel_tPbP16rmt_idle_level_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT idle output level for transmitter. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">idle_out_en</span></code>: Pointer to accept value of enable idle. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">level</span></code>: Pointer to accept value of output signal’s level in idle state for specified channel.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv414rmt_get_status13rmt_channel_tP8uint32_t">
+<span id="_CPPv314rmt_get_status13rmt_channel_tP8uint32_t"></span><span id="_CPPv214rmt_get_status13rmt_channel_tP8uint32_t"></span><span id="rmt_get_status__rmt_channel_t.uint32_tP"></span><span class="target" id="rmt_8h_1a350a18c0c54e4fca9e2cfe2e2f71138a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_status</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint32_t *<em>status</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414rmt_get_status13rmt_channel_tP8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get RMT status. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">status</span></code>: Pointer to accept channel status. Please refer to RMT_CHnSTATUS_REG(n=0~7) in <code class="docutils literal notranslate"><span class="pre">rmt_reg.h</span></code> for more details of each field.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_set_rx_intr_en13rmt_channel_tb">
+<span id="_CPPv318rmt_set_rx_intr_en13rmt_channel_tb"></span><span id="_CPPv218rmt_set_rx_intr_en13rmt_channel_tb"></span><span id="rmt_set_rx_intr_en__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1ac474ac159bdaceec598fa0c201715386"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_rx_intr_en</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_set_rx_intr_en13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT RX interrupt enable. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">en</span></code>: enable or disable RX interrupt.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv419rmt_set_err_intr_en13rmt_channel_tb">
+<span id="_CPPv319rmt_set_err_intr_en13rmt_channel_tb"></span><span id="_CPPv219rmt_set_err_intr_en13rmt_channel_tb"></span><span id="rmt_set_err_intr_en__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1a06890fe6e87895a26572da0026a8c40a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_err_intr_en</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419rmt_set_err_intr_en13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT RX error interrupt enable. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">en</span></code>: enable or disable RX err interrupt.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_set_tx_intr_en13rmt_channel_tb">
+<span id="_CPPv318rmt_set_tx_intr_en13rmt_channel_tb"></span><span id="_CPPv218rmt_set_tx_intr_en13rmt_channel_tb"></span><span id="rmt_set_tx_intr_en__rmt_channel_t.b"></span><span class="target" id="rmt_8h_1abaa0cec80f3257e2df3d027ee69b0530"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_tx_intr_en</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>en</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_set_tx_intr_en13rmt_channel_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT TX interrupt enable. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">en</span></code>: enable or disable TX interrupt.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422rmt_set_tx_thr_intr_en13rmt_channel_tb8uint16_t">
+<span id="_CPPv322rmt_set_tx_thr_intr_en13rmt_channel_tb8uint16_t"></span><span id="_CPPv222rmt_set_tx_thr_intr_en13rmt_channel_tb8uint16_t"></span><span id="rmt_set_tx_thr_intr_en__rmt_channel_t.b.uint16_t"></span><span class="target" id="rmt_8h_1a78a3849bc03e740cde87d853f810fc2b"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_tx_thr_intr_en</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, bool <em>en</em>, uint16_t <em>evt_thresh</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422rmt_set_tx_thr_intr_en13rmt_channel_tb8uint16_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT TX threshold event interrupt enable. </p>
+<p>An interrupt will be triggered when the number of transmitted items reaches the threshold value</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">en</span></code>: enable or disable TX event interrupt. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">evt_thresh</span></code>: RMT event interrupt threshold value</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv412rmt_set_gpio13rmt_channel_t10rmt_mode_t10gpio_num_tb">
+<span id="_CPPv312rmt_set_gpio13rmt_channel_t10rmt_mode_t10gpio_num_tb"></span><span id="_CPPv212rmt_set_gpio13rmt_channel_t10rmt_mode_t10gpio_num_tb"></span><span id="rmt_set_gpio__rmt_channel_t.rmt_mode_t.gpio_num_t.b"></span><span class="target" id="rmt_8h_1a2dc6071208163879a88d748003d865c6"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_gpio</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv410rmt_mode_t" title="rmt_mode_t">rmt_mode_t</a> <em>mode</em>, <a class="reference internal" href="gpio.html#_CPPv410gpio_num_t" title="gpio_num_t">gpio_num_t</a> <em>gpio_num</em>, bool <em>invert_signal</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv412rmt_set_gpio13rmt_channel_t10rmt_mode_t10gpio_num_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configure the GPIO used by RMT channel. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Configure RMT GPIO failed because of wrong parameter</p></li>
+<li><p>ESP_OK Configure RMT GPIO successfully </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: RMT mode, either RMT_MODE_TX or RMT_MODE_RX </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gpio_num</span></code>: GPIO number, which is connected with certain RMT signal </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">invert_signal</span></code>: Invert RMT signal physically by GPIO matrix</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv410rmt_configPK12rmt_config_t">
+<span id="_CPPv310rmt_configPK12rmt_config_t"></span><span id="_CPPv210rmt_configPK12rmt_config_t"></span><span id="rmt_config__rmt_config_tCP"></span><span class="target" id="rmt_8h_1a9e0f818e90e5aded6cac3dd0b4e9c5ea"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_config</code><span class="sig-paren">(</span><em class="property">const</em> <a class="reference internal" href="#_CPPv412rmt_config_t" title="rmt_config_t">rmt_config_t</a> *<em>rmt_param</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv410rmt_configPK12rmt_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Configure RMT parameters. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_param</span></code>: RMT parameter struct</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t">
+<span id="_CPPv316rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t"></span><span id="_CPPv216rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t"></span><span class="target" id="rmt_8h_1a316b7e7c714209f4977edd00e8491a4f"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_isr_register</code><span class="sig-paren">(</span>void (*<em>fn</em>)<span class="sig-paren">(</span>void *<span class="sig-paren">)</span>, void *<em>arg</em>, int <em>intr_alloc_flags</em>, <a class="reference internal" href="#_CPPv416rmt_isr_handle_t" title="rmt_isr_handle_t">rmt_isr_handle_t</a> *<em>handle</em>, <span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416rmt_isr_registerPFvPvEPviP16rmt_isr_handle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Register RMT interrupt handler, the handler is an ISR. </p>
+<p>The handler will be attached to the same CPU core that this function is running on.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>If you already called rmt_driver_install to use system RMT driver, please do not register ISR handler again.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Function pointer error.</p></li>
+<li><p>ESP_FAIL System driver installed, can not register ISR handler for RMT </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fn</span></code>: Interrupt handler function. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arg</span></code>: Parameter for the handler function </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">intr_alloc_flags</span></code>: Flags used to allocate the interrupt. One or multiple (ORred) ESP_INTR_FLAG_* values. See esp_intr_alloc.h for more info. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>: If non-zero, a handle to later clean up the ISR gets stored here.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_isr_deregister16rmt_isr_handle_t">
+<span id="_CPPv318rmt_isr_deregister16rmt_isr_handle_t"></span><span id="_CPPv218rmt_isr_deregister16rmt_isr_handle_t"></span><span id="rmt_isr_deregister__rmt_isr_handle_t"></span><span class="target" id="rmt_8h_1a6420254175566faef8ed7446d9bde316"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_isr_deregister</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv416rmt_isr_handle_t" title="rmt_isr_handle_t">rmt_isr_handle_t</a> <em>handle</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_isr_deregister16rmt_isr_handle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Deregister previously registered RMT interrupt handler. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK Success</p></li>
+<li><p>ESP_ERR_INVALID_ARG Handle invalid </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">handle</span></code>: Handle obtained from rmt_isr_register</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417rmt_fill_tx_items13rmt_channel_tPK12rmt_item32_t8uint16_t8uint16_t">
+<span id="_CPPv317rmt_fill_tx_items13rmt_channel_tPK12rmt_item32_t8uint16_t8uint16_t"></span><span id="_CPPv217rmt_fill_tx_items13rmt_channel_tPK12rmt_item32_t8uint16_t8uint16_t"></span><span id="rmt_fill_tx_items__rmt_channel_t.rmt_item32_tCP.uint16_t.uint16_t"></span><span class="target" id="rmt_8h_1a9e5dfda603a1b4dbbfe091adc1b483f0"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_fill_tx_items</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <em class="property">const</em> rmt_item32_t *<em>item</em>, uint16_t <em>item_num</em>, uint16_t <em>mem_offset</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417rmt_fill_tx_items13rmt_channel_tPK12rmt_item32_t8uint16_t8uint16_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Fill memory data of channel with given RMT items. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">item</span></code>: Pointer of items. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">item_num</span></code>: RMT sending items number. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mem_offset</span></code>: Index offset of memory.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv418rmt_driver_install13rmt_channel_t6size_ti">
+<span id="_CPPv318rmt_driver_install13rmt_channel_t6size_ti"></span><span id="_CPPv218rmt_driver_install13rmt_channel_t6size_ti"></span><span id="rmt_driver_install__rmt_channel_t.s.i"></span><span class="target" id="rmt_8h_1a026ae9e5b1628afefedb8e4dbc440bbb"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_driver_install</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, size_t <em>rx_buf_size</em>, int <em>intr_alloc_flags</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv418rmt_driver_install13rmt_channel_t6size_ti" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Initialize RMT driver. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_STATE Driver is already installed, call rmt_driver_uninstall first.</p></li>
+<li><p>ESP_ERR_NO_MEM Memory allocation failure</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rx_buf_size</span></code>: Size of RMT RX ringbuffer. Can be 0 if the RX ringbuffer is not used. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">intr_alloc_flags</span></code>: Flags for the RMT driver interrupt handler. Pass 0 for default flags. See esp_intr_alloc.h for details. If ESP_INTR_FLAG_IRAM is used, please do not use the memory allocated from psram when calling rmt_write_items.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv420rmt_driver_uninstall13rmt_channel_t">
+<span id="_CPPv320rmt_driver_uninstall13rmt_channel_t"></span><span id="_CPPv220rmt_driver_uninstall13rmt_channel_t"></span><span id="rmt_driver_uninstall__rmt_channel_t"></span><span class="target" id="rmt_8h_1a38160f5e413d51841184450490fdc22d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_driver_uninstall</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv420rmt_driver_uninstall13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Uninstall RMT driver. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422rmt_get_channel_statusP27rmt_channel_status_result_t">
+<span id="_CPPv322rmt_get_channel_statusP27rmt_channel_status_result_t"></span><span id="_CPPv222rmt_get_channel_statusP27rmt_channel_status_result_t"></span><span id="rmt_get_channel_status__rmt_channel_status_result_tP"></span><span class="target" id="rmt_8h_1a76bad6f7c2496eeea5380e178ffed70d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_channel_status</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv427rmt_channel_status_result_t" title="rmt_channel_status_result_t">rmt_channel_status_result_t</a> *<em>channel_status</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422rmt_get_channel_statusP27rmt_channel_status_result_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the current status of eight channels. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Do not call this function if it is possible that <code class="docutils literal notranslate"><span class="pre">rmt_driver_uninstall</span></code> will be called at the same time.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter is NULL</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">channel_status</span></code>: store the current status of each channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv421rmt_get_counter_clock13rmt_channel_tP8uint32_t">
+<span id="_CPPv321rmt_get_counter_clock13rmt_channel_tP8uint32_t"></span><span id="_CPPv221rmt_get_counter_clock13rmt_channel_tP8uint32_t"></span><span id="rmt_get_counter_clock__rmt_channel_t.uint32_tP"></span><span class="target" id="rmt_8h_1a6b2eb70b755a72b496fddfa3db3d4026"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_counter_clock</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, uint32_t *<em>clock_hz</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv421rmt_get_counter_clock13rmt_channel_tP8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get speed of channel’s internal counter clock. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter is NULL</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">clock_hz</span></code>: counter clock speed, in hz</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv415rmt_write_items13rmt_channel_tPK12rmt_item32_tib">
+<span id="_CPPv315rmt_write_items13rmt_channel_tPK12rmt_item32_tib"></span><span id="_CPPv215rmt_write_items13rmt_channel_tPK12rmt_item32_tib"></span><span id="rmt_write_items__rmt_channel_t.rmt_item32_tCP.i.b"></span><span class="target" id="rmt_8h_1a6dbf94f6ccf07b03683dee8524f900a4"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_write_items</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <em class="property">const</em> rmt_item32_t *<em>rmt_item</em>, int <em>item_num</em>, bool <em>wait_tx_done</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415rmt_write_items13rmt_channel_tPK12rmt_item32_tib" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT send waveform from rmt_item array. </p>
+<p>This API allows user to send waveform with any length.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>This function will not copy data, instead, it will point to the original items, and send the waveform items. If wait_tx_done is set to true, this function will block and will not return until all items have been sent out. If wait_tx_done is set to false, this function will return immediately, and the driver interrupt will continue sending the items. We must make sure the item data will not be damaged when the driver is still sending items in driver interrupt.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rmt_item</span></code>: head point of RMT items array. If ESP_INTR_FLAG_IRAM is used, please do not use the memory allocated from psram when calling rmt_write_items. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">item_num</span></code>: RMT data item number. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wait_tx_done</span></code>: <ul>
+<li><p>If set 1, it will block the task and wait for sending done.</p></li>
+<li><p>If set 0, it will not wait and return immediately.</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416rmt_wait_tx_done13rmt_channel_t10TickType_t">
+<span id="_CPPv316rmt_wait_tx_done13rmt_channel_t10TickType_t"></span><span id="_CPPv216rmt_wait_tx_done13rmt_channel_t10TickType_t"></span><span id="rmt_wait_tx_done__rmt_channel_t.TickType_t"></span><span class="target" id="rmt_8h_1ab70c9a02195e8962a7f478ac0868378d"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_wait_tx_done</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, TickType_t <em>wait_time</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416rmt_wait_tx_done13rmt_channel_t10TickType_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Wait RMT TX finished. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_OK RMT Tx done successfully</p></li>
+<li><p>ESP_ERR_TIMEOUT Exceeded the ‘wait_time’ given</p></li>
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_FAIL Driver not installed </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wait_time</span></code>: Maximum time in ticks to wait for transmission to be complete. If set 0, return immediately with ESP_ERR_TIMEOUT if TX is busy (polling).</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv422rmt_get_ringbuf_handle13rmt_channel_tP15RingbufHandle_t">
+<span id="_CPPv322rmt_get_ringbuf_handle13rmt_channel_tP15RingbufHandle_t"></span><span id="_CPPv222rmt_get_ringbuf_handle13rmt_channel_tP15RingbufHandle_t"></span><span id="rmt_get_ringbuf_handle__rmt_channel_t.RingbufHandle_tP"></span><span class="target" id="rmt_8h_1ac44b8ee543aea1808af04a150aac94f8"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_get_ringbuf_handle</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="../system/freertos_additions.html#_CPPv415RingbufHandle_t" title="RingbufHandle_t">RingbufHandle_t</a> *<em>buf_handle</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv422rmt_get_ringbuf_handle13rmt_channel_tP15RingbufHandle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get ringbuffer from RMT. </p>
+<p>Users can get the RMT RX ringbuffer handle, and process the RX data.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">buf_handle</span></code>: Pointer to buffer handle to accept RX ringbuffer handle.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv419rmt_translator_init13rmt_channel_t15sample_to_rmt_t">
+<span id="_CPPv319rmt_translator_init13rmt_channel_t15sample_to_rmt_t"></span><span id="_CPPv219rmt_translator_init13rmt_channel_t15sample_to_rmt_t"></span><span id="rmt_translator_init__rmt_channel_t.sample_to_rmt_t"></span><span class="target" id="rmt_8h_1ae97b7759a117b22c1b016edacbb83772"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_translator_init</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv415sample_to_rmt_t" title="sample_to_rmt_t">sample_to_rmt_t</a> <em>fn</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv419rmt_translator_init13rmt_channel_t15sample_to_rmt_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Init rmt translator and register user callback. The callback will convert the raw data that needs to be sent to rmt format. If a channel is initialized more than once, tha user callback will be replaced by the later. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_FAIL Init fail.</p></li>
+<li><p>ESP_OK Init success. </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel . </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fn</span></code>: Point to the data conversion function.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv426rmt_translator_set_context13rmt_channel_tPv">
+<span id="_CPPv326rmt_translator_set_context13rmt_channel_tPv"></span><span id="_CPPv226rmt_translator_set_context13rmt_channel_tPv"></span><span id="rmt_translator_set_context__rmt_channel_t.voidP"></span><span class="target" id="rmt_8h_1aee203b07feb87aafbab49a8d0ec1038a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_translator_set_context</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, void *<em>context</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426rmt_translator_set_context13rmt_channel_tPv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set user context for the translator of specific channel. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_FAIL Set context fail</p></li>
+<li><p>ESP_OK Set context success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel number </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code>: User context</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv426rmt_translator_get_contextPK6size_tPPv">
+<span id="_CPPv326rmt_translator_get_contextPK6size_tPPv"></span><span id="_CPPv226rmt_translator_get_contextPK6size_tPPv"></span><span id="rmt_translator_get_context__sCP.voidPP"></span><span class="target" id="rmt_8h_1a1e8e59596e2629eafe7111ed0531d64a"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_translator_get_context</code><span class="sig-paren">(</span><em class="property">const</em> size_t *<em>item_num</em>, void **<em>context</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv426rmt_translator_get_contextPK6size_tPPv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the user context set by ‘rmt_translator_set_context’. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>This API must be invoked in the RMT translator callback function, and the first argument must be the actual parameter ‘item_num’ you got in that callback function.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_FAIL Get context fail</p></li>
+<li><p>ESP_OK Get context success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">item_num</span></code>: Address of the memory which contains the number of translated items (It’s from driver’s internal memroy) </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">context</span></code>: Returned User context</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv416rmt_write_sample13rmt_channel_tPK7uint8_t6size_tb">
+<span id="_CPPv316rmt_write_sample13rmt_channel_tPK7uint8_t6size_tb"></span><span id="_CPPv216rmt_write_sample13rmt_channel_tPK7uint8_t6size_tb"></span><span id="rmt_write_sample__rmt_channel_t.uint8_tCP.s.b"></span><span class="target" id="rmt_8h_1af296bcb2ca8476d7187332e7ae74cc5e"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_write_sample</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <em class="property">const</em> uint8_t *<em>src</em>, size_t <em>src_size</em>, bool <em>wait_tx_done</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv416rmt_write_sample13rmt_channel_tPK7uint8_t6size_tb" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Translate uint8_t type of data into rmt format and send it out. Requires rmt_translator_init to init the translator first. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_FAIL Send fail</p></li>
+<li><p>ESP_OK Send success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel . </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code>: Pointer to the raw data. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src_size</span></code>: The size of the raw data. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wait_tx_done</span></code>: Set true to wait all data send done.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv428rmt_register_tx_end_callback15rmt_tx_end_fn_tPv">
+<span id="_CPPv328rmt_register_tx_end_callback15rmt_tx_end_fn_tPv"></span><span id="_CPPv228rmt_register_tx_end_callback15rmt_tx_end_fn_tPv"></span><span id="rmt_register_tx_end_callback__rmt_tx_end_fn_t.voidP"></span><span class="target" id="rmt_8h_1a5cec5a0a6ea06cec698c00bb1967ed2d"></span><a class="reference internal" href="#_CPPv421rmt_tx_end_callback_t" title="rmt_tx_end_callback_t">rmt_tx_end_callback_t</a> <code class="sig-name descname">rmt_register_tx_end_callback</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415rmt_tx_end_fn_t" title="rmt_tx_end_fn_t">rmt_tx_end_fn_t</a> <em>function</em>, void *<em>arg</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv428rmt_register_tx_end_callback15rmt_tx_end_fn_tPv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Registers a callback that will be called when transmission ends. </p>
+<p>Called by rmt_driver_isr_default in interrupt context.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Requires rmt_driver_install to install the default ISR handler.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>the previous callback settings (members will be set to NULL if there was none) </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">function</span></code>: Function to be called from the default interrupt handler or NULL. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arg</span></code>: Argument which will be provided to the callback when it is called.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv417rmt_memory_rw_rst13rmt_channel_t">
+<span id="_CPPv317rmt_memory_rw_rst13rmt_channel_t"></span><span id="_CPPv217rmt_memory_rw_rst13rmt_channel_t"></span><span id="rmt_memory_rw_rst__rmt_channel_t"></span><span class="target" id="rmt_8h_1aa8269bc77875d7373c3b2d7ebe1a8e32"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_memory_rw_rst</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv417rmt_memory_rw_rst13rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Reset RMT TX/RX memory index. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv424rmt_set_intr_enable_mask8uint32_t">
+<span id="_CPPv324rmt_set_intr_enable_mask8uint32_t"></span><span id="_CPPv224rmt_set_intr_enable_mask8uint32_t"></span><span id="rmt_set_intr_enable_mask__uint32_t"></span><span class="target" id="rmt_8h_1a8aa861a4000ef028a0cb7411a8c8fa0b"></span>void <code class="sig-name descname">rmt_set_intr_enable_mask</code><span class="sig-paren">(</span>uint32_t <em>mask</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424rmt_set_intr_enable_mask8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set mask value to RMT interrupt enable register. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code>: Bit mask to set to the register </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv424rmt_clr_intr_enable_mask8uint32_t">
+<span id="_CPPv324rmt_clr_intr_enable_mask8uint32_t"></span><span id="_CPPv224rmt_clr_intr_enable_mask8uint32_t"></span><span id="rmt_clr_intr_enable_mask__uint32_t"></span><span class="target" id="rmt_8h_1ac0a8084172c22faebd1c0cebeee4cf6c"></span>void <code class="sig-name descname">rmt_clr_intr_enable_mask</code><span class="sig-paren">(</span>uint32_t <em>mask</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv424rmt_clr_intr_enable_mask8uint32_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clear mask value to RMT interrupt enable register. </p>
+<p><dl class="simple">
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mask</span></code>: Bit mask to clear the register </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="_CPPv411rmt_set_pin13rmt_channel_t10rmt_mode_t10gpio_num_t">
+<span id="_CPPv311rmt_set_pin13rmt_channel_t10rmt_mode_t10gpio_num_t"></span><span id="_CPPv211rmt_set_pin13rmt_channel_t10rmt_mode_t10gpio_num_t"></span><span id="rmt_set_pin__rmt_channel_t.rmt_mode_t.gpio_num_t"></span><span class="target" id="rmt_8h_1ae7a81dbf0453fca62bb1abba99304210"></span><a class="reference internal" href="../system/esp_err.html#_CPPv49esp_err_t" title="esp_err_t">esp_err_t</a> <code class="sig-name descname">rmt_set_pin</code><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <em>channel</em>, <a class="reference internal" href="#_CPPv410rmt_mode_t" title="rmt_mode_t">rmt_mode_t</a> <em>mode</em>, <a class="reference internal" href="gpio.html#_CPPv410gpio_num_t" title="gpio_num_t">gpio_num_t</a> <em>gpio_num</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411rmt_set_pin13rmt_channel_t10rmt_mode_t10gpio_num_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set RMT pin. </p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p><ul class="simple">
+<li><p>ESP_ERR_INVALID_ARG Parameter error</p></li>
+<li><p>ESP_OK Success </p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">channel</span></code>: RMT channel </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mode</span></code>: TX or RX mode for RMT </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gpio_num</span></code>: GPIO number to transmit or receive the signal.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="section" id="structures">
+<h3>Structures<a class="headerlink" href="#structures" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="_CPPv415rmt_tx_config_t">
+<span id="_CPPv315rmt_tx_config_t"></span><span id="_CPPv215rmt_tx_config_t"></span><span id="rmt_tx_config_t"></span><span class="target" id="structrmt__tx__config__t"></span><em class="property">struct </em><code class="sig-name descname">rmt_tx_config_t</code><a class="headerlink" href="#_CPPv415rmt_tx_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Data struct of RMT TX configure parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t15carrier_freq_hzE">
+<span id="_CPPv3N15rmt_tx_config_t15carrier_freq_hzE"></span><span id="_CPPv2N15rmt_tx_config_t15carrier_freq_hzE"></span><span id="rmt_tx_config_t::carrier_freq_hz__uint32_t"></span><span class="target" id="structrmt__tx__config__t_1a9db8d773d611924c16e0f83f4e27667e"></span>uint32_t <code class="sig-name descname">carrier_freq_hz</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t15carrier_freq_hzE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT carrier frequency </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t13carrier_levelE">
+<span id="_CPPv3N15rmt_tx_config_t13carrier_levelE"></span><span id="_CPPv2N15rmt_tx_config_t13carrier_levelE"></span><span id="rmt_tx_config_t::carrier_level__rmt_carrier_level_t"></span><span class="target" id="structrmt__tx__config__t_1a575035b479879d96cb15fe9a45b17e9e"></span><a class="reference internal" href="#_CPPv419rmt_carrier_level_t" title="rmt_carrier_level_t">rmt_carrier_level_t</a> <code class="sig-name descname">carrier_level</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t13carrier_levelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Level of the RMT output, when the carrier is applied </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t10idle_levelE">
+<span id="_CPPv3N15rmt_tx_config_t10idle_levelE"></span><span id="_CPPv2N15rmt_tx_config_t10idle_levelE"></span><span id="rmt_tx_config_t::idle_level__rmt_idle_level_t"></span><span class="target" id="structrmt__tx__config__t_1ae7ab64015e83fc2f690d7a5c14f1ef54"></span><a class="reference internal" href="#_CPPv416rmt_idle_level_t" title="rmt_idle_level_t">rmt_idle_level_t</a> <code class="sig-name descname">idle_level</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t10idle_levelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT idle level </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t20carrier_duty_percentE">
+<span id="_CPPv3N15rmt_tx_config_t20carrier_duty_percentE"></span><span id="_CPPv2N15rmt_tx_config_t20carrier_duty_percentE"></span><span id="rmt_tx_config_t::carrier_duty_percent__uint8_t"></span><span class="target" id="structrmt__tx__config__t_1ae702467a252ab26a6e5b1fb160e8f9fd"></span>uint8_t <code class="sig-name descname">carrier_duty_percent</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t20carrier_duty_percentE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT carrier duty (%) </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t10carrier_enE">
+<span id="_CPPv3N15rmt_tx_config_t10carrier_enE"></span><span id="_CPPv2N15rmt_tx_config_t10carrier_enE"></span><span id="rmt_tx_config_t::carrier_en__b"></span><span class="target" id="structrmt__tx__config__t_1a70fce7512634d4bf8ccddb7fae73ee17"></span>bool <code class="sig-name descname">carrier_en</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t10carrier_enE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT carrier enable </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t7loop_enE">
+<span id="_CPPv3N15rmt_tx_config_t7loop_enE"></span><span id="_CPPv2N15rmt_tx_config_t7loop_enE"></span><span id="rmt_tx_config_t::loop_en__b"></span><span class="target" id="structrmt__tx__config__t_1a2ea975493f14d132c5c51e9b5f4b4178"></span>bool <code class="sig-name descname">loop_en</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t7loop_enE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Enable sending RMT items in a loop </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_tx_config_t14idle_output_enE">
+<span id="_CPPv3N15rmt_tx_config_t14idle_output_enE"></span><span id="_CPPv2N15rmt_tx_config_t14idle_output_enE"></span><span id="rmt_tx_config_t::idle_output_en__b"></span><span class="target" id="structrmt__tx__config__t_1a17afec09cb13254c0ba3d48a202101b4"></span>bool <code class="sig-name descname">idle_output_en</code><a class="headerlink" href="#_CPPv4N15rmt_tx_config_t14idle_output_enE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT idle level output enable </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv415rmt_rx_config_t">
+<span id="_CPPv315rmt_rx_config_t"></span><span id="_CPPv215rmt_rx_config_t"></span><span id="rmt_rx_config_t"></span><span class="target" id="structrmt__rx__config__t"></span><em class="property">struct </em><code class="sig-name descname">rmt_rx_config_t</code><a class="headerlink" href="#_CPPv415rmt_rx_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Data struct of RMT RX configure parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N15rmt_rx_config_t14idle_thresholdE">
+<span id="_CPPv3N15rmt_rx_config_t14idle_thresholdE"></span><span id="_CPPv2N15rmt_rx_config_t14idle_thresholdE"></span><span id="rmt_rx_config_t::idle_threshold__uint16_t"></span><span class="target" id="structrmt__rx__config__t_1ac5ef35a092474e44c7d8c5bdc246011c"></span>uint16_t <code class="sig-name descname">idle_threshold</code><a class="headerlink" href="#_CPPv4N15rmt_rx_config_t14idle_thresholdE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT RX idle threshold </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_rx_config_t19filter_ticks_threshE">
+<span id="_CPPv3N15rmt_rx_config_t19filter_ticks_threshE"></span><span id="_CPPv2N15rmt_rx_config_t19filter_ticks_threshE"></span><span id="rmt_rx_config_t::filter_ticks_thresh__uint8_t"></span><span class="target" id="structrmt__rx__config__t_1a21ddcfd6cbe120716c1f3b1f7e12aa6c"></span>uint8_t <code class="sig-name descname">filter_ticks_thresh</code><a class="headerlink" href="#_CPPv4N15rmt_rx_config_t19filter_ticks_threshE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT filter tick number </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N15rmt_rx_config_t9filter_enE">
+<span id="_CPPv3N15rmt_rx_config_t9filter_enE"></span><span id="_CPPv2N15rmt_rx_config_t9filter_enE"></span><span id="rmt_rx_config_t::filter_en__b"></span><span class="target" id="structrmt__rx__config__t_1a6c0aa340a641a89bbe2bceb953c1895d"></span>bool <code class="sig-name descname">filter_en</code><a class="headerlink" href="#_CPPv4N15rmt_rx_config_t9filter_enE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT receiver filter enable </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv412rmt_config_t">
+<span id="_CPPv312rmt_config_t"></span><span id="_CPPv212rmt_config_t"></span><span id="rmt_config_t"></span><span class="target" id="structrmt__config__t"></span><em class="property">struct </em><code class="sig-name descname">rmt_config_t</code><a class="headerlink" href="#_CPPv412rmt_config_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Data struct of RMT configure parameters. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t8rmt_modeE">
+<span id="_CPPv3N12rmt_config_t8rmt_modeE"></span><span id="_CPPv2N12rmt_config_t8rmt_modeE"></span><span id="rmt_config_t::rmt_mode__rmt_mode_t"></span><span class="target" id="structrmt__config__t_1ae91c91a9a63f07c8cfc7adebb3ed4f79"></span><a class="reference internal" href="#_CPPv410rmt_mode_t" title="rmt_mode_t">rmt_mode_t</a> <code class="sig-name descname">rmt_mode</code><a class="headerlink" href="#_CPPv4N12rmt_config_t8rmt_modeE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT mode: transmitter or receiver </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t7channelE">
+<span id="_CPPv3N12rmt_config_t7channelE"></span><span id="_CPPv2N12rmt_config_t7channelE"></span><span id="rmt_config_t::channel__rmt_channel_t"></span><span class="target" id="structrmt__config__t_1aa894c7d1784d98c859f0cdfaa7bf919b"></span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> <code class="sig-name descname">channel</code><a class="headerlink" href="#_CPPv4N12rmt_config_t7channelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t8gpio_numE">
+<span id="_CPPv3N12rmt_config_t8gpio_numE"></span><span id="_CPPv2N12rmt_config_t8gpio_numE"></span><span id="rmt_config_t::gpio_num__gpio_num_t"></span><span class="target" id="structrmt__config__t_1a218d8754ef9e06baa681eaf4014184f7"></span><a class="reference internal" href="gpio.html#_CPPv410gpio_num_t" title="gpio_num_t">gpio_num_t</a> <code class="sig-name descname">gpio_num</code><a class="headerlink" href="#_CPPv4N12rmt_config_t8gpio_numE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT GPIO number </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t7clk_divE">
+<span id="_CPPv3N12rmt_config_t7clk_divE"></span><span id="_CPPv2N12rmt_config_t7clk_divE"></span><span id="rmt_config_t::clk_div__uint8_t"></span><span class="target" id="structrmt__config__t_1abe3a572c9febac3b5663128aaa450166"></span>uint8_t <code class="sig-name descname">clk_div</code><a class="headerlink" href="#_CPPv4N12rmt_config_t7clk_divE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel counter divider </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t13mem_block_numE">
+<span id="_CPPv3N12rmt_config_t13mem_block_numE"></span><span id="_CPPv2N12rmt_config_t13mem_block_numE"></span><span id="rmt_config_t::mem_block_num__uint8_t"></span><span class="target" id="structrmt__config__t_1a4106d2bee12b26e594687878488143e3"></span>uint8_t <code class="sig-name descname">mem_block_num</code><a class="headerlink" href="#_CPPv4N12rmt_config_t13mem_block_numE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT memory block number </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t5flagsE">
+<span id="_CPPv3N12rmt_config_t5flagsE"></span><span id="_CPPv2N12rmt_config_t5flagsE"></span><span id="rmt_config_t::flags__uint32_t"></span><span class="target" id="structrmt__config__t_1a399ee1d97dacef2edf5867c03494c7a7"></span>uint32_t <code class="sig-name descname">flags</code><a class="headerlink" href="#_CPPv4N12rmt_config_t5flagsE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel extra configurations, OR’d with RMT_CHANNEL_FLAGS_[*] </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t9tx_configE">
+<span id="_CPPv3N12rmt_config_t9tx_configE"></span><span id="_CPPv2N12rmt_config_t9tx_configE"></span><span id="rmt_config_t::tx_config__rmt_tx_config_t"></span><span class="target" id="structrmt__config__t_1aaa1b0811c37c4144a783bce1d6bb68eb"></span><a class="reference internal" href="#_CPPv415rmt_tx_config_t" title="rmt_tx_config_t">rmt_tx_config_t</a> <code class="sig-name descname">tx_config</code><a class="headerlink" href="#_CPPv4N12rmt_config_t9tx_configE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT TX parameter </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N12rmt_config_t9rx_configE">
+<span id="_CPPv3N12rmt_config_t9rx_configE"></span><span id="_CPPv2N12rmt_config_t9rx_configE"></span><span id="rmt_config_t::rx_config__rmt_rx_config_t"></span><span class="target" id="structrmt__config__t_1a2d396f9b9cdd9f82406d6bcc6a8e50da"></span><a class="reference internal" href="#_CPPv415rmt_rx_config_t" title="rmt_rx_config_t">rmt_rx_config_t</a> <code class="sig-name descname">rx_config</code><a class="headerlink" href="#_CPPv4N12rmt_config_t9rx_configE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT RX parameter </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="class">
+<dt id="_CPPv421rmt_tx_end_callback_t">
+<span id="_CPPv321rmt_tx_end_callback_t"></span><span id="_CPPv221rmt_tx_end_callback_t"></span><span id="rmt_tx_end_callback_t"></span><span class="target" id="structrmt__tx__end__callback__t"></span><em class="property">struct </em><code class="sig-name descname">rmt_tx_end_callback_t</code><a class="headerlink" href="#_CPPv421rmt_tx_end_callback_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Structure encapsulating a RMT TX end callback. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N21rmt_tx_end_callback_t8functionE">
+<span id="_CPPv3N21rmt_tx_end_callback_t8functionE"></span><span id="_CPPv2N21rmt_tx_end_callback_t8functionE"></span><span id="rmt_tx_end_callback_t::function__rmt_tx_end_fn_t"></span><span class="target" id="structrmt__tx__end__callback__t_1a3830ff1badacd491855c2fdfdc550a02"></span><a class="reference internal" href="#_CPPv415rmt_tx_end_fn_t" title="rmt_tx_end_fn_t">rmt_tx_end_fn_t</a> <code class="sig-name descname">function</code><a class="headerlink" href="#_CPPv4N21rmt_tx_end_callback_t8functionE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Function which is called on RMT TX end </p>
+</dd></dl>
+
+<dl class="member">
+<dt id="_CPPv4N21rmt_tx_end_callback_t3argE">
+<span id="_CPPv3N21rmt_tx_end_callback_t3argE"></span><span id="_CPPv2N21rmt_tx_end_callback_t3argE"></span><span id="rmt_tx_end_callback_t::arg__voidP"></span><span class="target" id="structrmt__tx__end__callback__t_1a80f02cc5231c36c97dbf8487b36c32f1"></span>void *<code class="sig-name descname">arg</code><a class="headerlink" href="#_CPPv4N21rmt_tx_end_callback_t3argE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Optional argument passed to function </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="macros">
+<h3>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h3>
+<dl class="macro">
+<dt id="c.RMT_CHANNEL_FLAGS_AWARE_DFS">
+<span class="target" id="rmt_8h_1a30f7efb56707edaaee5f9e642d0731e1"></span><code class="sig-name descname">RMT_CHANNEL_FLAGS_AWARE_DFS</code><a class="headerlink" href="#c.RMT_CHANNEL_FLAGS_AWARE_DFS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Channel can work during APB clock scaling </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.RMT_CHANNEL_FLAGS_INVERT_SIG">
+<span class="target" id="rmt_8h_1a92ecb4f9163a915d061a8b1060b15027"></span><code class="sig-name descname">RMT_CHANNEL_FLAGS_INVERT_SIG</code><a class="headerlink" href="#c.RMT_CHANNEL_FLAGS_INVERT_SIG" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invert RMT signal </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.RMT_MEM_ITEM_NUM">
+<span class="target" id="rmt_8h_1a1f379a31a8a4970c3228910699d2df45"></span><code class="sig-name descname">RMT_MEM_ITEM_NUM</code><a class="headerlink" href="#c.RMT_MEM_ITEM_NUM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Define memory space of each RMT channel (in words = 4 bytes) </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.RMT_DEFAULT_CONFIG_TX">
+<span class="target" id="rmt_8h_1a484ae998f9f9c10712c46fbaa9388fa9"></span><code class="sig-name descname">RMT_DEFAULT_CONFIG_TX</code><span class="sig-paren">(</span>gpio, channel_id<span class="sig-paren">)</span><a class="headerlink" href="#c.RMT_DEFAULT_CONFIG_TX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default configuration for Tx channel. </p>
+</dd></dl>
+
+<dl class="macro">
+<dt id="c.RMT_DEFAULT_CONFIG_RX">
+<span class="target" id="rmt_8h_1a709d4e1db526ed2d3a124c740cb791f8"></span><code class="sig-name descname">RMT_DEFAULT_CONFIG_RX</code><span class="sig-paren">(</span>gpio, channel_id<span class="sig-paren">)</span><a class="headerlink" href="#c.RMT_DEFAULT_CONFIG_RX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default configuration for RX channel. </p>
+</dd></dl>
+
+</div>
+<div class="section" id="type-definitions">
+<h3>Type Definitions<a class="headerlink" href="#type-definitions" title="Permalink to this headline">¶</a></h3>
+<dl class="type">
+<dt id="_CPPv416rmt_isr_handle_t">
+<span id="_CPPv316rmt_isr_handle_t"></span><span id="_CPPv216rmt_isr_handle_t"></span><span id="rmt_isr_handle_t"></span><span class="target" id="rmt_8h_1adbec6ef154d31cfc734eecac7e0fd929"></span><em class="property">typedef </em><a class="reference internal" href="../system/intr_alloc.html#_CPPv413intr_handle_t" title="intr_handle_t">intr_handle_t</a> <code class="sig-name descname">rmt_isr_handle_t</code><a class="headerlink" href="#_CPPv416rmt_isr_handle_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT interrupt handle. </p>
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv415rmt_tx_end_fn_t">
+<span id="_CPPv315rmt_tx_end_fn_t"></span><span id="_CPPv215rmt_tx_end_fn_t"></span><span id="rmt_tx_end_fn_t"></span><span class="target" id="rmt_8h_1ac60e99fd94f7540d240e002428a3794b"></span><em class="property">typedef </em>void (*<code class="sig-name descname">rmt_tx_end_fn_t</code>)<span class="sig-paren">(</span><a class="reference internal" href="#_CPPv413rmt_channel_t" title="rmt_channel_t">rmt_channel_t</a> channel, void *arg<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415rmt_tx_end_fn_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Type of RMT Tx End callback function. </p>
+</dd></dl>
+
+<dl class="type">
+<dt id="_CPPv415sample_to_rmt_t">
+<span id="_CPPv315sample_to_rmt_t"></span><span id="_CPPv215sample_to_rmt_t"></span><span id="sample_to_rmt_t"></span><span class="target" id="rmt_8h_1a14c31635694042f3c01ee1f647105369"></span><em class="property">typedef </em>void (*<code class="sig-name descname">sample_to_rmt_t</code>)<span class="sig-paren">(</span><em class="property">const</em> void *src, rmt_item32_t *dest, size_t src_size, size_t wanted_num, size_t *translated_size, size_t *item_num<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415sample_to_rmt_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>User callback function to convert uint8_t type data to rmt format(rmt_item32_t). </p>
+<p>This function may be called from an ISR, so, the code should be short and efficient.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>In fact, item_num should be a multiple of translated_size, e.g. : When we convert each byte of uint8_t type data to rmt format data, the relation between item_num and translated_size should be <code class="docutils literal notranslate"><span class="pre">item_num</span> <span class="pre">=</span> <span class="pre">translated_size*8</span></code>. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">src</span></code>: Pointer to the buffer storing the raw data that needs to be converted to rmt format. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">dest</span></code>: Pointer to the buffer storing the rmt format data. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">src_size</span></code>: The raw data size. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wanted_num</span></code>: The number of rmt format data that wanted to get. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">translated_size</span></code>: The size of the raw data that has been converted to rmt format, it should return 0 if no data is converted in user callback. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">[out]</span> <span class="pre">item_num</span></code>: The number of the rmt format data that actually converted to, it can be less than wanted_num if there is not enough raw data, but cannot exceed wanted_num. it should return 0 if no data was converted.</p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id1">
+<h3>Header File<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/espressif/esp-idf/blob/v4.4/components/hal/include/hal/rmt_types.h">components/hal/include/hal/rmt_types.h</a></p></li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Structures<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="_CPPv427rmt_channel_status_result_t">
+<span id="_CPPv327rmt_channel_status_result_t"></span><span id="_CPPv227rmt_channel_status_result_t"></span><span id="rmt_channel_status_result_t"></span><span class="target" id="structrmt__channel__status__result__t"></span><em class="property">struct </em><code class="sig-name descname">rmt_channel_status_result_t</code><a class="headerlink" href="#_CPPv427rmt_channel_status_result_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Data struct of RMT channel status. </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric">Public Members</p>
+<dl class="member">
+<dt id="_CPPv4N27rmt_channel_status_result_t6statusE">
+<span id="_CPPv3N27rmt_channel_status_result_t6statusE"></span><span id="_CPPv2N27rmt_channel_status_result_t6statusE"></span><span id="rmt_channel_status_result_t::status__rmt_channel_status_tA"></span><span class="target" id="structrmt__channel__status__result__t_1ad4bfc934509e62b14794629602dc31c4"></span><a class="reference internal" href="#_CPPv420rmt_channel_status_t" title="rmt_channel_status_t">rmt_channel_status_t</a> <code class="sig-name descname">status</code>[<code class="sig-name descname">RMT_CHANNEL_MAX</code>]<a class="headerlink" href="#_CPPv4N27rmt_channel_status_result_t6statusE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Store the current status of each channel </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="enumerations">
+<h3>Enumerations<a class="headerlink" href="#enumerations" title="Permalink to this headline">¶</a></h3>
+<dl class="enum">
+<dt id="_CPPv413rmt_channel_t">
+<span id="_CPPv313rmt_channel_t"></span><span id="_CPPv213rmt_channel_t"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4ef"></span><em class="property">enum </em><code class="sig-name descname">rmt_channel_t</code><a class="headerlink" href="#_CPPv413rmt_channel_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel ID. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_0">
+<span id="_CPPv313RMT_CHANNEL_0"></span><span id="_CPPv213RMT_CHANNEL_0"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efacbedee156ee75a7e42e2d282c1dbe1ad"></span><code class="sig-name descname">RMT_CHANNEL_0</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_0" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 0 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_1">
+<span id="_CPPv313RMT_CHANNEL_1"></span><span id="_CPPv213RMT_CHANNEL_1"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efa1916256985f8b514fa29171a2dd0e544"></span><code class="sig-name descname">RMT_CHANNEL_1</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_1" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 1 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_2">
+<span id="_CPPv313RMT_CHANNEL_2"></span><span id="_CPPv213RMT_CHANNEL_2"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efa18ebc666451715ffdcbd124b4c1bcebb"></span><code class="sig-name descname">RMT_CHANNEL_2</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_2" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 2 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_3">
+<span id="_CPPv313RMT_CHANNEL_3"></span><span id="_CPPv213RMT_CHANNEL_3"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efa36af7e3229dad3ce6796bd9ad5e5f62a"></span><code class="sig-name descname">RMT_CHANNEL_3</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_3" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 3 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_4">
+<span id="_CPPv313RMT_CHANNEL_4"></span><span id="_CPPv213RMT_CHANNEL_4"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efa686fdc4be3587971cf7aa2444c85c3e0"></span><code class="sig-name descname">RMT_CHANNEL_4</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_4" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 4 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_5">
+<span id="_CPPv313RMT_CHANNEL_5"></span><span id="_CPPv213RMT_CHANNEL_5"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efaf8c189970020ae3525e1d6bf2990e817"></span><code class="sig-name descname">RMT_CHANNEL_5</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_5" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 5 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_6">
+<span id="_CPPv313RMT_CHANNEL_6"></span><span id="_CPPv213RMT_CHANNEL_6"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efa51cde38e0d1aeabf794730af9299919e"></span><code class="sig-name descname">RMT_CHANNEL_6</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_6" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 6 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv413RMT_CHANNEL_7">
+<span id="_CPPv313RMT_CHANNEL_7"></span><span id="_CPPv213RMT_CHANNEL_7"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efaf21adcf6fbcdb68372834702828c22dc"></span><code class="sig-name descname">RMT_CHANNEL_7</code><a class="headerlink" href="#_CPPv413RMT_CHANNEL_7" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel number 7 </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv415RMT_CHANNEL_MAX">
+<span id="_CPPv315RMT_CHANNEL_MAX"></span><span id="_CPPv215RMT_CHANNEL_MAX"></span><span class="target" id="rmt__types_8h_1ac5fa37e41ad85688fffd1a6d14c7f4efadcae4be9650ce242471d9accaba43ed6"></span><code class="sig-name descname">RMT_CHANNEL_MAX</code><a class="headerlink" href="#_CPPv415RMT_CHANNEL_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Number of RMT channels </p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv415rmt_mem_owner_t">
+<span id="_CPPv315rmt_mem_owner_t"></span><span id="_CPPv215rmt_mem_owner_t"></span><span class="target" id="rmt__types_8h_1ab7d6b237ffb69664eb312ee60ef390ce"></span><em class="property">enum </em><code class="sig-name descname">rmt_mem_owner_t</code><a class="headerlink" href="#_CPPv415rmt_mem_owner_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Internal Memory Owner. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv416RMT_MEM_OWNER_TX">
+<span id="_CPPv316RMT_MEM_OWNER_TX"></span><span id="_CPPv216RMT_MEM_OWNER_TX"></span><span class="target" id="rmt__types_8h_1ab7d6b237ffb69664eb312ee60ef390cea9cef9d69ef50ef90b77bd4e1cc9602fb"></span><code class="sig-name descname">RMT_MEM_OWNER_TX</code><a class="headerlink" href="#_CPPv416RMT_MEM_OWNER_TX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT RX mode, RMT transmitter owns the memory block </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416RMT_MEM_OWNER_RX">
+<span id="_CPPv316RMT_MEM_OWNER_RX"></span><span id="_CPPv216RMT_MEM_OWNER_RX"></span><span class="target" id="rmt__types_8h_1ab7d6b237ffb69664eb312ee60ef390cea787e24854543dd37d61f900144781fa6"></span><code class="sig-name descname">RMT_MEM_OWNER_RX</code><a class="headerlink" href="#_CPPv416RMT_MEM_OWNER_RX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT RX mode, RMT receiver owns the memory block </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417RMT_MEM_OWNER_MAX">
+<span id="_CPPv317RMT_MEM_OWNER_MAX"></span><span id="_CPPv217RMT_MEM_OWNER_MAX"></span><span class="target" id="rmt__types_8h_1ab7d6b237ffb69664eb312ee60ef390cead99d05c47e9353aa3957684807b8ef6d"></span><code class="sig-name descname">RMT_MEM_OWNER_MAX</code><a class="headerlink" href="#_CPPv417RMT_MEM_OWNER_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv416rmt_source_clk_t">
+<span id="_CPPv316rmt_source_clk_t"></span><span id="_CPPv216rmt_source_clk_t"></span><span class="target" id="rmt__types_8h_1a4589689f71f2955b95d8d82ed695bac1"></span><em class="property">enum </em><code class="sig-name descname">rmt_source_clk_t</code><a class="headerlink" href="#_CPPv416rmt_source_clk_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Clock Source of RMT Channel. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv415RMT_BASECLK_REF">
+<span id="_CPPv315RMT_BASECLK_REF"></span><span id="_CPPv215RMT_BASECLK_REF"></span><span class="target" id="rmt__types_8h_1a4589689f71f2955b95d8d82ed695bac1afa630dbc082d3d1d14d900b0c27d9a19"></span><code class="sig-name descname">RMT_BASECLK_REF</code> = 0<a class="headerlink" href="#_CPPv415RMT_BASECLK_REF" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT source clock is REF_TICK, 1MHz by default </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv415RMT_BASECLK_APB">
+<span id="_CPPv315RMT_BASECLK_APB"></span><span id="_CPPv215RMT_BASECLK_APB"></span><span class="target" id="rmt__types_8h_1a4589689f71f2955b95d8d82ed695bac1ab24eba9e39a934cf2d27bc04e4bc23ac"></span><code class="sig-name descname">RMT_BASECLK_APB</code> = 1<a class="headerlink" href="#_CPPv415RMT_BASECLK_APB" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT source clock is APB CLK, 80Mhz by default </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv415RMT_BASECLK_MAX">
+<span id="_CPPv315RMT_BASECLK_MAX"></span><span id="_CPPv215RMT_BASECLK_MAX"></span><span class="target" id="rmt__types_8h_1a4589689f71f2955b95d8d82ed695bac1a46162bcb7d0a086f4fa3473de1719810"></span><code class="sig-name descname">RMT_BASECLK_MAX</code><a class="headerlink" href="#_CPPv415RMT_BASECLK_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv415rmt_data_mode_t">
+<span id="_CPPv315rmt_data_mode_t"></span><span id="_CPPv215rmt_data_mode_t"></span><span class="target" id="rmt__types_8h_1a2b03fb1ef0680bd485ea49cb1da82a99"></span><em class="property">enum </em><code class="sig-name descname">rmt_data_mode_t</code><a class="headerlink" href="#_CPPv415rmt_data_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Data Mode. </p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>We highly recommended to use MEM mode not FIFO mode since there will be some gotcha in FIFO mode. </p>
+</dd>
+</dl>
+</p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv418RMT_DATA_MODE_FIFO">
+<span id="_CPPv318RMT_DATA_MODE_FIFO"></span><span id="_CPPv218RMT_DATA_MODE_FIFO"></span><span class="target" id="rmt__types_8h_1a2b03fb1ef0680bd485ea49cb1da82a99ae30df8e3c9b798318e554379da1e3a3e"></span><code class="sig-name descname">RMT_DATA_MODE_FIFO</code><a class="headerlink" href="#_CPPv418RMT_DATA_MODE_FIFO" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417RMT_DATA_MODE_MEM">
+<span id="_CPPv317RMT_DATA_MODE_MEM"></span><span id="_CPPv217RMT_DATA_MODE_MEM"></span><span class="target" id="rmt__types_8h_1a2b03fb1ef0680bd485ea49cb1da82a99aaca801abbea1f2e0c71fcb6e7b1600aa"></span><code class="sig-name descname">RMT_DATA_MODE_MEM</code><a class="headerlink" href="#_CPPv417RMT_DATA_MODE_MEM" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv417RMT_DATA_MODE_MAX">
+<span id="_CPPv317RMT_DATA_MODE_MAX"></span><span id="_CPPv217RMT_DATA_MODE_MAX"></span><span class="target" id="rmt__types_8h_1a2b03fb1ef0680bd485ea49cb1da82a99a6ca05dde3b5215b263d882ad1cafccf4"></span><code class="sig-name descname">RMT_DATA_MODE_MAX</code><a class="headerlink" href="#_CPPv417RMT_DATA_MODE_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv410rmt_mode_t">
+<span id="_CPPv310rmt_mode_t"></span><span id="_CPPv210rmt_mode_t"></span><span class="target" id="rmt__types_8h_1a0c8bc5c0e1aba2d5ea5dd135d7ba3f26"></span><em class="property">enum </em><code class="sig-name descname">rmt_mode_t</code><a class="headerlink" href="#_CPPv410rmt_mode_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Channel Working Mode (TX or RX) </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv411RMT_MODE_TX">
+<span id="_CPPv311RMT_MODE_TX"></span><span id="_CPPv211RMT_MODE_TX"></span><span class="target" id="rmt__types_8h_1a0c8bc5c0e1aba2d5ea5dd135d7ba3f26a6cb1a37754c38ef031de85a268938559"></span><code class="sig-name descname">RMT_MODE_TX</code><a class="headerlink" href="#_CPPv411RMT_MODE_TX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT TX mode </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv411RMT_MODE_RX">
+<span id="_CPPv311RMT_MODE_RX"></span><span id="_CPPv211RMT_MODE_RX"></span><span class="target" id="rmt__types_8h_1a0c8bc5c0e1aba2d5ea5dd135d7ba3f26a38c2eca09a76635ea6fae3dbaf9adde0"></span><code class="sig-name descname">RMT_MODE_RX</code><a class="headerlink" href="#_CPPv411RMT_MODE_RX" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT RX mode </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv412RMT_MODE_MAX">
+<span id="_CPPv312RMT_MODE_MAX"></span><span id="_CPPv212RMT_MODE_MAX"></span><span class="target" id="rmt__types_8h_1a0c8bc5c0e1aba2d5ea5dd135d7ba3f26a77172af8aac0409f94a2f9fcccf7a441"></span><code class="sig-name descname">RMT_MODE_MAX</code><a class="headerlink" href="#_CPPv412RMT_MODE_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv416rmt_idle_level_t">
+<span id="_CPPv316rmt_idle_level_t"></span><span id="_CPPv216rmt_idle_level_t"></span><span class="target" id="rmt__types_8h_1ae49b9903d1f0a0fc3645ec8d4f0cd3ab"></span><em class="property">enum </em><code class="sig-name descname">rmt_idle_level_t</code><a class="headerlink" href="#_CPPv416rmt_idle_level_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Idle Level. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv418RMT_IDLE_LEVEL_LOW">
+<span id="_CPPv318RMT_IDLE_LEVEL_LOW"></span><span id="_CPPv218RMT_IDLE_LEVEL_LOW"></span><span class="target" id="rmt__types_8h_1ae49b9903d1f0a0fc3645ec8d4f0cd3aba2e13bef3f856e9d348b97ed1ad9f8eee"></span><code class="sig-name descname">RMT_IDLE_LEVEL_LOW</code><a class="headerlink" href="#_CPPv418RMT_IDLE_LEVEL_LOW" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT TX idle level: low Level </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv419RMT_IDLE_LEVEL_HIGH">
+<span id="_CPPv319RMT_IDLE_LEVEL_HIGH"></span><span id="_CPPv219RMT_IDLE_LEVEL_HIGH"></span><span class="target" id="rmt__types_8h_1ae49b9903d1f0a0fc3645ec8d4f0cd3abae9b3aa9ec1e57a81713a143ce5a37581"></span><code class="sig-name descname">RMT_IDLE_LEVEL_HIGH</code><a class="headerlink" href="#_CPPv419RMT_IDLE_LEVEL_HIGH" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT TX idle level: high Level </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv418RMT_IDLE_LEVEL_MAX">
+<span id="_CPPv318RMT_IDLE_LEVEL_MAX"></span><span id="_CPPv218RMT_IDLE_LEVEL_MAX"></span><span class="target" id="rmt__types_8h_1ae49b9903d1f0a0fc3645ec8d4f0cd3aba6500b31429f70864ec704470f4d1d946"></span><code class="sig-name descname">RMT_IDLE_LEVEL_MAX</code><a class="headerlink" href="#_CPPv418RMT_IDLE_LEVEL_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv419rmt_carrier_level_t">
+<span id="_CPPv319rmt_carrier_level_t"></span><span id="_CPPv219rmt_carrier_level_t"></span><span class="target" id="rmt__types_8h_1a94fe53d71daabae6bf0013875287aa20"></span><em class="property">enum </em><code class="sig-name descname">rmt_carrier_level_t</code><a class="headerlink" href="#_CPPv419rmt_carrier_level_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Carrier Level. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv421RMT_CARRIER_LEVEL_LOW">
+<span id="_CPPv321RMT_CARRIER_LEVEL_LOW"></span><span id="_CPPv221RMT_CARRIER_LEVEL_LOW"></span><span class="target" id="rmt__types_8h_1a94fe53d71daabae6bf0013875287aa20a175ed49d085a98efd55a546562f7a069"></span><code class="sig-name descname">RMT_CARRIER_LEVEL_LOW</code><a class="headerlink" href="#_CPPv421RMT_CARRIER_LEVEL_LOW" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT carrier wave is modulated for low Level output </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv422RMT_CARRIER_LEVEL_HIGH">
+<span id="_CPPv322RMT_CARRIER_LEVEL_HIGH"></span><span id="_CPPv222RMT_CARRIER_LEVEL_HIGH"></span><span class="target" id="rmt__types_8h_1a94fe53d71daabae6bf0013875287aa20a66442af693a8e6c5dd6fa8a7ea588f25"></span><code class="sig-name descname">RMT_CARRIER_LEVEL_HIGH</code><a class="headerlink" href="#_CPPv422RMT_CARRIER_LEVEL_HIGH" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT carrier wave is modulated for high Level output </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv421RMT_CARRIER_LEVEL_MAX">
+<span id="_CPPv321RMT_CARRIER_LEVEL_MAX"></span><span id="_CPPv221RMT_CARRIER_LEVEL_MAX"></span><span class="target" id="rmt__types_8h_1a94fe53d71daabae6bf0013875287aa20a1bbd77eb4caffa6b18056cbf12809318"></span><code class="sig-name descname">RMT_CARRIER_LEVEL_MAX</code><a class="headerlink" href="#_CPPv421RMT_CARRIER_LEVEL_MAX" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="enum">
+<dt id="_CPPv420rmt_channel_status_t">
+<span id="_CPPv320rmt_channel_status_t"></span><span id="_CPPv220rmt_channel_status_t"></span><span class="target" id="rmt__types_8h_1aaaaae75b84d3f8154533cd2670775699"></span><em class="property">enum </em><code class="sig-name descname">rmt_channel_status_t</code><a class="headerlink" href="#_CPPv420rmt_channel_status_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT Channel Status. </p>
+<p><em>Values:</em></p>
+<dl class="enumerator">
+<dt id="_CPPv418RMT_CHANNEL_UNINIT">
+<span id="_CPPv318RMT_CHANNEL_UNINIT"></span><span id="_CPPv218RMT_CHANNEL_UNINIT"></span><span class="target" id="rmt__types_8h_1aaaaae75b84d3f8154533cd2670775699a7b922c0def068b29f1018b0cd3caab10"></span><code class="sig-name descname">RMT_CHANNEL_UNINIT</code><a class="headerlink" href="#_CPPv418RMT_CHANNEL_UNINIT" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel uninitialized </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416RMT_CHANNEL_IDLE">
+<span id="_CPPv316RMT_CHANNEL_IDLE"></span><span id="_CPPv216RMT_CHANNEL_IDLE"></span><span class="target" id="rmt__types_8h_1aaaaae75b84d3f8154533cd2670775699a7ba581149fcf60d7f17ef447ee091126"></span><code class="sig-name descname">RMT_CHANNEL_IDLE</code><a class="headerlink" href="#_CPPv416RMT_CHANNEL_IDLE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel status idle </p>
+</dd></dl>
+
+<dl class="enumerator">
+<dt id="_CPPv416RMT_CHANNEL_BUSY">
+<span id="_CPPv316RMT_CHANNEL_BUSY"></span><span id="_CPPv216RMT_CHANNEL_BUSY"></span><span class="target" id="rmt__types_8h_1aaaaae75b84d3f8154533cd2670775699a36b09cc075ea84ea30ba91eaaf9f9591"></span><code class="sig-name descname">RMT_CHANNEL_BUSY</code><a class="headerlink" href="#_CPPv416RMT_CHANNEL_BUSY" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>RMT channel status busy </p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+           <div class="articleComments">
+            
+<p style="text-align:center"><a href="https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=Remote Control (RMT) (api-reference/peripherals/rmt)&version=esp32 v4.4 (v4.4)">Provide feedback about this document</a></p>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sd_pullup_requirements.html" class="btn btn-neutral float-right" title="SD Pull-up Requirements" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pcnt.html" class="btn btn-neutral float-left" title="Pulse Counter (PCNT)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016 - 2021, Espressif Systems (Shanghai) Co., Ltd
+
+    </p>
+  </div>
+
+  <ul class="footer">
+    <li>
+      
+      
+      Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+    </li>
+
+    <li class="footer-aside">
+        <a href="../../esp-idf-en-v4.4-esp32.pdf" class="fa fa-file-pdf-o"> Download PDF</a>
+    </li>
+
+  </ul> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

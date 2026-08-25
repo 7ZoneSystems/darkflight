@@ -1,0 +1,780 @@
+
+
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-132861133-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-132861133-1');
+        </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>ESP-IDF FreeRTOS (SMP) - ESP32 -  &mdash; ESP-IDF Programming Guide v4.4 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+        <script type="text/javascript" src="../_static/clipboard.min.js"></script>
+        <script type="text/javascript" src="../_static/copybutton.js"></script>
+      <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+    
+    <script type="text/javascript">
+        DOCUMENTATION_OPTIONS.PAGENAME = 'api-guides/freertos-smp';
+        DOCUMENTATION_OPTIONS.PROJECT_SLUG = 'esp-idf';
+        DOCUMENTATION_OPTIONS.VERSIONS_URL = 'https://dl.espressif.com/dl/esp-idf/idf_versions.js';
+        DOCUMENTATION_OPTIONS.LANGUAGES = ["en", "zh_CN"];
+        DOCUMENTATION_OPTIONS.IDF_TARGET = 'esp32';
+        DOCUMENTATION_OPTIONS.HAS_IDF_TARGETS = ["esp32", "esp32s2", "esp32s3", "esp32c3"]
+        DOCUMENTATION_OPTIONS.RELEASE = 'v4.4';
+    </script>
+
+    <script type="text/javascript" src="https://dl.espressif.com/dl/esp-idf/idf_versions.js"></script>
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/theme_overrides.css" type="text/css" />
+    <link rel="author" title="About these documents" href="../about.html" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hardware Abstraction" href="hardware-abstraction.html" />
+    <link rel="prev" title="Flash Encryption" href="../security/flash-encryption.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> ESP-IDF Programming Guide
+          
+
+          
+            
+            <img src="../_static/espressif-logo.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            <div class="selectors">
+              <select id="target-select" style="width: 150px;">
+                <option value="" disabled selected>Choose target...</option>
+              </select>
+            </div>
+          
+
+          <div class="selectors">
+            <select id="version-select" style="width: 150px;">
+              <option value="" disabled selected>Choose version...</option>
+            </select>
+          </div>
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../get-started/index.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api-reference/index.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../hw-reference/index.html">H/W Reference</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API Guides</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="app_trace.html">Application Level Tracing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="startup.html">Application Startup Flow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blufi.html">BluFi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bootloader.html">Bootloader</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system.html">Build System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build-system-legacy.html">Build System (Legacy GNU Make)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deep-sleep-stub.html">Deep Sleep Wake Stubs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="error-handling.html">Error Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-ble-mesh/ble-mesh-index.html">ESP-BLE-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="esp-wifi-mesh.html">ESP-WIFI-MESH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_dump.html">Core Dump</a></li>
+<li class="toctree-l2"><a class="reference internal" href="event-handling.html">Event Handling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external-ram.html">External SPI-connected RAM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fatal-errors.html">Fatal Errors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../security/flash-encryption.html">Flash Encryption</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">FreeRTOS SMP Changes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#symmetric-multiprocessing">Symmetric Multiprocessing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-concepts">Basic Concepts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#smp-on-an-esp-target">SMP on an ESP Target</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tasks">Tasks</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#creation">Creation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#execution">Execution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deletion">Deletion</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#smp-scheduler">SMP Scheduler</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fixed-priority">Fixed Priority</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#preemption">Preemption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#time-slicing">Time Slicing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#tick-interrupts">Tick Interrupts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#idle-tasks">Idle Tasks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scheduler-suspension">Scheduler Suspension</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#disabling-interrupts">Disabling Interrupts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#startup-and-termination">Startup and Termination</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#critical-sections">Critical Sections</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#api-changes">API Changes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#implementation">Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#restrictions-and-considerations">Restrictions and Considerations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#misc">Misc</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#floating-point-usage">Floating Point Usage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#esp-idf-freertos-single-core">ESP-IDF FreeRTOS Single Core</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hardware-abstraction.html">Hardware Abstraction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hlinterrupts.html">High Level Interrupts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jtag-debugging/index.html">JTAG Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linker-script-generation.html">Linker Script Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="memory-types.html">Memory Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lwip.html">lwIP TCP/IP Stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="openthread.html">OpenThread</a></li>
+<li class="toctree-l2"><a class="reference internal" href="partition-tables.html">Partition Tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance/index.html">Performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RF_calibration.html">RF Calibration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../security/secure-boot-v1.html">Secure Boot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../security/secure-boot-v2.html">Secure Boot V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="thread-local-storage.html">Thread Local Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools/index.html">Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ulp.html">ULP Coprocessor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ulp-legacy.html">ULP Coprocessor (Legacy GNU Make)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests.html">Unit Testing (Target)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="linux-host-testing.html">Unit Testing (Linux Host)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="unit-tests-legacy.html">Unit Testing (Legacy GNU Make)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi.html">Wi-Fi Driver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wifi-security.html">Wi-Fi Security</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../libraries-and-frameworks/index.html">Libraries and Frameworks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute/index.html">Contribute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../versions.html">Versions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../resources.html">Resources</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../COPYRIGHT.html">Copyrights</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../languages.html">语言/Languages</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">ESP-IDF Programming Guide</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html">API Guides</a> &raquo;</li>
+        
+      <li>ESP-IDF FreeRTOS (SMP)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/espressif/esp-idf/blob/v4.4/docs/en/api-guides/freertos-smp.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="esp-idf-freertos-smp">
+<h1><a class="toc-backref" href="#id1">ESP-IDF FreeRTOS (SMP)</a><a class="headerlink" href="#esp-idf-freertos-smp" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This document assumes that the reader has a requisite understanding of Vanilla FreeRTOS (its features, behavior, and API usage). Refer to the <a class="reference external" href="https://www.freertos.org/index.html">Vanilla FreeRTOS documentation</a> for more details.</p>
+</div>
+<p>This document describes the API and behavioral differences between Vanilla FreeRTOS and ESP-IDF FreeRTOS that were made in order to support Symmetric Multiprocessing (SMP). This document is split into the following parts.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#esp-idf-freertos-smp" id="id1">ESP-IDF FreeRTOS (SMP)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview" id="id2">Overview</a></p></li>
+<li><p><a class="reference internal" href="#symmetric-multiprocessing" id="id3">Symmetric Multiprocessing</a></p>
+<ul>
+<li><p><a class="reference internal" href="#basic-concepts" id="id4">Basic Concepts</a></p></li>
+<li><p><a class="reference internal" href="#smp-on-an-esp-target" id="id5">SMP on an ESP Target</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#tasks" id="id6">Tasks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#creation" id="id7">Creation</a></p></li>
+<li><p><a class="reference internal" href="#execution" id="id8">Execution</a></p></li>
+<li><p><a class="reference internal" href="#deletion" id="id9">Deletion</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#smp-scheduler" id="id10">SMP Scheduler</a></p>
+<ul>
+<li><p><a class="reference internal" href="#fixed-priority" id="id11">Fixed Priority</a></p></li>
+<li><p><a class="reference internal" href="#preemption" id="id12">Preemption</a></p></li>
+<li><p><a class="reference internal" href="#time-slicing" id="id13">Time Slicing</a></p></li>
+<li><p><a class="reference internal" href="#tick-interrupts" id="id14">Tick Interrupts</a></p></li>
+<li><p><a class="reference internal" href="#idle-tasks" id="id15">Idle Tasks</a></p></li>
+<li><p><a class="reference internal" href="#scheduler-suspension" id="id16">Scheduler Suspension</a></p></li>
+<li><p><a class="reference internal" href="#disabling-interrupts" id="id17">Disabling Interrupts</a></p></li>
+<li><p><a class="reference internal" href="#startup-and-termination" id="id18">Startup and Termination</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#critical-sections" id="id19">Critical Sections</a></p>
+<ul>
+<li><p><a class="reference internal" href="#api-changes" id="id20">API Changes</a></p></li>
+<li><p><a class="reference internal" href="#implementation" id="id21">Implementation</a></p></li>
+<li><p><a class="reference internal" href="#restrictions-and-considerations" id="id22">Restrictions and Considerations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#misc" id="id23">Misc</a></p>
+<ul>
+<li><p><a class="reference internal" href="#floating-point-usage" id="id24">Floating Point Usage</a></p></li>
+<li><p><a class="reference internal" href="#esp-idf-freertos-single-core" id="id25">ESP-IDF FreeRTOS Single Core</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="overview">
+<h2><a class="toc-backref" href="#id2">Overview</a><a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The original FreeRTOS (hereinafter referred to as Vanilla FreeRTOS) is a small and efficient Real Time Operating System supported on many single-core MCUs and SoCs. However, numerous ESP targets (such as the ESP32 and ESP32-S3) are capable of dual core symmetric multiprocessing (SMP). Therefore, the version of FreeRTOS used in ESP-IDF (hereinafter referred to as ESP-IDF FreeRTOS) is a modified version of Vanilla FreeRTOS v10.4.3. Theses modifications allow ESP-IDF FreeRTOS to utilize the dual core SMP capabilities of ESP SoCs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>For information regarding features that have been added to ESP-IDF FreeRTOS, see <a class="reference internal" href="../api-reference/system/freertos_additions.html"><span class="doc">ESP-IDF FreeRTOS Additions</span></a>.</p></li>
+<li><p>For a detailed ESP-IDF FreeRTOS API Reference, see <a class="reference internal" href="../api-reference/system/freertos.html"><span class="doc">FreeRTOS API reference</span></a>.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="symmetric-multiprocessing">
+<h2><a class="toc-backref" href="#id3">Symmetric Multiprocessing</a><a class="headerlink" href="#symmetric-multiprocessing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-concepts">
+<h3><a class="toc-backref" href="#id4">Basic Concepts</a><a class="headerlink" href="#basic-concepts" title="Permalink to this headline">¶</a></h3>
+<p>SMP (Symmetric Multiprocessing) is a computing architecture where two or more identical CPUs (cores) are connected to a single shared main memory and controlled by a single operating system. In general, an SMP system…</p>
+<ul class="simple">
+<li><p>has multiple cores running independently. Each core has its own register file, interrupts, and interrupt handling.</p></li>
+<li><p>presents an identical view of memory to each core. Thus a piece of code that accesses a particular memory address will have the same effect regardless of which core it runs on.</p></li>
+</ul>
+<p>The main advantages of an SMP system compared to single core or Asymmetric Multiprocessing systems are that…</p>
+<ul class="simple">
+<li><p>the presence of multiple CPUs allows for multiple hardware threads, thus increases overall processing throughput.</p></li>
+<li><p>having symmetric memory means that threads can switch cores during execution. This in general can lead to better CPU utilization.</p></li>
+</ul>
+<p>Although an SMP system allows threads to switch cores, there are scenarios where a thread must/should only run on a particular core. Therefore, threads in an SMP systems will also have a core affinity that specifies which particular core the thread is allowed to run on.</p>
+<ul class="simple">
+<li><p>A thread that is pinned to a particular core will only be able to run on that core</p></li>
+<li><p>A thread that is unpinned will be allowed to switch between cores during execution instead of being pinned to a particular core.</p></li>
+</ul>
+</div>
+<div class="section" id="smp-on-an-esp-target">
+<h3><a class="toc-backref" href="#id5">SMP on an ESP Target</a><a class="headerlink" href="#smp-on-an-esp-target" title="Permalink to this headline">¶</a></h3>
+<p>ESP targets (such as the ESP32, ESP32-S3) are dual core SMP SoCs. These targets have the following hardware features that make them SMP capable:</p>
+<ul class="simple">
+<li><p>Two identical cores known as CPU0 (i.e., Protocol CPU or PRO_CPU) and CPU1 (i.e., Application CPU or APP_CPU). This  means that the execution of a piece of code is identical regardless of which core it runs on.</p></li>
+<li><p>Symmetric memory (with some small exceptions).</p>
+<ul>
+<li><p>If multiple cores access the same memory address, their access will be serialized at the memory bus level.</p></li>
+<li><p>True atomic access to the same memory address is achieved via an atomic compare-and-swap instruction provided by the ISA.</p></li>
+</ul>
+</li>
+<li><p>Cross-core interrupts that allow one CPU to trigger and interrupt on another CPU. This allows cores to signal each other.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The “PRO_CPU” and “APP_CPU” aliases for CPU0 and CPU1 exist in ESP-IDF as they reflect how typical IDF applications will utilize the two CPUs. Typically, the tasks responsible for handling wireless networking (e.g., WiFi or Bluetooth) will be pinned to CPU0 (thus the name PRO_CPU), whereas the tasks handling the remainder of the application will be pinned to CPU1 (thus the name APP_CPU).</p>
+</div>
+</div>
+</div>
+<div class="section" id="tasks">
+<h2><a class="toc-backref" href="#id6">Tasks</a><a class="headerlink" href="#tasks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="creation">
+<h3><a class="toc-backref" href="#id7">Creation</a><a class="headerlink" href="#creation" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS provides the following functions to create a task:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411xTaskCreate14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC12TaskHandle_t" title="xTaskCreate"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreate()</span></code></a> creates a task. The task’s memory is dynamically allocated</p></li>
+<li><p><a class="reference internal" href="../api-reference/system/freertos.html#_CPPv417xTaskCreateStatic14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC11StackType_tPC12StaticTask_t" title="xTaskCreateStatic"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreateStatic()</span></code></a> creates a task. The task’s memory is statically allocated (i.e., provided by the user)</p></li>
+</ul>
+<p>However, in an SMP system, tasks need to be assigned a particular affinity. Therefore, ESP-IDF provides a <code class="docutils literal notranslate"><span class="pre">PinnedToCore</span></code> version of Vanilla FreeRTOS’s task creation functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../api-reference/system/freertos.html#_CPPv423xTaskCreatePinnedToCore14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC12TaskHandle_tK10BaseType_t" title="xTaskCreatePinnedToCore"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreatePinnedToCore()</span></code></a> creates a task with a particular core affinity. The task’s memory is dynamically allocated.</p></li>
+<li><p><a class="reference internal" href="../api-reference/system/freertos.html#_CPPv429xTaskCreateStaticPinnedToCore14TaskFunction_tPCKcK8uint32_tPCv11UBaseType_tPC11StackType_tPC12StaticTask_tK10BaseType_t" title="xTaskCreateStaticPinnedToCore"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskCreateStaticPinnedToCore()</span></code></a> creates a task with a particular core affinity. The task’s memory is statically allocated (i.e., provided by the user)</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">PinnedToCore</span></code> versions of the task creation functions API differ from their vanilla counter parts by having an extra <code class="docutils literal notranslate"><span class="pre">xCoreID</span></code> parameter that is used to specify the created task’s core affinity. The valid values for core affinity are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> which pins the created task to CPU0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> which pins the created task to CPU1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tskNO_AFFINITY</span></code> which allows the task to be run on both CPUs</p></li>
+</ul>
+<p>Note that ESP-IDF FreeRTOS still supports the vanilla versions of the task creation functions. However, they have been modified to simply call their <code class="docutils literal notranslate"><span class="pre">PinnedToCore</span></code> counterparts with <code class="docutils literal notranslate"><span class="pre">tskNO_AFFINITY</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ESP-IDF FreeRTOS also changes the units of <code class="docutils literal notranslate"><span class="pre">ulStackDepth</span></code> in the task creation functions. Task stack sizes in Vanilla FreeRTOS are specified in number of words, whereas in ESP-IDF FreeRTOS, the task stack sizes are specified in bytes.</p>
+</div>
+</div>
+<div class="section" id="execution">
+<h3><a class="toc-backref" href="#id8">Execution</a><a class="headerlink" href="#execution" title="Permalink to this headline">¶</a></h3>
+<p>The anatomy of a task in ESP-IDF FreeRTOS is the same as Vanilla FreeRTOS. More specifically, ESP-IDF FreeRTOS tasks:</p>
+<ul class="simple">
+<li><p>Can only be in one of following states: Running, Ready, Blocked, or Suspended.</p></li>
+<li><p>Task functions are typically implemented as an infinite loop</p></li>
+<li><p>Task functions should never return</p></li>
+</ul>
+</div>
+<div class="section" id="deletion">
+<h3><a class="toc-backref" href="#id9">Deletion</a><a class="headerlink" href="#deletion" title="Permalink to this headline">¶</a></h3>
+<p>Task deletion in Vanilla FreeRTOS is called via <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a>. The function allows deletion of another task or the currently running task (if the provided task handle is <code class="docutils literal notranslate"><span class="pre">NULL</span></code>). The actual freeing of the task’s memory is sometimes delegated to the idle task (if the task being deleted is the currently running task).</p>
+<p>ESP-IDF FreeRTOS provides the same <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a> function. However, due to the dual core nature, there are some behavioral differences when calling <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a> in ESP-IDF FreeRTOS:</p>
+<ul class="simple">
+<li><p>When deleting a task that is pinned to the other core, that task’s memory is always freed by the idle task of the other core (due to the need to clear FPU registers).</p></li>
+<li><p>When deleting a task that is currently running on the other core, a yield is triggered on the other core and the task’s memory is freed by one of the idle tasks (depending on the task’s core affinity)</p></li>
+<li><p>A deleted task’s memory is freed immediately if…</p>
+<ul>
+<li><p>The tasks is currently running on this core and is also pinned to this core</p></li>
+<li><p>The task is not currently running and is not pinned to any core</p></li>
+</ul>
+</li>
+</ul>
+<p>Users should avoid calling <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a>  on a task that is currently running on the other core. This is due to the fact that it is difficult to know what the task currently running on the other core is executing, thus can lead to unpredictable behavior such as…</p>
+<ul class="simple">
+<li><p>Deleting a task that is holding a mutex</p></li>
+<li><p>Deleting a task that has yet to free memory it previously allocated</p></li>
+</ul>
+<p>Where possible, users should design their application such that <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv411vTaskDelete12TaskHandle_t" title="vTaskDelete"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskDelete()</span></code></a> is only ever called on tasks in a known state. For example:</p>
+<ul class="simple">
+<li><p>Tasks self deleting (via <code class="docutils literal notranslate"><span class="pre">vTaskDelete(NULL)</span></code>) when their execution is complete and have also cleaned up all resources used within the task.</p></li>
+<li><p>Tasks placing themselves in the suspend state (via <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv412vTaskSuspend12TaskHandle_t" title="vTaskSuspend"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskSuspend()</span></code></a>) before being deleted by another task.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="smp-scheduler">
+<h2><a class="toc-backref" href="#id10">SMP Scheduler</a><a class="headerlink" href="#smp-scheduler" title="Permalink to this headline">¶</a></h2>
+<p>The Vanilla FreeRTOS scheduler is best described as a <strong>Fixed Priority Preemptive scheduler with Time Slicing</strong> meaning that:</p>
+<ul class="simple">
+<li><p>Each tasks is given a constant priority upon creation. The scheduler executes highest priority ready state task</p></li>
+<li><p>The scheduler can switch execution to another task without the cooperation of the currently running task</p></li>
+<li><p>The scheduler will periodically switch execution between ready state tasks of the same priority (in a round robin fashion). Time slicing is governed by a tick interrupt.</p></li>
+</ul>
+<p>The ESP-IDF FreeRTOS scheduler supports the same scheduling features (i.e., Fixed Priority, Preemption, and Time Slicing) albeit with some small behavioral differences.</p>
+<div class="section" id="fixed-priority">
+<h3><a class="toc-backref" href="#id11">Fixed Priority</a><a class="headerlink" href="#fixed-priority" title="Permalink to this headline">¶</a></h3>
+<p>In Vanilla FreeRTOS, when scheduler selects a new task to run, it will always select the current highest priority ready state task. In ESP-IDF FreeRTOS, each core will independently schedule tasks to run. When a particular core selects a task, the core will select the highest priority ready state task that can be run by the core. A task can be run by the core if:</p>
+<ul class="simple">
+<li><p>The task has a compatible affinity (i.e., is either pinned to that core or is unpinned)</p></li>
+<li><p>The task is not currently being run by another core</p></li>
+</ul>
+<p>However, users should not assume that the two highest priority ready state tasks are always run by the scheduler as a task’s core affinity must also be accounted for. For example, given the following tasks:</p>
+<ul class="simple">
+<li><p>Task A of priority 10 pinned to CPU0</p></li>
+<li><p>Task B of priority 9 pinned to CPU0</p></li>
+<li><p>Task C of priority 8 pinned to CPU1</p></li>
+</ul>
+<p>The resulting schedule will have Task A running on CPU0 and Task C running on CPU1. Task B is not run even though it is the second highest priority task.</p>
+</div>
+<div class="section" id="preemption">
+<h3><a class="toc-backref" href="#id12">Preemption</a><a class="headerlink" href="#preemption" title="Permalink to this headline">¶</a></h3>
+<p>In Vanilla FreeRTOS, the scheduler can preempt the currently running task if a higher priority task becomes ready to execute. Likewise in ESP-IDF FreeRTOS, each core can be individually preempted by the scheduler if the scheduler determines that a higher priority task can run on that core.</p>
+<p>However, there are some instances where a higher priority task that becomes ready can be run on multiple cores. In this case, the scheduler will only preempt one core. The scheduler always gives preference to the current core when multiple cores can be preempted. In other words, if the higher priority ready task is unpinned and has a higher priority than the current priority of both cores, the scheduler will always choose to preempt the current core. For example, given the following tasks:</p>
+<ul class="simple">
+<li><p>Task A of priority 8 currently running on CPU0</p></li>
+<li><p>Task B of priority 9 currently running on CPU1</p></li>
+<li><p>Task C of priority 10 that is unpinned and was unblocked by Task B</p></li>
+</ul>
+<p>The resulting schedule will have Task A running on CPU0 and Task C preempting Task B given that the scheduler always gives preference to the current core.</p>
+</div>
+<div class="section" id="time-slicing">
+<h3><a class="toc-backref" href="#id13">Time Slicing</a><a class="headerlink" href="#time-slicing" title="Permalink to this headline">¶</a></h3>
+<p>The Vanilla FreeRTOS scheduler implements time slicing meaning that if current highest ready priority contains multiple ready tasks, the scheduler will switch between those tasks periodically in a round robin fashion.</p>
+<p>However, in ESP-IDF FreeRTOS, it is not possible to implement perfect Round Robin time slicing due to the fact that a particular task may not be able to run on a particular core due to the following reasons:</p>
+<ul class="simple">
+<li><p>The task is pinned to the another core.</p></li>
+<li><p>For unpinned tasks, the task is already being run by another core.</p></li>
+</ul>
+<p>Therefore, when a core searches the ready state task list for a task to run, the core may need to skip over a few tasks in the same priority list or drop to a lower priority in order to find a ready state task that the core can run.</p>
+<p>The ESP-IDF FreeRTOS scheduler implements a Best Effort Round Robin time slicing for ready state tasks of the same priority by ensuring that tasks that have been selected to run will be placed at the back of the list, thus giving unselected tasks a higher priority on the next scheduling iteration (i.e., the next tick interrupt or yield)</p>
+<p>The following example demonstrates the Best Effort Round Robin time slicing in action. Assume that:</p>
+<ul class="simple">
+<li><p>There are four ready state tasks of the same priority <code class="docutils literal notranslate"><span class="pre">AX,</span> <span class="pre">B0,</span> <span class="pre">C1,</span> <span class="pre">D1</span></code> where:
+- The priority is the current highest priority with ready state tasks
+- The first character represents the task’s names (i.e., <code class="docutils literal notranslate"><span class="pre">A,</span> <span class="pre">B,</span> <span class="pre">C,</span> <span class="pre">D</span></code>)
+- And the second character represents the tasks core pinning (and <code class="docutils literal notranslate"><span class="pre">X</span></code> means unpinned)</p></li>
+<li><p>The task list is always searched from the head</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>--------------------------------------------------------------------------------
+
+1. Starting state. None of the ready state tasks have been selected to run
+
+Head [ AX , B0 , C1 , D0 ] Tail
+
+--------------------------------------------------------------------------------
+
+2. Core 0 has tick interrupt and searches for a task to run.
+  Task A is selected and is moved to the back of the list
+
+Core0--|
+Head [ AX , B0 , C1 , D0 ] Tail
+
+                      0
+Head [ B0 , C1 , D0 , AX ] Tail
+
+--------------------------------------------------------------------------------
+
+3. Core 1 has a tick interrupt and searches for a task to run.
+  Task B cannot be run due to incompatible affinity, so core 1 skips to Task C.
+  Task C is selected and is moved to the back of the list
+
+Core1-------|         0
+Head [ B0 , C1 , D0 , AX ] Tail
+
+                 0    1
+Head [ B0 , D0 , AX , C1 ] Tail
+
+--------------------------------------------------------------------------------
+
+4. Core 0 has another tick interrupt and searches for a task to run.
+  Task B is selected and moved to the back of the list
+
+
+Core0--|              1
+Head [ B0 , D0 , AX , C1 ] Tail
+
+                 1    0
+Head [ D0 , AX , C1 , B0 ] Tail
+
+--------------------------------------------------------------------------------
+
+5. Core 1 has another tick and searches for a task to run.
+  Task D cannot be run due to incompatible affinity, so core 1 skips to Task A
+  Task A is selected and moved to the back of the list
+
+Core1-------|         0
+Head [ D0 , AX , C1 , B0 ] Tail
+
+                 0    1
+Head [ D0 , C1 , B0 , AX ] Tail
+</pre></div>
+</div>
+<p>The implications to users regarding the Best Effort Round Robin time slicing:</p>
+<ul class="simple">
+<li><p>Users cannot expect multiple ready state tasks of the same priority to run sequentially (as is the case in Vanilla FreeRTOS). As demonstrated in the example above, a core may need to skip over tasks.</p></li>
+<li><p>However, given enough ticks, a task will eventually be given some processing time.</p></li>
+<li><p>If a core cannot find a task runnable task at the highest ready state priority, it will drop to a lower priority to search for tasks.</p></li>
+<li><p>To achieve ideal round robin time slicing, users should ensure that all tasks of a particular priority are pinned to the same core.</p></li>
+</ul>
+</div>
+<div class="section" id="tick-interrupts">
+<h3><a class="toc-backref" href="#id14">Tick Interrupts</a><a class="headerlink" href="#tick-interrupts" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS requires that a periodic tick interrupt occurs. The tick interrupt is responsible for:</p>
+<ul class="simple">
+<li><p>Incrementing the scheduler’s tick count</p></li>
+<li><p>Unblocking any blocked tasks that have timed out</p></li>
+<li><p>Checking if time slicing is required (i.e., triggering a context switch)</p></li>
+<li><p>Executing the application tick hook</p></li>
+</ul>
+<p>In ESP-IDF FreeRTOS, each core will receive a periodic interrupt and independently run the tick interrupt. The tick interrupts on each core are of the same period but can be out of phase. Furthermore, the tick interrupt responsibilities listed above are not run by all cores:</p>
+<ul class="simple">
+<li><p>CPU0 will execute all of the tick interrupt responsibilities listed above</p></li>
+<li><p>CPU1 will only check for time slicing and execute the application tick hook</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>CPU0 is solely responsible for keeping time in ESP-IDF FreeRTOS. Therefore anything that prevents CPU0 from incrementing the tick count (such as suspending the scheduler on CPU0) will cause the entire schedulers time keeping to lag behind.</p>
+</div>
+</div>
+<div class="section" id="idle-tasks">
+<h3><a class="toc-backref" href="#id15">Idle Tasks</a><a class="headerlink" href="#idle-tasks" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS will implicitly create an idle task of priority 0 when the scheduler is started. The idle task runs when no other task is ready to run, and it has the following responsibilities:</p>
+<ul class="simple">
+<li><p>Freeing the memory of deleted tasks</p></li>
+<li><p>Executing the application idle hook</p></li>
+</ul>
+<p>In ESP-IDF FreeRTOS, a separate pinned idle task is created for each core. The idle tasks on each core have the same responsibilities as their vanilla counterparts.</p>
+</div>
+<div class="section" id="scheduler-suspension">
+<h3><a class="toc-backref" href="#id16">Scheduler Suspension</a><a class="headerlink" href="#scheduler-suspension" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS allows the scheduler to be suspended/resumed by calling <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv415vTaskSuspendAllv" title="vTaskSuspendAll"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskSuspendAll()</span></code></a> and <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv414xTaskResumeAllv" title="xTaskResumeAll"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskResumeAll()</span></code></a> respectively. While the scheduler is suspended:</p>
+<ul class="simple">
+<li><p>Task switching is disabled but interrupts are left enabled.</p></li>
+<li><p>Calling any blocking/yielding function is forbidden, and time slicing is disabled.</p></li>
+<li><p>The tick count is frozen (but the tick interrupt will still occur to execute the application tick hook)</p></li>
+</ul>
+<p>On scheduler resumption, <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv414xTaskResumeAllv" title="xTaskResumeAll"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskResumeAll()</span></code></a> will catch up all of the lost ticks and unblock any timed out tasks.</p>
+<p>In ESP-IDF FreeRTOS, suspending the scheduler across multiple cores is not possible. Therefore when <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv415vTaskSuspendAllv" title="vTaskSuspendAll"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskSuspendAll()</span></code></a> is called:</p>
+<ul class="simple">
+<li><p>Task switching is disabled only on the current core but interrupts for the current core are left enabled</p></li>
+<li><p>Calling any blocking/yielding function on the current core is forbidden. Time slicing is disabled on the current core.</p></li>
+<li><p>If suspending on CPU0, the tick count is frozen. The tick interrupt will still occur to execute the application tick hook.</p></li>
+</ul>
+<p>When resuming the scheduler on CPU0, <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv414xTaskResumeAllv" title="xTaskResumeAll"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">xTaskResumeAll()</span></code></a> will catch up all of the lost ticks and unblock any timed out tasks.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Given that scheduler suspension on ESP-IDF FreeRTOS will only suspend scheduling on a particular core, scheduler suspension is <strong>NOT</strong> a valid method ensuring mutual exclusion between tasks when accessing shared data. Users should use proper locking primitives such as mutexes or spinlocks if they require mutual exclusion.</p>
+</div>
+</div>
+<div class="section" id="disabling-interrupts">
+<h3><a class="toc-backref" href="#id17">Disabling Interrupts</a><a class="headerlink" href="#disabling-interrupts" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS allows interrupts to be disabled and enabled by calling <a class="reference internal" href="../api-reference/system/freertos.html#c.taskDISABLE_INTERRUPTS" title="taskDISABLE_INTERRUPTS"><code class="xref c c-macro docutils literal notranslate"><span class="pre">taskDISABLE_INTERRUPTS</span></code></a> and <a class="reference internal" href="../api-reference/system/freertos.html#c.taskENABLE_INTERRUPTS" title="taskENABLE_INTERRUPTS"><code class="xref c c-macro docutils literal notranslate"><span class="pre">taskENABLE_INTERRUPTS</span></code></a> respectively.</p>
+<p>ESP-IDF FreeRTOS provides the same API, however interrupts will only disabled or enabled on the current core.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Disabling interrupts is a valid method of achieve mutual exclusion in Vanilla FreeRTOS (and single core systems in general). However, in an SMP system, disabling interrupts  is <strong>NOT</strong> a valid method ensuring mutual exclusion. Refer to Critical Sections for more details.</p>
+</div>
+</div>
+<div class="section" id="startup-and-termination">
+<h3><a class="toc-backref" href="#id18">Startup and Termination</a><a class="headerlink" href="#startup-and-termination" title="Permalink to this headline">¶</a></h3>
+<p>ESP-IDF FreeRTOS <strong>does not</strong> require users to call <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv419vTaskStartSchedulerv" title="vTaskStartScheduler"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskStartScheduler()</span></code></a> to start the scheduler. The startup flow of an ESP-IDF application will already call this automatically. The entry point for user code is a user defined <code class="docutils literal notranslate"><span class="pre">void</span> <span class="pre">app_main(void)</span></code> function. For more details regarding the startup of ESP-IDF FreeRTOS applications, see <a class="reference internal" href="../api-reference/system/freertos.html#freertos-applications"><span class="std std-ref">ESP-IDF FreeRTOS Applications</span></a>.</p>
+<p>ESP-IDF FreeRTOS <strong>does not</strong> support scheduler termination. Calling <a class="reference internal" href="../api-reference/system/freertos.html#_CPPv417vTaskEndSchedulerv" title="vTaskEndScheduler"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">vTaskEndScheduler()</span></code></a> will simply cause the application to abort.</p>
+</div>
+</div>
+<div class="section" id="critical-sections">
+<h2><a class="toc-backref" href="#id19">Critical Sections</a><a class="headerlink" href="#critical-sections" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="api-changes">
+<h3><a class="toc-backref" href="#id20">API Changes</a><a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
+<p>Vanilla FreeRTOS implements critical sections by disabling interrupts, This prevents preemptive context switches and the servicing of ISRs during a critical section. Thus a task/ISR that enters a critical section is guaranteed to be the sole entity to access a shared resource. Critical sections in Vanilla FreeRTOS have the following API:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL()</span></code> enters a critical section by disabling interrupts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL()</span></code> exits a critical section by reenabling interrupts</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL_FROM_ISR()</span></code> enters a critical section from an ISR by disabling interrupt nesting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL_FROM_ISR()</span></code> exits a critical section from an ISR by reenabling interrupt nesting</p></li>
+</ul>
+<p>However, in an SMP system, merely disabling interrupts does not constitute a critical section as the presence of other cores means that a shared resource can still be concurrently accessed. Therefore, critical sections in ESP-IDF FreeRTOS are implemented using spinlocks. To accommodate the spinlocks, the ESP-IDF FreeRTOS critical section APIs contain an additional spinlock parameter as shown below:</p>
+<ul class="simple">
+<li><p>Spinlocks are of <code class="docutils literal notranslate"><span class="pre">portMUX_TYPE</span></code> (<strong>not to be confused to FreeRTOS mutexes</strong>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL(&amp;mux)</span></code> enters a critical from a task context</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL(&amp;mux)</span></code> exits a critical section from a task context</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL_ISR(&amp;mux)</span></code> enters a critical section from an interrupt context</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL_ISR(&amp;mux)</span></code> exits a critical section from an interrupt context</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The critical section API can be called recursively (i.e., nested critical sections). Entering a critical section multiple times recursively is valid so long as the critical section is exited the same number of times it was entered. However, given that critical sections can target different spinlocks, users should take care to avoid dead locking when entering critical sections recursively.</p>
+</div>
+</div>
+<div class="section" id="implementation">
+<h3><a class="toc-backref" href="#id21">Implementation</a><a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h3>
+<p>In ESP-IDF FreeRTOS, the process of a particular core entering and exiting a critical section is as follows:</p>
+<ul class="simple">
+<li><p>For <code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL(&amp;mux)</span></code> (or <code class="docutils literal notranslate"><span class="pre">taskENTER_CRITICAL_ISR(&amp;mux)</span></code>)</p>
+<ol class="arabic simple">
+<li><p>The core disables its interrupts (or interrupt nesting) up to <code class="docutils literal notranslate"><span class="pre">configMAX_SYSCALL_INTERRUPT_PRIORITY</span></code></p></li>
+<li><p>The core then spins on the spinlock using an atomic compare-and-set instruction until it acquires the lock. A lock is acquired when the core is able to set the lock’s owner value to the core’s ID.</p></li>
+<li><p>Once the spinlock is acquired, the function returns. The remainder of the critical section runs with interrupts (or interrupt nesting) disabled.</p></li>
+</ol>
+</li>
+<li><p>For <code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL(&amp;mux)</span></code> (or <code class="docutils literal notranslate"><span class="pre">taskEXIT_CRITICAL_ISR(&amp;mux)</span></code>)</p>
+<ol class="arabic simple">
+<li><p>The core releases the spinlock by clearing the spinlock’s owner value</p></li>
+<li><p>The core re-enables interrupts (or interrupt nesting)</p></li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="section" id="restrictions-and-considerations">
+<h3><a class="toc-backref" href="#id22">Restrictions and Considerations</a><a class="headerlink" href="#restrictions-and-considerations" title="Permalink to this headline">¶</a></h3>
+<p>Given that interrupts (or interrupt nesting) are disabled during a critical section, there are multiple restrictions regarding what can be done within a critical sections. During a critical section, users should keep the following restrictions and considerations in mind:</p>
+<ul class="simple">
+<li><p>Critical sections should be as kept as short as possible</p>
+<ul>
+<li><p>The longer the critical section lasts, the longer a pending interrupt can be delayed.</p></li>
+<li><p>A typical critical section should only access a few data structures and/or hardware registers</p></li>
+<li><p>If possible, defer as much processing and/or event handling to the outside of critical sections.</p></li>
+</ul>
+</li>
+<li><p>FreeRTOS API should not be called from within a critical section</p></li>
+<li><p>Users should never call any blocking or yielding functions within a critical section</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="misc">
+<h2><a class="toc-backref" href="#id23">Misc</a><a class="headerlink" href="#misc" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="floating-point-usage">
+<h3><a class="toc-backref" href="#id24">Floating Point Usage</a><a class="headerlink" href="#floating-point-usage" title="Permalink to this headline">¶</a></h3>
+<p>Usually, when a context switch occurs:</p>
+<ul class="simple">
+<li><p>the current state of a CPU’s registers are saved to the stack of task being switch out</p></li>
+<li><p>the previously saved state of the CPU’s registers are loaded from the stack of the task being switched in</p></li>
+</ul>
+<p>However, ESP-IDF FreeRTOS implements Lazy Context Switching for the FPU (Floating Point Unit) registers of a CPU. In other words, when a context switch occurs on a particular core (e.g., CPU0), the state of the core’s FPU registers are not immediately saved to the stack of the task getting switched out (e.g., Task A). The FPU’s registers are left untouched until:</p>
+<ul class="simple">
+<li><p>A different task (e.g., Task B) runs on the same core and uses the FPU. This will trigger an exception that will save the FPU registers to Task A’s stack.</p></li>
+<li><p>Task A get’s scheduled to the same core and continues execution. Saving and restoring the FPU’s registers is not necessary in this case.</p></li>
+</ul>
+<p>However, given that tasks can be unpinned thus can be scheduled on different cores (e.g., Task A switches to CPU1), it is unfeasible to copy and restore the FPU’s registers across cores. Therefore, when a task utilizes the FPU (by using a <code class="docutils literal notranslate"><span class="pre">float</span></code> type in its call flow), ESP-IDF FreeRTOS will automatically pin the task to the current core it is running on. This ensures that all tasks that uses the FPU are always pinned to a particular core.</p>
+<p>Furthermore, ESP-IDF FreeRTOS by default does not support the usage of the FPU within an interrupt context given that the FPU’s register state is tied to a particular task.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>ESP targets that contain an FPU do not support hardware acceleration for double precision floating point arithmetic (<code class="docutils literal notranslate"><span class="pre">double</span></code>). Instead <code class="docutils literal notranslate"><span class="pre">double</span></code> is implemented via software hence the behavioral restrictions regarding the <code class="docutils literal notranslate"><span class="pre">float</span></code> type do not apply to <code class="docutils literal notranslate"><span class="pre">double</span></code>. Note that due to the lack of hardware acceleration, <code class="docutils literal notranslate"><span class="pre">double</span></code> operations may consume significantly more CPU time in comparison to <code class="docutils literal notranslate"><span class="pre">float</span></code>.</p>
+</div>
+</div>
+<div class="section" id="esp-idf-freertos-single-core">
+<span id="freertos-smp-single-core"></span><h3><a class="toc-backref" href="#id25">ESP-IDF FreeRTOS Single Core</a><a class="headerlink" href="#esp-idf-freertos-single-core" title="Permalink to this headline">¶</a></h3>
+<p>Although ESP-IDF FreeRTOS is an SMP scheduler, some ESP targets are single core (such as the ESP32-S2 and ESP32-C3). When building ESP-IDF applications for these targets, ESP-IDF FreeRTOS is still used but the number of cores will be set to <cite>1</cite> (i.e., the <a class="reference internal" href="../api-reference/kconfig.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a> will always be enabled for single core targets).</p>
+<p>For multicore targets (such as the ESP32 and ESP32-S3), <a class="reference internal" href="../api-reference/kconfig.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a> can also be set. This will result in ESP-IDF FreeRTOS only running on CPU0, and all other cores will be inactive.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Users should bear in mind that enabling <a class="reference internal" href="../api-reference/kconfig.html#config-freertos-unicore"><span class="std std-ref">CONFIG_FREERTOS_UNICORE</span></a> <strong>is NOT equivalent to running Vanilla FreeRTOS</strong>. The additional API of ESP-IDF FreeRTOS can still be called, and the behavior changes of ESP-IDF FreeRTOS will incur a small amount of overhead even when compiled for only a single core.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+           <div class="articleComments">
+            
+<p style="text-align:center"><a href="https://www.espressif.com/en/company/documents/documentation_feedback?docId=4287&sections=ESP-IDF FreeRTOS (SMP) (api-guides/freertos-smp)&version=esp32 v4.4 (v4.4)">Provide feedback about this document</a></p>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="hardware-abstraction.html" class="btn btn-neutral float-right" title="Hardware Abstraction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../security/flash-encryption.html" class="btn btn-neutral float-left" title="Flash Encryption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2016 - 2021, Espressif Systems (Shanghai) Co., Ltd
+
+    </p>
+  </div>
+
+  <ul class="footer">
+    <li>
+      
+      
+      Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/espressif/sphinx_idf_theme">theme</a>  based on <a href="https://github.com/readthedocs/sphinx_rtd_theme">Read the Docs Sphinx Theme</a>.
+    </li>
+
+    <li class="footer-aside">
+        <a href="../esp-idf-en-v4.4-esp32.pdf" class="fa fa-file-pdf-o"> Download PDF</a>
+    </li>
+
+  </ul> 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
