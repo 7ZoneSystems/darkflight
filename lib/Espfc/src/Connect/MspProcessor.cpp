@@ -96,7 +96,7 @@ static Espfc::SerialSpeed fromBaudIndex(SerialSpeedIndex index)
 static uint8_t toMspBoxId(uint8_t mode)
 {
   using namespace Espfc;
-  switch((FlightMode)mode)
+  switch ((FlightMode)mode)
   {
     case MODE_ARMED:
       return BOXARM;
@@ -124,7 +124,7 @@ static uint8_t toMspBoxId(uint8_t mode)
 static uint8_t fromMspBoxId(uint8_t boxId)
 {
   using namespace Espfc;
-  switch(boxId)
+  switch (boxId)
   {
     case BOXARM:
       return MODE_ARMED;
@@ -408,7 +408,7 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         const uint8_t ch = m.readU8() + AXIS_AUX_1;
         const int16_t min = m.readU8() * 25 + 900;
         const int16_t max = m.readU8() * 25 + 900;
-        if(mode < MODE_COUNT)
+        if (mode < MODE_COUNT)
         {
           _model.config.conditions[i].id = mode;
           _model.config.conditions[i].ch = ch;
@@ -419,10 +419,11 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         {
           r.result = -1;
         }
-        if(m.remain() >= 2) {
+        if (m.remain() >= 2)
+        {
           const uint8_t logicMode = m.readU8(); // mode logic
-          const uint8_t linkId = m.readU8(); // link to
-          if(mode < MODE_COUNT)
+          const uint8_t linkId = m.readU8();    // link to
+          if (mode < MODE_COUNT)
           {
             _model.config.conditions[i].logicMode = logicMode;
             _model.config.conditions[i].linkId = linkId;
@@ -677,12 +678,12 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         {
           continue;
         }
-        r.writeU8(_model.config.serial[i].id);                        // identifier
-        r.writeU16(_model.config.serial[i].functionMask);             // functionMask
-        r.writeU8(toBaudIndex(_model.config.serial[i].baud));         // msp_baudrateIndex
-        r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud));      // gps_baudrateIndex
+        r.writeU8(_model.config.serial[i].id);                         // identifier
+        r.writeU16(_model.config.serial[i].functionMask);              // functionMask
+        r.writeU8(toBaudIndex(_model.config.serial[i].baud));          // msp_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud));       // gps_baudrateIndex
         r.writeU8(toBaudIndex(_model.config.serial[i].telemetryBaud)); // telemetry_baudrateIndex
-        r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud)); // blackbox_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud));  // blackbox_baudrateIndex
       }
       break;
 
@@ -703,12 +704,12 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
         {
           continue;
         }
-        r.writeU8(_model.config.serial[i].id);                        // identifier
-        r.writeU32(_model.config.serial[i].functionMask);             // functionMask
-        r.writeU8(toBaudIndex(_model.config.serial[i].baud));         // msp_baudrateIndex
-        r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud));      // gps_baudrateIndex
+        r.writeU8(_model.config.serial[i].id);                         // identifier
+        r.writeU32(_model.config.serial[i].functionMask);              // functionMask
+        r.writeU8(toBaudIndex(_model.config.serial[i].baud));          // msp_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].gpsBaud));       // gps_baudrateIndex
         r.writeU8(toBaudIndex(_model.config.serial[i].telemetryBaud)); // telemetry_baudrateIndex
-        r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud)); // blackbox_baudrateIndex
+        r.writeU8(toBaudIndex(_model.config.serial[i].blackboxBaud));  // blackbox_baudrateIndex
       }
     }
     break;
@@ -1677,15 +1678,16 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
     case MSP_SET_GPS_CONFIG:
       if (m.remain() >= 4)
       {
-        _model.config.gps.provider = m.readU8();   // 0=NMEA, 1=UBLOX
+        _model.config.gps.provider = m.readU8(); // 0=NMEA, 1=UBLOX
         _model.config.gps.sbasMode = m.readU8();
         _model.config.gps.autoConfig = m.readU8();
         _model.config.gps.autoBaud = m.readU8();
       }
-      if (m.remain() >= 2) {
-          // Added in API version 1.43
-          _model.config.gps.setHomeOnce = m.readU8(); // gps_set_home_point_once
-          _model.config.gps.enableGalileo = m.readU8(); // gps_ublox_use_galileo
+      if (m.remain() >= 2)
+      {
+        // Added in API version 1.43
+        _model.config.gps.setHomeOnce = m.readU8();   // gps_set_home_point_once
+        _model.config.gps.enableGalileo = m.readU8(); // gps_ublox_use_galileo
       }
       break;
 
@@ -1695,15 +1697,15 @@ void MspProcessor::processCommand(MspMessage& m, MspResponse& r, Device::SerialD
       r.writeU8(_model.config.gps.autoConfig); // autoConfig, 0: off, 1: on
       r.writeU8(_model.config.gps.autoBaud);   // autoBaud, 0: off, 1: on
       // Added in API version 1.43
-      r.writeU8(_model.config.gps.setHomeOnce); // gps_set_home_point_once
+      r.writeU8(_model.config.gps.setHomeOnce);   // gps_set_home_point_once
       r.writeU8(_model.config.gps.enableGalileo); // gps_ublox_use_galileo
       break;
 
     case MSP_RAW_GPS:
       r.writeU8(_model.state.gps.fix && _model.state.gps.fixType >= 3); // STATE(GPS_FIX));
-      r.writeU8(_model.state.gps.numSats); // numSat
-      r.writeU32(_model.state.gps.location.raw.lat); // lat
-      r.writeU32(_model.state.gps.location.raw.lon); // lon
+      r.writeU8(_model.state.gps.numSats);                              // numSat
+      r.writeU32(_model.state.gps.location.raw.lat);                    // lat
+      r.writeU32(_model.state.gps.location.raw.lon);                    // lon
       r.writeU16(std::clamp<int>(_model.state.gps.location.raw.height / 1000, 0,
                                  std::numeric_limits<uint16_t>::max())); // height [m]
       r.writeU16(_model.state.gps.velocity.raw.groundSpeed / 10);        // cm/s

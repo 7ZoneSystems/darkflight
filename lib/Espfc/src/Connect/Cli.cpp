@@ -422,7 +422,8 @@ const Cli::Param* Cli::initialize(ModelConfig& c)
       Param("gps_enable_qzss", &c.gps.enableQZSS), Param("gps_enable_sbas", &c.gps.enableSBAS),
 
       // Position hold tuning parameters
-      Param("gps_poshold_max_angle", &c.gps.posHoldMaxAngle), Param("gps_poshold_deadband", &c.gps.posHoldStickDeadband),
+      Param("gps_poshold_max_angle", &c.gps.posHoldMaxAngle),
+      Param("gps_poshold_deadband", &c.gps.posHoldStickDeadband),
       Param("gps_poshold_max_velocity", &c.gps.posHoldMaxVelocity),
       Param("gps_poshold_velocity_filter", &c.gps.posHoldVelocityFilter),
       Param("gps_poshold_max_horz_accuracy", &c.gps.posHoldMaxHorizontalAccuracy),
@@ -991,7 +992,7 @@ void Cli::execute(CliCmd& cmd, Stream& s)
       _model.state.gps.homeSet = false;
       s.println("Home position cleared");
     }
-    else if(cmd.args[1] && strcmp(cmd.args[1], "config") == 0)
+    else if (cmd.args[1] && strcmp(cmd.args[1], "config") == 0)
     {
       s.print("GPS provider=");
       s.print(_model.config.gps.provider);
@@ -1001,36 +1002,42 @@ void Cli::execute(CliCmd& cmd, Stream& s)
       s.print(_model.config.gps.autoConfig);
       s.print(" auto_baud=");
       s.println(_model.config.gps.autoBaud);
-      for(size_t i = 0; i < SERIAL_UART_COUNT; i++)
+      for (size_t i = 0; i < SERIAL_UART_COUNT; i++)
       {
         const SerialPortConfig& spc = _model.config.serial[i];
-        if(spc.functionMask & SERIAL_FUNCTION_GPS)
+        if (spc.functionMask & SERIAL_FUNCTION_GPS)
         {
           s.print("GPS port=");
-          s.print(spc.id == SERIAL_ID_UART_1 ? "UART1" : (spc.id == SERIAL_ID_UART_2 ? "UART2" : (spc.id == SERIAL_ID_UART_3 ? "UART3" : "other")));
+          s.print(spc.id == SERIAL_ID_UART_1
+                      ? "UART1"
+                      : (spc.id == SERIAL_ID_UART_2 ? "UART2" : (spc.id == SERIAL_ID_UART_3 ? "UART3" : "other")));
           s.print(" baud=");
           s.print(spc.gpsBaud ? spc.gpsBaud : spc.baud);
           s.println();
         }
       }
     }
-    else if(cmd.args[1] && strcmp(cmd.args[1], "port") == 0 && cmd.args[2])
+    else if (cmd.args[1] && strcmp(cmd.args[1], "port") == 0 && cmd.args[2])
     {
       const int requestedId = String(cmd.args[2]).toInt();
       int id = requestedId;
-      if(strcasecmp(cmd.args[2], "UART1") == 0) id = SERIAL_ID_UART_1;
-      else if(strcasecmp(cmd.args[2], "UART2") == 0) id = SERIAL_ID_UART_2;
-      else if(strcasecmp(cmd.args[2], "UART3") == 0) id = SERIAL_ID_UART_3;
-      else if(requestedId >= 1 && requestedId <= 3) id = requestedId - 1;
+      if (strcasecmp(cmd.args[2], "UART1") == 0)
+        id = SERIAL_ID_UART_1;
+      else if (strcasecmp(cmd.args[2], "UART2") == 0)
+        id = SERIAL_ID_UART_2;
+      else if (strcasecmp(cmd.args[2], "UART3") == 0)
+        id = SERIAL_ID_UART_3;
+      else if (requestedId >= 1 && requestedId <= 3)
+        id = requestedId - 1;
 
       const int selected = _model.getSerialIndex((SerialPortId)id);
-      if(selected < 0)
+      if (selected < 0)
       {
         s.println("Invalid or unavailable GPS UART");
       }
       else
       {
-        for(size_t i = 0; i < SERIAL_UART_COUNT; i++)
+        for (size_t i = 0; i < SERIAL_UART_COUNT; i++)
         {
           _model.config.serial[i].functionMask &= ~SERIAL_FUNCTION_GPS;
         }
