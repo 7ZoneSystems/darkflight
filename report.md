@@ -34,26 +34,6 @@ Host: aarch64, Debian 13 (trixie) inside proot-distro on Termux/Android, f2fs ro
 | clang-format | 20.1.7 (matches repo pin; system had 21 from Termux) | pip |
 | Host gcc/g++ | 14.2.0 | preinstalled |
 
-No x86 emulation, Wine, or GUI dependencies introduced.
-
-### Environment problems diagnosed and worked around
-
-This sandbox is a proot/Termux-on-Android environment with two quirks that break
-default PlatformIO operation. Both are handled by an out-of-repo wrapper
-(`/tmp/opencode/pio_serial.py`) that:
-
-1. Forces `multiprocessing.cpu_count() = 1`.
-   - Symptom: with the default `-j8`, the host compiler crashed repeatedly
-     (`cc1plus` ICE: "Bus error", "Segmentation fault", "futex facility returned
-     an unexpected error code") while compiling large test TUs.
-2. Replaces `shutil.copytree` with an `os.lstat()`-based implementation.
-   - Symptom: every PlatformIO package install failed with
-     `OSError: [Errno 22] Invalid argument` while copying toolchain files.
-   - Root cause chain (proven empirically):
-     proot's `getdents64` misreports hard-linked entries as `DT_LNK` ->
-     Python `DirEntry.is_symlink()` returns true for regular files ->
-     stdlib `copytree(symlinks=True)` calls `os.readlink()` on them -> EINVAL.
-   - The wrapper decides entry types via `lstat()` instead of the lying d_type.
 
 ## Unit tests — `pio test -e native`
 
@@ -110,7 +90,7 @@ all 14 tests in the suite did run to completion.
 ## Builds
 
 - `esp32`: interrupted at user request ~90% through compilation (framework,
-  libraries, and most of Espfc compiled; linking not reached). Bootloader and
+  libraries, and most of Espfc compiled; linking not reached). Bootloader and/
   partition binaries produced. Xtensa toolchain + Arduino framework installed OK.
 - `esp32s2`, `esp32s3`, `esp32c3`, `esp8266`, `rp2040`, `rp2350`: not started.
   Each requires additional multi-hundred-MB toolchain downloads and serial
@@ -129,18 +109,3 @@ all 14 tests in the suite did run to completion.
 | ASan refuses to init (`CHECK failed ... kSpaceBeg`) | sandbox address-space restrictions | environment |
 | `test_crsf_encode_msp_v1_fragmented` failure | genuine 2-byte OOB write in `CrsfMessage` | **repository bug** |
 | `check_format` target failure | codebase not formatted against `.clang-format` | repository state |
-
-## Recommended next steps
-
-1. Apply the `CrsfMessage::payload` size fix (one-line change), re-run
-   `pio test -e native` (expect 190/190).
-2. Build remaining targets one at a time as wall-time permits
-   (`esp32s3`, `esp32c3`, `esp8266` first; RP2040/RP2350 pull an external
-   GitHub platform and are experimental upstream anyway).
-3. Run `pio check` (cppcheck) for the static-analysis gate.
-4. Apply repo-wide clang-format as a dedicated commit
-   (`pio run -e native -t format`), after agreeing scope with upstream.
-5. Patch `bin/format-check.sh` to exclude `.pio/` (and consider excluding
-   vendored `lib/betaflight`).
-6. Optionally document the `-j1` requirement and proot caveats for this box
-   (or use the provided `/tmp/opencode/pio_serial.py` wrapper).

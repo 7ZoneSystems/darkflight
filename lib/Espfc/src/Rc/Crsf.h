@@ -117,7 +117,9 @@ struct CrsfMessage
   uint8_t addr; // CrsfAddress
   uint8_t size; // counts size after this byte, so it must be the payload size + 2 (type and crc)
   uint8_t type; // CrsfFrameType
-  uint8_t payload[CRSF_PAYLOAD_SIZE_MAX + 1]; // +1 for crc
+  // worst case frame: addr + len + type + [ext header (dst, origin, status)] + max payload chunk + crc
+  // = CRSF_FRAME_SIZE_MAX bytes total, thus payload capacity is CRSF_FRAME_SIZE_MAX - 3
+  uint8_t payload[CRSF_FRAME_SIZE_MAX - 3];
 
   void prepare(uint8_t t)
   {
@@ -172,6 +174,9 @@ struct CrsfMessage
     return Utils::crc8_dvb_s2(crc, payload, size - 2); // size includes type and crc
   }
 } __attribute__ ((__packed__));
+
+// the whole struct must be able to hold a full-size wire frame (<addr><len><type><payload...><crc>)
+static_assert(sizeof(CrsfMessage) >= CRSF_FRAME_SIZE_MAX, "CrsfMessage too small for max size CRSF frame");
 
 class Crsf
 {

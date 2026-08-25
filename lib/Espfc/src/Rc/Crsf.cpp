@@ -114,13 +114,14 @@ static inline void fillMessage(const CrsfMessage& frame, Connect::MspMessage& m,
 {
   // Payload structure: [dst, origin, flags, msp_header, msp_data...]
   // Available MSP data (after header) = frame.size - 5 (type,dst,origin,flags,crc) - sizeof(header)
+  const int framePayloadSize = frame.size - 5 - sizeof(HeaderType);
+  if(framePayloadSize < 0) return; // frame too short to contain full msp header
   const auto * hdr = reinterpret_cast<const HeaderType*>(frame.payload + 3);
-  const size_t framePayloadSize = frame.size - 5 - sizeof(HeaderType);
   m.cmd = hdr->cmd;
   m.version = version;
   m.dir = Connect::MSP_TYPE_CMD;
   m.expected = hdr->size;
-  m.append(frame.payload + 3 + sizeof(HeaderType), std::min(framePayloadSize, (size_t)hdr->size)); // skip dst, origin, status and msp header
+  m.append(frame.payload + 3 + sizeof(HeaderType), std::min((size_t)framePayloadSize, (size_t)hdr->size)); // skip dst, origin, status and msp header
   if(m.expected == m.received)
   {
     m.state = Connect::MSP_STATE_RECEIVED;
@@ -176,6 +177,7 @@ int FAST_CODE_ATTR Crsf::decodeMsp(const CrsfMessage& frame, Connect::MspMessage
     m.state = Connect::MSP_STATE_IDLE;
     m.received = 0;
     m.expected = 0;
+    m.read = 0;
     if(version == 1)
     {
       fillMessage<Connect::MspHeaderV1>(frame, m, Connect::MSP_V1);
@@ -190,8 +192,8 @@ int FAST_CODE_ATTR Crsf::decodeMsp(const CrsfMessage& frame, Connect::MspMessage
     // next chunks - continuation of fragmented message
     if(sequence == ((m.sequence + 1) & CRSF_MSP_STATUS_SEQ_MASK))
     {
-      size_t framePayloadSize = std::min(frame.size - 5, m.expected - m.received); // skip dst, origin, status;
-      if(m.received + framePayloadSize <= Connect::MSP_BUF_SIZE)
+      const int framePayloadSize = std::min(frame.size - 5, (int)m.expected - (int)m.received); // skip dst, origin, status
+      if(framePayloadSize >= 0 && m.received + framePayloadSize <= Connect::MSP_BUF_SIZE)
       {
         m.append(frame.payload + 3, framePayloadSize);
         if(m.received == m.expected)

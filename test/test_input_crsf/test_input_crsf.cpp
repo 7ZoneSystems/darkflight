@@ -623,6 +623,212 @@ void test_csrf_decode_msp_v1_fragmented()
   TEST_ASSERT_EQUAL_UINT8(src, origin);
 }
 
+// guard bytes placed directly after the message object to detect out of bounds writes
+struct __attribute__((packed)) GuardedCrsfMessage
+{
+  CrsfMessage msg;
+  uint8_t guard_a;
+  uint8_t guard_b;
+};
+
+void test_crsf_encode_msp_v1_fragmented_no_overflow()
+{
+  GuardedCrsfMessage g;
+  memset(&g, 0, sizeof(g));
+  g.guard_a = 0xAA;
+  g.guard_b = 0x55;
+
+  Connect::MspResponse resp;
+  resp.version = Connect::MSP_V1;
+  resp.cmd = MSP_API_VERSION;
+  resp.result = 0;
+  for(size_t i = 0; i < 64; i++)
+  {
+    resp.writeU8(i);
+  }
+
+  uint8_t buff[255];
+  size_t size = resp.serialize(buff, sizeof(buff));
+  const uint8_t* beg = buff + 3;        // skip msp header
+  const uint8_t* end = buff + size - 1; // skip crc
+
+  beg = Crsf::encodeMspData(g.msg, CRSF_ADDRESS_RADIO_TRANSMITTER, 1, 0, true, beg, end);
+  TEST_ASSERT_FALSE(beg == end);
+
+  // maximum size frame: size counts type + payload + crc
+  TEST_ASSERT_EQUAL_UINT8(62, g.msg.size);
+  TEST_ASSERT_EQUAL_UINT8(0xFE, g.msg.crc());
+
+  // adjacent memory must remain untouched (2-byte overflow was present here)
+  TEST_ASSERT_EQUAL_UINT8(0xAA, g.guard_a);
+  TEST_ASSERT_EQUAL_UINT8(0x55, g.guard_b);
+}
+
+void test_input_crsf_max_size_frame_parse_no_overflow()
+{
+  InputCRSF input;
+  GuardedCrsfMessage g;
+  memset(&g, 0, sizeof(g));
+  g.guard_a = 0xAA;
+  g.guard_b = 0x55;
+
+  When(Method(ArduinoFake(), micros)).Return(0);
+  input.begin(nullptr, nullptr);
+
+  // build valid maximum-size MSP_REQ frame (size = 62, wire length = 64)
+  CrsfMessage t;
+  memset(&t, 0, sizeof(t));
+  t.prepare(CRSF_FRAMETYPE_MSP_REQ);
+  t.writeU8(CRSF_ADDRESS_FLIGHT_CONTROLLER);   // dst
+  t.writeU8(CRSF_ADDRESS_RADIO_TRANSMITTER);   // origin
+  t.writeU8((1 << 5) | (1 << 4) | 0);          // status: v1 + start + seq0
+  t.writeU8(200);                              // msp v1 size (fragmented)
+  t.writeU8(MSP_API_VERSION);                  // msp v1 cmd
+  while(t.size < CRSF_FRAME_SIZE_MAX - 2)      // pad to max payload
+  {
+    t.writeU8(0x42);
+  }
+  t.finalize();
+  TEST_ASSERT_EQUAL_UINT8(62, t.size);
+
+  const uint8_t * stream = reinterpret_cast<const uint8_t*>(&t);
+  for(size_t i = 0; i < t.size + 2; i++)       // whole wire frame incl addr and len
+  {
+    input.parse(g.msg, stream[i]);
+  }
+
+  // parser must not write past the message object while collecting frame data and crc
+  TEST_ASSERT_EQUAL_UINT8(0xAA, g.guard_a);
+  TEST_ASSERT_EQUAL_UINT8(0x55, g.guard_b);
+
+  // frame must be intact after parsing
+  TEST_ASSERT_EQUAL_UINT8(CRSF_SYNC_BYTE, g.msg.addr);
+  TEST_ASSERT_EQUAL_UINT8(62, g.msg.size);
+  TEST_ASSERT_EQUAL_UINT8(CRSF_FRAMETYPE_MSP_REQ, g.msg.type);
+  TEST_ASSERT_EQUAL_UINT8(stream[63], g.msg.crc());
+}
+
+void test_crsf_decode_msp_short_start_frame_ignored()
+{
+  // start frame too short to contain full msp v2 header (size < 9) must be rejected
+  CrsfMessage frame;
+  memset(&frame, 0, sizeof(frame));
+  frame.addr = CRSF_SYNC_BYTE;
+  frame.type = CRSF_FRAMETYPE_MSP_REQ;
+  frame.size = 6; // payload area = dst, origin, status + 1 byte only
+  frame.payload[0] = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+  frame.payload[1] = CRSF_ADDRESS_RADIO_TRANSMITTER;
+  frame.payload[2] = (2 << 5) | (1 << 4) | 0; // v2 + start + seq0
+
+  Connect::MspMessage m;
+  uint8_t origin = 0;
+
+  int ret = Crsf::decodeMsp(frame, m, origin);
+
+  TEST_ASSERT_EQUAL_INT(0, ret);
+  TEST_ASSERT_FALSE(m.isReady());
+  TEST_ASSERT_EQUAL_UINT8(0, m.received);
+}
+
+void test_crsf_decode_msp_short_continuation_frame_ignored()
+{
+  // start frame announcing long fragmented message
+  CrsfMessage frame1;
+  memset(&frame1, 0, sizeof(frame1));
+  frame1.addr = CRSF_SYNC_BYTE;
+  frame1.type = CRSF_FRAMETYPE_MSP_REQ;
+  frame1.size = 17; // ext header + msp v1 header + 10 bytes of payload
+  frame1.payload[0] = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+  frame1.payload[1] = CRSF_ADDRESS_RADIO_TRANSMITTER;
+  frame1.payload[2] = (1 << 5) | (1 << 4) | 0; // v1 + start + seq0
+  frame1.payload[3] = 200;                     // msp size (fragmented)
+  frame1.payload[4] = MSP_API_VERSION;         // msp cmd
+  for(size_t i = 0; i < 10; i++)
+  {
+    frame1.payload[5 + i] = i;
+  }
+
+  Connect::MspMessage m;
+  uint8_t origin = 0;
+
+  int ret = Crsf::decodeMsp(frame1, m, origin);
+  TEST_ASSERT_EQUAL_INT(0, ret);
+  TEST_ASSERT_EQUAL_UINT8(10, m.received);
+  TEST_ASSERT_EQUAL_UINT16(200, m.expected);
+
+  // malformed continuation frame with size below extended header length (size < 5)
+  // previously caused integer underflow and unbounded append (memory corruption)
+  CrsfMessage frame2;
+  memset(&frame2, 0, sizeof(frame2));
+  frame2.addr = CRSF_SYNC_BYTE;
+  frame2.type = CRSF_FRAMETYPE_MSP_REQ;
+  frame2.size = 4;
+  frame2.payload[0] = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+  frame2.payload[1] = CRSF_ADDRESS_RADIO_TRANSMITTER;
+  frame2.payload[2] = (1 << 5) | (0 << 4) | 1; // v1 + no start + seq1
+
+  ret = Crsf::decodeMsp(frame2, m, origin);
+
+  TEST_ASSERT_EQUAL_INT(0, ret);
+  TEST_ASSERT_FALSE(m.isReady());
+  TEST_ASSERT_EQUAL_UINT8(10, m.received); // unchanged, nothing appended
+}
+
+void test_crsf_decode_msp_resets_read_on_start()
+{
+  Connect::MspMessage m;
+  uint8_t origin = 0;
+
+  // first complete command with payload
+  CrsfMessage frame1;
+  memset(&frame1, 0, sizeof(frame1));
+  frame1.addr = CRSF_SYNC_BYTE;
+  frame1.type = CRSF_FRAMETYPE_MSP_REQ;
+  frame1.size = 12; // ext header + msp v1 header + 4 bytes of payload
+  frame1.payload[0] = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+  frame1.payload[1] = CRSF_ADDRESS_RADIO_TRANSMITTER;
+  frame1.payload[2] = (1 << 5) | (1 << 4) | 0; // v1 + start + seq0
+  frame1.payload[3] = 4;                       // msp size
+  frame1.payload[4] = MSP_API_VERSION;         // msp cmd
+  for(size_t i = 0; i < 4; i++)
+  {
+    frame1.payload[5 + i] = 10 + i;
+  }
+
+  int ret = Crsf::decodeMsp(frame1, m, origin);
+  TEST_ASSERT_EQUAL_INT(1, ret);
+  TEST_ASSERT_TRUE(m.isReady());
+  TEST_ASSERT_EQUAL_UINT8(4, m.received);
+
+  // simulate consumption by msp processor
+  m.read = m.received;
+  TEST_ASSERT_EQUAL_UINT8(4, m.read);
+
+  // second command must be decoded from clean state, read offset included,
+  // otherwise processor would consume stale bytes from previous message
+  CrsfMessage frame2;
+  memset(&frame2, 0, sizeof(frame2));
+  frame2.addr = CRSF_SYNC_BYTE;
+  frame2.type = CRSF_FRAMETYPE_MSP_REQ;
+  frame2.size = 11; // ext header + msp v1 header + 3 bytes of payload
+  frame2.payload[0] = CRSF_ADDRESS_FLIGHT_CONTROLLER;
+  frame2.payload[1] = CRSF_ADDRESS_RADIO_TRANSMITTER;
+  frame2.payload[2] = (1 << 5) | (1 << 4) | 1; // v1 + start + seq1
+  frame2.payload[3] = 3;                       // msp size
+  frame2.payload[4] = MSP_FC_VARIANT;          // msp cmd
+  for(size_t i = 0; i < 3; i++)
+  {
+    frame2.payload[5 + i] = 20 + i;
+  }
+
+  ret = Crsf::decodeMsp(frame2, m, origin);
+  TEST_ASSERT_EQUAL_INT(1, ret);
+  TEST_ASSERT_TRUE(m.isReady());
+  TEST_ASSERT_EQUAL_UINT8(3, m.received);
+  TEST_ASSERT_EQUAL_UINT16(MSP_FC_VARIANT, m.cmd);
+  TEST_ASSERT_EQUAL_UINT8(0, m.read); // must point at message start again
+}
+
 void test_input_ibus_rc_valid()
 {
   InputIBUS input;
@@ -706,6 +912,11 @@ int main(int argc, char **argv)
   RUN_TEST(test_crsf_encode_tlm);
   RUN_TEST(test_crsf_encode_msp_v1);
   RUN_TEST(test_crsf_encode_msp_v1_fragmented);
+  RUN_TEST(test_crsf_encode_msp_v1_fragmented_no_overflow);
+  RUN_TEST(test_input_crsf_max_size_frame_parse_no_overflow);
+  RUN_TEST(test_crsf_decode_msp_short_start_frame_ignored);
+  RUN_TEST(test_crsf_decode_msp_short_continuation_frame_ignored);
+  RUN_TEST(test_crsf_decode_msp_resets_read_on_start);
   RUN_TEST(test_crsf_encode_msp_v2);
   RUN_TEST(test_crsf_decode_msp_v1);
   RUN_TEST(test_csrf_decode_msp_v1_fragmented);
