@@ -15,22 +15,52 @@ using namespace fakeit;
 using namespace Espfc;
 using namespace Espfc::Connect;
 
-class MspTestSerial: public Device::SerialDevice
+class MspTestSerial : public Device::SerialDevice
 {
 public:
   void begin(const SerialDeviceConfig& conf) override {}
   void updateBaudRate(int baud) override {}
-  int available() override { return 0; }
-  int read() override { return -1; }
-  size_t readMany(uint8_t * c, size_t l) override { return 0; }
-  int peek() override { return -1; }
+  int available() override
+  {
+    return 0;
+  }
+  int read() override
+  {
+    return -1;
+  }
+  size_t readMany(uint8_t* c, size_t l) override
+  {
+    return 0;
+  }
+  int peek() override
+  {
+    return -1;
+  }
   void flush() override {}
-  size_t write(uint8_t c) override { return 1; }
-  size_t write(const uint8_t * c, size_t l) override { return l; }
-  int availableForWrite() override { return 0; }
-  bool isTxFifoEmpty() override { return true; }
-  bool isSoft() const override { return false; }
-  operator bool() const override { return true; }
+  size_t write(uint8_t c) override
+  {
+    return 1;
+  }
+  size_t write(const uint8_t* c, size_t l) override
+  {
+    return l;
+  }
+  int availableForWrite() override
+  {
+    return 0;
+  }
+  bool isTxFifoEmpty() override
+  {
+    return true;
+  }
+  bool isSoft() const override
+  {
+    return false;
+  }
+  operator bool() const override
+  {
+    return true;
+  }
 };
 
 /*void setUp(void)
@@ -42,15 +72,14 @@ public:
 // // clean stuff up here
 // }
 
-
 #define MSP_V2_FLAG 0
 
 void test_msp_v1_parse_header()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'M' , '<' };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'M', '<'};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -62,8 +91,8 @@ void test_msp_v1_parse_no_payload()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'M' , '<', 0, MSP_API_VERSION, 1 };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'M', '<', 0, MSP_API_VERSION, 1};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -79,8 +108,8 @@ void test_msp_v1_parse_payload()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'M' , '<', 2, MSP_API_VERSION, 1, 2, 0 };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'M', '<', 2, MSP_API_VERSION, 1, 2, 0};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -96,8 +125,8 @@ void test_msp_v2_parse_header()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'X' , '<' };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'X', '<'};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -109,8 +138,8 @@ void test_msp_v2_parse_no_payload()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'X' , '<', MSP_V2_FLAG, MSP_API_VERSION, 0, 0, 0, 69 };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'X', '<', MSP_V2_FLAG, MSP_API_VERSION, 0, 0, 0, 69};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -126,8 +155,8 @@ void test_msp_v2_parse_payload()
 {
   MspMessage msg;
   MspParser parser;
-  const uint8_t data[] = { '$', 'X' , '<', MSP_V2_FLAG, MSP_API_VERSION, 0, 2, 0, 1, 2, 102 };
-  for(size_t i = 0; i < sizeof(data); i++)
+  const uint8_t data[] = {'$', 'X', '<', MSP_V2_FLAG, MSP_API_VERSION, 0, 2, 0, 1, 2, 102};
+  for (size_t i = 0; i < sizeof(data); i++)
   {
     parser.parse(data[i], msg);
   }
@@ -139,13 +168,13 @@ void test_msp_v2_parse_payload()
   TEST_ASSERT_EQUAL_UINT8(MSP_STATE_RECEIVED, msg.state);
 }
 
-void process_msp(Model& model, uint16_t cmd, MspResponse& response, const uint8_t * payload = nullptr, size_t len = 0)
+void process_msp(Model& model, uint16_t cmd, MspResponse& response, const uint8_t* payload = nullptr, size_t len = 0)
 {
   MspMessage msg;
   MspTestSerial serial;
   MspProcessor processor(model);
   msg.cmd = cmd;
-  if(payload && len) msg.append(payload, len);
+  if (payload && len) msg.append(payload, len);
   processor.processCommand(msg, response, serial);
 }
 
@@ -168,13 +197,13 @@ void test_msp_mode_range_maps_gps_rescue_box_to_poshold()
   Model model;
   MspResponse response;
   const uint8_t setModeRange[] = {
-    0,                    // range index
-    BOXGPSRESCUE,         // Betaflight permanent box id
-    0,                    // AUX1
-    20,                   // 1400us
-    40,                   // 1900us
-    0,                    // OR logic
-    0,                    // link id
+      0,            // range index
+      BOXGPSRESCUE, // Betaflight permanent box id
+      0,            // AUX1
+      20,           // 1400us
+      40,           // 1900us
+      0,            // OR logic
+      0,            // link id
   };
 
   process_msp(model, MSP_SET_MODE_RANGE, response, setModeRange, sizeof(setModeRange));
@@ -191,7 +220,7 @@ void test_msp_mode_range_maps_gps_rescue_box_to_poshold()
   TEST_ASSERT_EQUAL_UINT8(BOXGPSRESCUE, ranges.data[0]);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   UNITY_BEGIN();
   RUN_TEST(test_msp_v1_parse_header);

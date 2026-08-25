@@ -7,7 +7,10 @@
 #include <Gps.hpp>
 #include <GpsParser.hpp>
 
-static constexpr float toRad(float deg) { return deg * (float)M_PI / 180.0f; }
+static constexpr float toRad(float deg)
+{
+  return deg * (float)M_PI / 180.0f;
+}
 
 static_assert(sizeof(Gps::UbxNavPosLlh28) == 28, "u-blox legacy POSLLH layout");
 static_assert(sizeof(Gps::UbxNavVelned36) == 36, "u-blox legacy VELNED layout");
@@ -103,10 +106,10 @@ void test_date_line_crossing_east_to_west()
   // Home at 179° East, current at -179° (179° West)
   // Actual shortest distance: ~2° (2° * 111300m/deg ≈ 222600m)
   // Without date line handling, would calculate 358° (40067000m) - WRONG!
-  const int32_t homeLon = 1790000000;   // 179° * 1e7
-  const int32_t curLon = -1790000000;   // -179° * 1e7
+  const int32_t homeLon = 1790000000; // 179° * 1e7
+  const int32_t curLon = -1790000000; // -179° * 1e7
   const auto [distance, bearing] = Gps::calculateDistanceAndBearing(0, homeLon, 0, curLon);
-  
+
   // Distance should be ~2° (222600m) not 358° (40000000m+)
   TEST_ASSERT_FLOAT_WITHIN(100.0f, 222600.0f, distance);
 }
@@ -115,10 +118,10 @@ void test_date_line_crossing_west_to_east()
 {
   // Home at -179° (179° West), current at 179° East
   // Actual shortest distance: ~2°
-  const int32_t homeLon = -1790000000;  // -179° * 1e7
-  const int32_t curLon = 1790000000;    // 179° * 1e7
+  const int32_t homeLon = -1790000000; // -179° * 1e7
+  const int32_t curLon = 1790000000;   // 179° * 1e7
   const auto [distance, bearing] = Gps::calculateDistanceAndBearing(0, homeLon, 0, curLon);
-  
+
   TEST_ASSERT_FLOAT_WITHIN(100.0f, 222600.0f, distance);
 }
 
@@ -130,7 +133,7 @@ void test_date_line_crossing_bearing()
   const int32_t homeLon = -1790000000;
   const int32_t curLon = 1790000000;
   const auto [distance, bearing] = Gps::calculateDistanceAndBearing(0, homeLon, 0, curLon);
-  
+
   TEST_ASSERT_FLOAT_WITHIN(0.01f, toRad(270.0f), bearing);
 }
 
@@ -151,15 +154,15 @@ void test_local_offset_date_line_crossing_west()
 void test_legacy_ubx_velocity_payload_layout()
 {
   Gps::UbxNavVelned36 payload{
-    .iTow = 1234,
-    .velN = -25,
-    .velE = 40,
-    .velD = 3,
-    .speed = 50,
-    .gSpeed = 47,
-    .heading = 9000000,
-    .sAcc = 6,
-    .cAcc = 120000,
+      .iTow = 1234,
+      .velN = -25,
+      .velE = 40,
+      .velD = 3,
+      .speed = 50,
+      .gSpeed = 47,
+      .heading = 9000000,
+      .sAcc = 6,
+      .cAcc = 120000,
   };
   TEST_ASSERT_EQUAL_INT32(-25, payload.velN);
   TEST_ASSERT_EQUAL_INT32(40, payload.velE);

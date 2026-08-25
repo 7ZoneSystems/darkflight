@@ -15,21 +15,21 @@ void test_input_crsf_rc_valid()
   InputCRSF input;
   CrsfMessage frame;
   memset(&frame, 0, sizeof(frame));
-  uint8_t * frame_data = reinterpret_cast<uint8_t*>(&frame);
+  uint8_t* frame_data = reinterpret_cast<uint8_t*>(&frame);
 
   When(Method(ArduinoFake(), micros)).Return(0);
 
   input.begin(nullptr, nullptr);
 
-  const uint8_t data[] = {
-    0xC8, 0x18, 0x16, 0xE0, 0x03, 0xDF, 0xD9, 0xC0, 0xF7, 0x8B, 0x5F, 0x94, 0xAF,
-    0x7C, 0xE5, 0x2B, 0x5F, 0xF9, 0xCA, 0x07, 0x00, 0x00, 0x4C, 0x7C, 0xE2, 0x23
-  };
-  for (size_t i = 0; i < sizeof(data); i++) {
+  const uint8_t data[] = {0xC8, 0x18, 0x16, 0xE0, 0x03, 0xDF, 0xD9, 0xC0, 0xF7, 0x8B, 0x5F, 0x94, 0xAF,
+                          0x7C, 0xE5, 0x2B, 0x5F, 0xF9, 0xCA, 0x07, 0x00, 0x00, 0x4C, 0x7C, 0xE2, 0x23};
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     input.parse(frame, data[i]);
   }
 
-  for (size_t i = 0; i < sizeof(data); i++) {
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     TEST_ASSERT_EQUAL_UINT8(data[i], frame_data[i]);
   }
 
@@ -54,20 +54,20 @@ void test_input_crsf_rc_valid_no_payload()
   InputCRSF input;
   CrsfMessage frame;
   memset(&frame, 0, sizeof(frame));
-  uint8_t * frame_data = reinterpret_cast<uint8_t*>(&frame);
+  uint8_t* frame_data = reinterpret_cast<uint8_t*>(&frame);
 
   When(Method(ArduinoFake(), micros)).Return(0);
 
   input.begin(nullptr, nullptr);
 
-  const uint8_t data[] = {
-    0xC8, 0x02, 0x16, 0xD3
-  };
-  for (size_t i = 0; i < sizeof(data); i++) {
+  const uint8_t data[] = {0xC8, 0x02, 0x16, 0xD3};
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     input.parse(frame, data[i]);
   }
 
-  for (size_t i = 0; i < sizeof(data); i++) {
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     TEST_ASSERT_EQUAL_UINT8(data[i], frame_data[i]);
   }
 
@@ -91,12 +91,10 @@ void test_input_crsf_rc_prefix()
   input.begin(nullptr, nullptr);
 
   // prefix with few random bytes
-  const uint8_t data[] = {
-    0xA1, 0x04, 0xC5, 0x09,
-    0xC8, 0x18, 0x16, 0xE0, 0x03, 0xDF, 0xD9, 0xC0, 0xF7, 0x8B, 0x5F, 0x94, 0xAF,
-    0x7C, 0xE5, 0x2B, 0x5F, 0xF9, 0xCA, 0x07, 0x00, 0x00, 0x4C, 0x7C, 0xE2, 0x23
-  };
-  for (size_t i = 0; i < sizeof(data); i++) {
+  const uint8_t data[] = {0xA1, 0x04, 0xC5, 0x09, 0xC8, 0x18, 0x16, 0xE0, 0x03, 0xDF, 0xD9, 0xC0, 0xF7, 0x8B, 0x5F,
+                          0x94, 0xAF, 0x7C, 0xE5, 0x2B, 0x5F, 0xF9, 0xCA, 0x07, 0x00, 0x00, 0x4C, 0x7C, 0xE2, 0x23};
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     input.parse(frame, data[i]);
   }
 
@@ -136,12 +134,10 @@ void test_crsf_encode_rc()
 
   Crsf::encodeRcData(frame, data);
 
-  const uint8_t expected[] = {
-    0xC8, 0x18, 0x16, 0xE0, 0x03, 0x1F, 0x2B, 0xC0, 0x07, 0x3E, 0xF0, 0x81, 0x0F,
-    0x7C, 0xE0, 0x03, 0x1F, 0xF8, 0xC0, 0x07, 0x3E, 0xF0, 0x81, 0x0F, 0x7C, 0xDB
-  };
+  const uint8_t expected[] = {0xC8, 0x18, 0x16, 0xE0, 0x03, 0x1F, 0x2B, 0xC0, 0x07, 0x3E, 0xF0, 0x81, 0x0F,
+                              0x7C, 0xE0, 0x03, 0x1F, 0xF8, 0xC0, 0x07, 0x3E, 0xF0, 0x81, 0x0F, 0x7C, 0xDB};
 
-  uint8_t * frame_data = reinterpret_cast<uint8_t*>(&frame);
+  uint8_t* frame_data = reinterpret_cast<uint8_t*>(&frame);
 
   TEST_ASSERT_EQUAL_UINT8(expected[0], frame_data[0]); // addr
   TEST_ASSERT_EQUAL_UINT8(expected[1], frame_data[1]); // size
@@ -203,13 +199,13 @@ void test_crsf_decode_rc_struct()
 
   Crsf::encodeRcData(frame, data);
 
-  uint16_t channels[16] = { 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0};
+  uint16_t channels[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Crsf::decodeRcData(channels, (const CrsfData*)frame.payload);
 
   TEST_ASSERT_EQUAL_UINT16(1500, channels[0]);
   TEST_ASSERT_EQUAL_UINT16(1500, channels[1]);
-  TEST_ASSERT_EQUAL_UINT16( 988, channels[2]);
+  TEST_ASSERT_EQUAL_UINT16(988, channels[2]);
   TEST_ASSERT_EQUAL_UINT16(1500, channels[3]);
 
   TEST_ASSERT_EQUAL_UINT16(1500, channels[4]);
@@ -253,13 +249,13 @@ void test_crsf_decode_rc_shift8()
 
   Crsf::encodeRcData(frame, data);
 
-  uint16_t channels[16] = { 0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0};
+  uint16_t channels[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   Crsf::decodeRcDataShift8(channels, (const CrsfData*)frame.payload);
 
   TEST_ASSERT_EQUAL_UINT16(1500, channels[0]);
   TEST_ASSERT_EQUAL_UINT16(1500, channels[1]);
-  TEST_ASSERT_EQUAL_UINT16( 988, channels[2]);
+  TEST_ASSERT_EQUAL_UINT16(988, channels[2]);
   TEST_ASSERT_EQUAL_UINT16(1500, channels[3]);
 
   TEST_ASSERT_EQUAL_UINT16(1500, channels[4]);
@@ -337,9 +333,9 @@ void test_crsf_encode_tlm()
   frame.writeU8(0x01);
   frame.finalize();
 
-  TEST_ASSERT_EQUAL_UINT8(0xC8, frame.addr); // addr
-  TEST_ASSERT_EQUAL_UINT8(0x03, frame.size); // size
-  TEST_ASSERT_EQUAL_UINT8(0x0B, frame.type); // type: heartbeat
+  TEST_ASSERT_EQUAL_UINT8(0xC8, frame.addr);       // addr
+  TEST_ASSERT_EQUAL_UINT8(0x03, frame.size);       // size
+  TEST_ASSERT_EQUAL_UINT8(0x0B, frame.type);       // type: heartbeat
   TEST_ASSERT_EQUAL_UINT8(0x01, frame.payload[0]); // payload
   TEST_ASSERT_EQUAL_UINT8(0x90, frame.payload[1]); // crc
 
@@ -401,7 +397,7 @@ void test_crsf_encode_msp_v1_fragmented()
   resp.version = Connect::MSP_V1;
   resp.cmd = MSP_API_VERSION;
   resp.result = 0;
-  for(size_t i = 0; i < 64; i++)
+  for (size_t i = 0; i < 64; i++)
   {
     resp.writeU8(i);
   }
@@ -427,7 +423,7 @@ void test_crsf_encode_msp_v1_fragmented()
 
   // ext msp v1 header
   TEST_ASSERT_EQUAL_UINT8(64, frame.payload[3]); // size
-  TEST_ASSERT_EQUAL_UINT8( 1, frame.payload[4]); // type // api_version(1)
+  TEST_ASSERT_EQUAL_UINT8(1, frame.payload[4]);  // type // api_version(1)
 
   // ext msp payload
   TEST_ASSERT_EQUAL_UINT8(0, frame.payload[5]); // param0
@@ -499,8 +495,8 @@ void test_crsf_encode_msp_v2()
   TEST_ASSERT_EQUAL_UINT8(0, frame.payload[7]); // size (hi)
 
   // ext msp payload
-  TEST_ASSERT_EQUAL_UINT8(1, frame.payload[8]); // param1
-  TEST_ASSERT_EQUAL_UINT8(2, frame.payload[9]); // param2
+  TEST_ASSERT_EQUAL_UINT8(1, frame.payload[8]);  // param1
+  TEST_ASSERT_EQUAL_UINT8(2, frame.payload[9]);  // param2
   TEST_ASSERT_EQUAL_UINT8(3, frame.payload[10]); // param3
 
   // crsf crc
@@ -509,10 +505,8 @@ void test_crsf_encode_msp_v2()
 
 void test_crsf_decode_msp_v1()
 {
-  const uint8_t data[] = {
-    0xc8, 0x08, 0x7a, 0xc8, 0xea, 0x32, 0x00, 0x70, 0x70, 0x4b
-  };
-  CrsfMessage frame; 
+  const uint8_t data[] = {0xc8, 0x08, 0x7a, 0xc8, 0xea, 0x32, 0x00, 0x70, 0x70, 0x4b};
+  CrsfMessage frame;
   std::copy_n(data, sizeof(data), (uint8_t*)&frame);
 
   Connect::MspMessage m;
@@ -563,7 +557,7 @@ void test_csrf_decode_msp_v1_fragmented()
 
   // we need only range from 3 to 37
   const size_t dataLen = 34;
-  const uint8_t *dataPtr = buff + 3; // skip msp header ($M<)
+  const uint8_t* dataPtr = buff + 3;                 // skip msp header ($M<)
   const uint8_t flags1 = (1 << 5) | (1 << 4) | 0x00; // v(1) + start(1) + sequence(0)
   const uint8_t flags2 = (1 << 5) | (0 << 4) | 0x01; // v(1) + start(0) + sequence(1)
   const uint8_t dst = CRSF_ADDRESS_FLIGHT_CONTROLLER;
@@ -642,7 +636,7 @@ void test_crsf_encode_msp_v1_fragmented_no_overflow()
   resp.version = Connect::MSP_V1;
   resp.cmd = MSP_API_VERSION;
   resp.result = 0;
-  for(size_t i = 0; i < 64; i++)
+  for (size_t i = 0; i < 64; i++)
   {
     resp.writeU8(i);
   }
@@ -679,20 +673,20 @@ void test_input_crsf_max_size_frame_parse_no_overflow()
   CrsfMessage t;
   memset(&t, 0, sizeof(t));
   t.prepare(CRSF_FRAMETYPE_MSP_REQ);
-  t.writeU8(CRSF_ADDRESS_FLIGHT_CONTROLLER);   // dst
-  t.writeU8(CRSF_ADDRESS_RADIO_TRANSMITTER);   // origin
-  t.writeU8((1 << 5) | (1 << 4) | 0);          // status: v1 + start + seq0
-  t.writeU8(200);                              // msp v1 size (fragmented)
-  t.writeU8(MSP_API_VERSION);                  // msp v1 cmd
-  while(t.size < CRSF_FRAME_SIZE_MAX - 2)      // pad to max payload
+  t.writeU8(CRSF_ADDRESS_FLIGHT_CONTROLLER); // dst
+  t.writeU8(CRSF_ADDRESS_RADIO_TRANSMITTER); // origin
+  t.writeU8((1 << 5) | (1 << 4) | 0);        // status: v1 + start + seq0
+  t.writeU8(200);                            // msp v1 size (fragmented)
+  t.writeU8(MSP_API_VERSION);                // msp v1 cmd
+  while (t.size < CRSF_FRAME_SIZE_MAX - 2)   // pad to max payload
   {
     t.writeU8(0x42);
   }
   t.finalize();
   TEST_ASSERT_EQUAL_UINT8(62, t.size);
 
-  const uint8_t * stream = reinterpret_cast<const uint8_t*>(&t);
-  for(size_t i = 0; i < t.size + 2; i++)       // whole wire frame incl addr and len
+  const uint8_t* stream = reinterpret_cast<const uint8_t*>(&t);
+  for (size_t i = 0; i < t.size + 2; i++) // whole wire frame incl addr and len
   {
     input.parse(g.msg, stream[i]);
   }
@@ -743,7 +737,7 @@ void test_crsf_decode_msp_short_continuation_frame_ignored()
   frame1.payload[2] = (1 << 5) | (1 << 4) | 0; // v1 + start + seq0
   frame1.payload[3] = 200;                     // msp size (fragmented)
   frame1.payload[4] = MSP_API_VERSION;         // msp cmd
-  for(size_t i = 0; i < 10; i++)
+  for (size_t i = 0; i < 10; i++)
   {
     frame1.payload[5 + i] = i;
   }
@@ -790,7 +784,7 @@ void test_crsf_decode_msp_resets_read_on_start()
   frame1.payload[2] = (1 << 5) | (1 << 4) | 0; // v1 + start + seq0
   frame1.payload[3] = 4;                       // msp size
   frame1.payload[4] = MSP_API_VERSION;         // msp cmd
-  for(size_t i = 0; i < 4; i++)
+  for (size_t i = 0; i < 4; i++)
   {
     frame1.payload[5 + i] = 10 + i;
   }
@@ -816,7 +810,7 @@ void test_crsf_decode_msp_resets_read_on_start()
   frame2.payload[2] = (1 << 5) | (1 << 4) | 1; // v1 + start + seq1
   frame2.payload[3] = 3;                       // msp size
   frame2.payload[4] = MSP_FC_VARIANT;          // msp cmd
-  for(size_t i = 0; i < 3; i++)
+  for (size_t i = 0; i < 3; i++)
   {
     frame2.payload[5 + i] = 20 + i;
   }
@@ -834,7 +828,7 @@ void test_input_ibus_rc_valid()
   InputIBUS input;
   InputIBUS::IBusData frame;
   memset(&frame, 0, sizeof(frame));
-  uint8_t * frame_data = reinterpret_cast<uint8_t*>(&frame);
+  uint8_t* frame_data = reinterpret_cast<uint8_t*>(&frame);
 
   When(Method(ArduinoFake(), micros)).Return(0);
 
@@ -850,16 +844,16 @@ void test_input_ibus_rc_valid()
   // };
 
   const uint8_t data[] = {
-    0x20, 0x40,
-    0xDB, 0x05, 0xDC, 0x05,  0x54, 0x05, 0xDC, 0x05,  0xE8, 0x03, 0xD0, 0x07,  0xD2, 0x05, 0xE8, 0x03,
-    0xDC, 0x05, 0xDC, 0x05,  0xDC, 0x05, 0xDC, 0x05,  0xDC, 0x05, 0xDC, 0x05,
-    0xDA, 0xF3,
+      0x20, 0x40, 0xDB, 0x05, 0xDC, 0x05, 0x54, 0x05, 0xDC, 0x05, 0xE8, 0x03, 0xD0, 0x07, 0xD2, 0x05,
+      0xE8, 0x03, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDC, 0x05, 0xDA, 0xF3,
   };
-  for (size_t i = 0; i < sizeof(data); i++) {
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     input.parse(frame, data[i]);
   }
 
-  for (size_t i = 0; i < sizeof(data); i++) {
+  for (size_t i = 0; i < sizeof(data); i++)
+  {
     TEST_ASSERT_EQUAL_HEX8(data[i], frame_data[i]);
   }
 
@@ -899,7 +893,7 @@ void test_input_ibus_rc_valid()
   TEST_ASSERT_EQUAL_UINT16(1500, input.get(13));
 }
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   UNITY_BEGIN();
   RUN_TEST(test_input_crsf_rc_valid);
@@ -908,7 +902,7 @@ int main(int argc, char **argv)
   RUN_TEST(test_crsf_encode_rc);
   RUN_TEST(test_crsf_decode_rc_struct);
   RUN_TEST(test_crsf_decode_rc_shift8);
-  //RUN_TEST(test_crsf_decode_rc_shift32);
+  // RUN_TEST(test_crsf_decode_rc_shift32);
   RUN_TEST(test_crsf_encode_tlm);
   RUN_TEST(test_crsf_encode_msp_v1);
   RUN_TEST(test_crsf_encode_msp_v1_fragmented);
