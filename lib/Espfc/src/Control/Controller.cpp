@@ -39,9 +39,13 @@ int FAST_CODE_ATTR Controller::update()
     resetIterm();
     switch (_model.config.mixer.type)
     {
-      case FC_MIXER_GIMBAL: outerLoopRobot(); break;
+      case FC_MIXER_GIMBAL:
+        outerLoopRobot();
+        break;
 
-      default: outerLoop(); break;
+      default:
+        outerLoop();
+        break;
     }
   }
 
@@ -49,9 +53,13 @@ int FAST_CODE_ATTR Controller::update()
     Utils::Stats::Measure measure(_model.state.stats, COUNTER_INNER_PID);
     switch (_model.config.mixer.type)
     {
-      case FC_MIXER_GIMBAL: innerLoopRobot(); break;
+      case FC_MIXER_GIMBAL:
+        innerLoopRobot();
+        break;
 
-      default: innerLoop(); break;
+      default:
+        innerLoop();
+        break;
     }
   }
 

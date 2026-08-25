@@ -55,11 +55,18 @@ int FAST_CODE_ATTR Fusion::update()
 
     switch (_model.config.fusion.mode)
     {
-      case FUSION_MADGWICK: q = madgwickFusion(g, a, m); break;
-      case FUSION_MAHONY: q = mahonyFusion(g, a, m); break;
-      case FUSION_RTQF: q = rtqfFusion(g, a, m); break;
+      case FUSION_MADGWICK:
+        q = madgwickFusion(g, a, m);
+        break;
+      case FUSION_MAHONY:
+        q = mahonyFusion(g, a, m);
+        break;
+      case FUSION_RTQF:
+        q = rtqfFusion(g, a, m);
+        break;
       case FUSION_NONE:
-      default: break;
+      default:
+        break;
     }
 
     _model.state.attitude.quaternion = Quaternion::ensureSign(q, _model.state.attitude.quaternion);

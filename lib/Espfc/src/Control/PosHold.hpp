@@ -170,8 +170,8 @@ private:
   bool isStickOverrideActive() const
   {
     const float deadband = std::clamp((float)_model.config.gps.posHoldStickDeadband * 0.01f, 0.0f, 1.0f);
-    return std::fabs(_model.state.input.ch[AXIS_ROLL]) > deadband
-        || std::fabs(_model.state.input.ch[AXIS_PITCH]) > deadband;
+    return std::fabs(_model.state.input.ch[AXIS_ROLL]) > deadband ||
+           std::fabs(_model.state.input.ch[AXIS_PITCH]) > deadband;
   }
 
   bool isGpsHealthy() const
@@ -253,12 +253,8 @@ private:
 
   void updateHoldAngles()
   {
-    const auto offset = Gps::calculateLocalOffset(
-      _model.state.gps.location.raw.lat,
-      _model.state.gps.location.raw.lon,
-      _holdLat,
-      _holdLon
-    );
+    const auto offset = Gps::calculateLocalOffset(_model.state.gps.location.raw.lat, _model.state.gps.location.raw.lon,
+                                                  _holdLat, _holdLon);
 
     float targetNorth = _positionPid[AXIS_ROLL].update(offset.north, 0.0f);
     float targetEast = _positionPid[AXIS_PITCH].update(offset.east, 0.0f);
