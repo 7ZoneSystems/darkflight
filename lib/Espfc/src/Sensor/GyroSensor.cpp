@@ -274,7 +274,7 @@ void FAST_CODE_ATTR GyroSensor::dynNotchFilterUpdate()
               size_t x = (p + i) % 3;
               int harmonic = (p / 3) + 1;
               int16_t f = std::clamp((int16_t)lrintf(freq * harmonic), _model.config.gyro.dynamicFilter.min_freq,
-                                       _model.config.gyro.dynamicFilter.max_freq);
+                                     _model.config.gyro.dynamicFilter.max_freq);
               _model.state.gyro.dynNotchFilter[p][x].reconfigure(f, f, q);
             }
           }

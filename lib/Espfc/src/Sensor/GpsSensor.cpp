@@ -24,10 +24,10 @@ static constexpr std::array<std::tuple<uint16_t, uint8_t>, 2> UBX_LEGACY_MODERN_
 }};
 
 static constexpr std::array<std::tuple<uint16_t, uint8_t>, 4> UBX_LEGACY_MSG_ON{
-  std::make_tuple(Gps::UBX_NAV_POSLLH,  1u),
-  std::make_tuple(Gps::UBX_NAV_VELNED,  1u),
-  std::make_tuple(Gps::UBX_NAV_SOL,     1u),
-  std::make_tuple(Gps::UBX_NAV_SVINFO,  1u),
+    std::make_tuple(Gps::UBX_NAV_POSLLH, 1u),
+    std::make_tuple(Gps::UBX_NAV_VELNED, 1u),
+    std::make_tuple(Gps::UBX_NAV_SOL, 1u),
+    std::make_tuple(Gps::UBX_NAV_SVINFO, 1u),
 };
 
 GpsSensor::GpsSensor(Model& model): _model(model) {}
@@ -867,9 +867,9 @@ void GpsSensor::handleNavSvInfo() const
   const auto& m = *_ubxMsg.getAs<Gps::UbxNavSvInfo>();
   const size_t available = (_ubxMsg.length - sizeof(Gps::UbxNavSvInfo)) / sizeof(m.sats[0]);
   _model.state.gps.numCh = static_cast<uint8_t>(std::min<size_t>(std::min<size_t>(m.numCh, SAT_MAX), available));
-  for(size_t i = 0; i < SAT_MAX; i++)
+  for (size_t i = 0; i < SAT_MAX; i++)
   {
-    if(i < _model.state.gps.numCh)
+    if (i < _model.state.gps.numCh)
     {
       const auto& sat = m.sats[i];
       _model.state.gps.svinfo[i].id = sat.svid;
@@ -926,10 +926,14 @@ void GpsSensor::handleNmeaSentence()
   if (count == 0 || std::strlen(fields[0]) < 5) return;
   const char* type = fields[0] + 2; // skip 2-char talker id (GP/GN/GL/GA/GB)
 
-  if (std::strncmp(type, "GGA", 3) == 0)      handleNmeaGga(fields, count);
-  else if (std::strncmp(type, "RMC", 3) == 0) handleNmeaRmc(fields, count);
-  else if (std::strncmp(type, "GSA", 3) == 0) handleNmeaGsa(fields, count);
-  else if (std::strncmp(type, "GSV", 3) == 0) handleNmeaGsv(fields, count);
+  if (std::strncmp(type, "GGA", 3) == 0)
+    handleNmeaGga(fields, count);
+  else if (std::strncmp(type, "RMC", 3) == 0)
+    handleNmeaRmc(fields, count);
+  else if (std::strncmp(type, "GSA", 3) == 0)
+    handleNmeaGsa(fields, count);
+  else if (std::strncmp(type, "GSV", 3) == 0)
+    handleNmeaGsv(fields, count);
 }
 
 void GpsSensor::handleNmeaGga(char** f, size_t n) const
@@ -977,14 +981,14 @@ void GpsSensor::handleNmeaRmc(char** f, size_t n) const
     // position-delta estimate, so it stays consistent with PosHold's
     // "velocity is a direct measurement" assumption.
     _model.state.gps.velocity.raw.north = lrintf(speedMmS * cosf(Utils::toRad(courseDeg)));
-    _model.state.gps.velocity.raw.east  = lrintf(speedMmS * sinf(Utils::toRad(courseDeg)));
+    _model.state.gps.velocity.raw.east = lrintf(speedMmS * sinf(Utils::toRad(courseDeg)));
   }
 
   if (std::strlen(f[9]) >= 6)
   {
-    _model.state.gps.dateTime.day   = (f[9][0] - '0') * 10 + (f[9][1] - '0');
+    _model.state.gps.dateTime.day = (f[9][0] - '0') * 10 + (f[9][1] - '0');
     _model.state.gps.dateTime.month = (f[9][2] - '0') * 10 + (f[9][3] - '0');
-    _model.state.gps.dateTime.year  = 2000 + (f[9][4] - '0') * 10 + (f[9][5] - '0');
+    _model.state.gps.dateTime.year = 2000 + (f[9][4] - '0') * 10 + (f[9][5] - '0');
   }
 }
 
