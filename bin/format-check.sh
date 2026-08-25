@@ -17,7 +17,8 @@ else
     exit 1
 fi
 
-find "$ROOT_DIR" \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" \) -print0 |
+# skip PlatformIO build output (.pio), it contains downloaded libraries and generated sources
+find "$ROOT_DIR" \( -name "*.cpp" -o -name "*.hpp" -o -name "*.h" \) -not -path "*/.pio/*" -print0 |
 while IFS= read -r -d '' file; do
     if [ "$VERBOSE" -eq 1 ]; then
         output=$("$CLANG_FORMAT" --dry-run --Werror "$file" 2>&1)
