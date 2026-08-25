@@ -6,14 +6,14 @@
 #include <tuple>
 
 namespace Gps {
-   
+
 struct LocalCoordinate
 {
   float north = 0.0f;
   float east = 0.0f;
 };
 
-static constexpr float LAT_TO_M = 1.113e-2f; // deg * 1e-7 to meters (111300 m/deg / 1e7)
+static constexpr float LAT_TO_M = 1.113e-2f;     // deg * 1e-7 to meters (111300 m/deg / 1e7)
 static constexpr int64_t LON_180 = 1800000000LL; // 180 * 1e7
 static constexpr int64_t LON_360 = 3600000000LL; // 360 * 1e7
 
@@ -21,8 +21,10 @@ inline int64_t calculateLongitudeDelta(int32_t originLon, int32_t pointLon)
 {
   int64_t dlon = (int64_t)pointLon - (int64_t)originLon;
 
-  if (dlon > LON_180) dlon -= LON_360;
-  else if (dlon < -LON_180) dlon += LON_360;
+  if (dlon > LON_180)
+    dlon -= LON_360;
+  else if (dlon < -LON_180)
+    dlon += LON_360;
 
   return dlon;
 }
@@ -40,9 +42,10 @@ inline int64_t calculateLongitudeDelta(int32_t originLon, int32_t pointLon)
 inline LocalCoordinate calculateLocalOffset(int32_t originLat, int32_t originLon, int32_t pointLat, int32_t pointLon)
 {
   const float north = (pointLat - originLat) * LAT_TO_M;
-  const float east = (float)calculateLongitudeDelta(originLon, pointLon) * LAT_TO_M * cosf(originLat * 1e-7f * (float)M_PI / 180.0f);
+  const float east =
+      (float)calculateLongitudeDelta(originLon, pointLon) * LAT_TO_M * cosf(originLat * 1e-7f * (float)M_PI / 180.0f);
 
-  return LocalCoordinate{ north, east };
+  return LocalCoordinate{north, east};
 }
 
 /**
@@ -54,7 +57,8 @@ inline LocalCoordinate calculateLocalOffset(int32_t originLat, int32_t originLon
  * @param curLon Current longitude in degrees * 1e7
  * @return Tuple of (distance, bearing) where distance is in meters and bearing is in radians (0-2PI)
  */
-inline std::tuple<float, float> calculateDistanceAndBearing(int32_t homeLat, int32_t homeLon, int32_t curLat, int32_t curLon)
+inline std::tuple<float, float> calculateDistanceAndBearing(int32_t homeLat, int32_t homeLon, int32_t curLat,
+                                                            int32_t curLon)
 {
   const LocalCoordinate offset = calculateLocalOffset(homeLat, homeLon, curLat, curLon);
 
@@ -65,4 +69,4 @@ inline std::tuple<float, float> calculateDistanceAndBearing(int32_t homeLat, int
   return std::make_tuple(distance, bearing);
 }
 
-}
+} // namespace Gps

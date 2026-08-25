@@ -10,82 +10,90 @@ enum EscDriverTimer
   ESC_DRIVER_TIMER1,
 };
 
-class EscDriverEsp32c3: public EscDriverBase
+class EscDriverEsp32c3 : public EscDriverBase
 {
+public:
+  class Slot
+  {
   public:
-    class Slot
+    Slot(): pin(-1), pulse(0) {}
+    int pin;
+    int pulse;
+    bool operator<(const Slot& rhs) const
     {
-      public:
-        Slot(): pin(-1), pulse(0) {}
-        int pin;
-        int pulse;
-        bool operator<(const Slot& rhs) const
-        {
-          if(!active()) return false;
-          else if(!rhs.active()) return true;
-          return this->pulse < rhs.pulse;
-        }
-        inline bool active() const { return pin != -1; }
-    };
-
-    class Item
+      if (!active())
+        return false;
+      else if (!rhs.active())
+        return true;
+      return this->pulse < rhs.pulse;
+    }
+    inline bool active() const
     {
-      public:
-        Item(): set_mask(0), clr_mask(0), ticks(0), last(0) {}
-        uint32_t set_mask; // pin set mask
-        uint32_t clr_mask; // pin clear mask
-        int32_t ticks;    // delay to next cycle
-        uint32_t last;
-        void reset() { *this = Item(); }
-    };
+      return pin != -1;
+    }
+  };
 
-    using mask_t = uint32_t;
+  class Item
+  {
+  public:
+    Item(): set_mask(0), clr_mask(0), ticks(0), last(0) {}
+    uint32_t set_mask; // pin set mask
+    uint32_t clr_mask; // pin clear mask
+    int32_t ticks;     // delay to next cycle
+    uint32_t last;
+    void reset()
+    {
+      *this = Item();
+    }
+  };
 
-    EscDriverEsp32c3();
+  using mask_t = uint32_t;
 
-    int begin(const EscConfig& conf);
-    void end();
-    int attach(size_t channel, int pin, int pulse);
-    int write(size_t channel, int pulse);
-    void apply();
-    int pin(size_t channel) const;
-    uint32_t telemetry(size_t channel) const;
-    static bool handle(void * p);
+  EscDriverEsp32c3();
 
-  private:
-    void commit();
-    uint32_t usToTicks(uint32_t us);
-    uint32_t usToTicksReal(EscDriverTimer timer, uint32_t us);
-    int32_t minTicks(EscDriverTimer timer);
-    void dshotWrite();
+  int begin(const EscConfig& conf);
+  void end();
+  int attach(size_t channel, int pin, int pulse);
+  int write(size_t channel, int pulse);
+  void apply();
+  int pin(size_t channel) const;
+  uint32_t telemetry(size_t channel) const;
+  static bool handle(void* p);
 
-    static void _isr_init(EscDriverTimer timer, void * driver);
-    static bool _isr_wait(EscDriverTimer timer, const uint32_t ticks);
-    static void _isr_start(EscDriverTimer timer);
-    static void _isr_end(EscDriverTimer timer, void* p);
+private:
+  void commit();
+  uint32_t usToTicks(uint32_t us);
+  uint32_t usToTicksReal(EscDriverTimer timer, uint32_t us);
+  int32_t minTicks(EscDriverTimer timer);
+  void dshotWrite();
 
-    volatile bool _busy;
-    bool _async;
-    EscProtocol _protocol;
-    int _rate;
-    EscDriverTimer _timer;
-    int32_t _interval;
-    int32_t _intervalMin; // for brushed
-    int32_t _intervalMax; // for brushed
+  static void _isr_init(EscDriverTimer timer, void* driver);
+  static bool _isr_wait(EscDriverTimer timer, const uint32_t ticks);
+  static void _isr_start(EscDriverTimer timer);
+  static void _isr_end(EscDriverTimer timer, void* p);
 
-    int _dh;
-    int _dl;
+  volatile bool _busy;
+  bool _async;
+  EscProtocol _protocol;
+  int _rate;
+  EscDriverTimer _timer;
+  int32_t _interval;
+  int32_t _intervalMin; // for brushed
+  int32_t _intervalMax; // for brushed
 
-    Slot _slots[ESC_CHANNEL_COUNT];
-    Item _items[ESC_CHANNEL_COUNT * 2];
+  int _dh;
+  int _dl;
 
-    volatile Item * _it;
-    const Item * _end;
+  Slot _slots[ESC_CHANNEL_COUNT];
+  Item _items[ESC_CHANNEL_COUNT * 2];
 
-    mask_t dshotSetMask[DSHOT_BIT_COUNT];
-    mask_t dshotClrMask[DSHOT_BIT_COUNT * 2];
+  volatile Item* _it;
+  const Item* _end;
 
-    //static EscDriverEsp32c3 * _instance;
+  mask_t dshotSetMask[DSHOT_BIT_COUNT];
+  mask_t dshotClrMask[DSHOT_BIT_COUNT * 2];
+
+  // static EscDriverEsp32c3 * _instance;
 };
 
 #endif // ESP32C3

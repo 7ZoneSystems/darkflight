@@ -1,19 +1,16 @@
 #include "EscDriverBase.hpp"
 #include <Arduino.h>
 
-const char * const * EscDriverBase::getProtocolNames()
+const char* const* EscDriverBase::getProtocolNames()
 {
-  static const char * const protocols[] = {
-    "PWM", "ONESHOT125", "ONESHOT42", "MULTISHOT", "BRUSHED",
-    "DSHOT150", "DSHOT300", "DSHOT600", "PROSHOT1000", "DISABLED",
-    nullptr
-  };
+  static const char* const protocols[] = {"PWM",      "ONESHOT125", "ONESHOT42",   "MULTISHOT", "BRUSHED", "DSHOT150",
+                                          "DSHOT300", "DSHOT600",   "PROSHOT1000", "DISABLED",  nullptr};
   return protocols;
 }
 
-const char * const EscDriverBase::getProtocolName(EscProtocol protocol)
+const char* const EscDriverBase::getProtocolName(EscProtocol protocol)
 {
-  if(protocol >= ESC_PROTOCOL_COUNT) return "?";
+  if (protocol >= ESC_PROTOCOL_COUNT) return "?";
   return getProtocolNames()[protocol];
 }
 
@@ -34,7 +31,7 @@ uint16_t IRAM_ATTR EscDriverBase::dshotEncode(uint16_t value, bool inverted)
     csum ^= csum_data; // xor
     csum_data >>= 4;
   }
-  if(inverted)
+  if (inverted)
   {
     csum = ~csum;
   }
@@ -50,7 +47,7 @@ uint32_t IRAM_ATTR EscDriverBase::durationToBitLen(uint32_t duration, uint32_t l
 
 uint32_t IRAM_ATTR EscDriverBase::pushBits(uint32_t value, uint32_t bitVal, size_t bitLen)
 {
-  while(bitLen--)
+  while (bitLen--)
   {
     value <<= 1;
     value |= bitVal;
@@ -68,23 +65,23 @@ uint32_t IRAM_ATTR EscDriverBase::extractTelemetryGcr(uint32_t* data, size_t len
 {
   int bitCount = 0;
   uint32_t value = 0;
-  for(size_t i = 0; i < len; i++)
+  for (size_t i = 0; i < len; i++)
   {
     uint32_t duration0 = data[i] & 0x7fff;
-    if(!duration0) break;
+    if (!duration0) break;
     uint32_t level0 = (data[i] >> 15) & 0x01;
     uint32_t len0 = durationToBitLen(duration0, bitLen);
-    if(len0)
+    if (len0)
     {
       value = pushBits(value, level0, len0);
       bitCount += len0;
     }
 
     uint32_t duration1 = (data[i] >> 16) & 0x7fff;
-    if(!duration1) break;
+    if (!duration1) break;
     uint32_t level1 = (data[i] >> 31) & 0x01;
     uint32_t len1 = durationToBitLen(duration1, bitLen);
-    if(len1)
+    if (len1)
     {
       value = pushBits(value, level1, len1);
       bitCount += len1;
@@ -92,7 +89,7 @@ uint32_t IRAM_ATTR EscDriverBase::extractTelemetryGcr(uint32_t* data, size_t len
   }
 
   // fill missing bits with 1
-  if(bitCount < 21)
+  if (bitCount < 21)
   {
     value = pushBits(value, 0x1, 21 - bitCount);
   }
@@ -107,9 +104,9 @@ float IRAM_ATTR EscDriverBase::getErpmToHzRatio(int poles)
 
 uint32_t IRAM_ATTR EscDriverBase::convertToErpm(uint32_t value)
 {
-  if(!value) return 0;
+  if (!value) return 0;
 
-  if(!value || value == INVALID_TELEMETRY_VALUE)
+  if (!value || value == INVALID_TELEMETRY_VALUE)
   {
     return INVALID_TELEMETRY_VALUE;
   }
@@ -121,9 +118,9 @@ uint32_t IRAM_ATTR EscDriverBase::convertToErpm(uint32_t value)
 uint32_t IRAM_ATTR EscDriverBase::convertToValue(uint32_t value)
 {
   // eRPM range
-  if(value == 0x0fff)
+  if (value == 0x0fff)
   {
-      return 0;
+    return 0;
   }
 
   // Convert value to 16 bit from the GCR telemetry format (eeem mmmm mmmm)
@@ -138,20 +135,20 @@ uint32_t IRAM_ATTR EscDriverBase::gcrToRawValue(uint32_t value)
   // First bit is start bit so discard it.
   value &= 0xfffff;
   static const uint32_t decode[32] = {
-    iv, iv, iv, iv, iv, iv, iv, iv, iv, 9, 10, 11, iv, 13, 14, 15,
-    iv, iv,  2,  3, iv,  5,  6,  7, iv, 0,  8,  1, iv,  4, 12, iv,
+      iv, iv, iv, iv, iv, iv, iv, iv, iv, 9, 10, 11, iv, 13, 14, 15,
+      iv, iv, 2,  3,  iv, 5,  6,  7,  iv, 0, 8,  1,  iv, 4,  12, iv,
   };
 
   uint32_t decodedValue = decode[value & 0x1f];
-  decodedValue |= decode[(value >>  5) & 0x1f] <<  4;
-  decodedValue |= decode[(value >> 10) & 0x1f] <<  8;
+  decodedValue |= decode[(value >> 5) & 0x1f] << 4;
+  decodedValue |= decode[(value >> 10) & 0x1f] << 8;
   decodedValue |= decode[(value >> 15) & 0x1f] << 12;
 
   uint32_t csum = decodedValue;
   csum = csum ^ (csum >> 8); // xor bytes
   csum = csum ^ (csum >> 4); // xor nibbles
 
-  if((csum & 0xf) != 0xf || decodedValue > 0xffff)
+  if ((csum & 0xf) != 0xf || decodedValue > 0xffff)
   {
     return INVALID_TELEMETRY_VALUE;
   }
@@ -159,4 +156,3 @@ uint32_t IRAM_ATTR EscDriverBase::gcrToRawValue(uint32_t value)
 
   return value;
 }
-
