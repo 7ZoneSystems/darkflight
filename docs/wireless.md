@@ -1,6 +1,8 @@
-# ESP-FC Wireless functions
+# Wireless functions (WiFi / ESP-NOW)
 
 Espressif modules have a built-in WiFi module that can be used for configuration and control.
+
+> DarkFlight inherits this functionality from ESP-FC. Note that the WiFi Access-Point name below is a firmware identifier and is still `ESP-FC`.
 
 ## WiFi configuration
 

@@ -1,4 +1,6 @@
-# ESP-FC CLI Reference
+# CLI Reference
+
+DarkFlight inherits the ESP-FC command set, which follows Betaflight conventions.
 
 ## Help
 ```

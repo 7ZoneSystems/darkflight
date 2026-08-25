@@ -1,4 +1,4 @@
-# ESP-FC wiring examples and PIN mapping
+# Wiring examples and PIN mapping
 
 ESP32 MCUs allows to remap pins, so the wiring is not final and you can remap intputs and outputs to your needs. To change pin function go to the CLI and use `get pin` command to check current assignment. For example, to set first output to pin 1 use command
 

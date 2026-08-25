@@ -44,7 +44,7 @@ If you want to use Serial based receiver (SBUS,IBUS,CRSF), you need to allocate 
 
 Then go to the `Receiver` tab, and select `Receiver mode` and `Serial Receiver Provider`.
 
-To use ESP-NOW receiver, choose "SPI Rx (e.g. built-in Rx)" receiver mode in Receiver tab. You need compatible transmitter module. Read more about [ESP-FC Wireless Functions](/docs/wireless.md)
+To use ESP-NOW receiver, choose "SPI Rx (e.g. built-in Rx)" receiver mode in Receiver tab. You need compatible transmitter module. Read more about [Wireless Functions](/docs/wireless.md)
 
 ## Motor setup
 
@@ -200,7 +200,7 @@ Not implemented, but MW_OSD should works via serial port and MSP protocol.
 
 ## GPS Setup
 
-ESP-FC supports u-blox M8, M9, F9, and M10 GPS modules via UART. M10 modules provide enhanced accuracy with dual-band L1+L5 GNSS support.
+DarkFlight supports u-blox M8, M9, F9, and M10 GPS modules via UART. M10 modules provide enhanced accuracy with dual-band L1+L5 GNSS support.
 
 ### Hardware Connection
 
