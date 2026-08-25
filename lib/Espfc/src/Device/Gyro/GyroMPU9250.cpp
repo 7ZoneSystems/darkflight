@@ -1,9 +1,9 @@
 #include "GyroMPU9250.hpp"
 
-#define MPU6050_RA_WHO_AM_I          0x75
-#define MPU9250_ACCEL_CONF2          0x1D
+#define MPU6050_RA_WHO_AM_I 0x75
+#define MPU9250_ACCEL_CONF2 0x1D
 #define MPU9250_WHOAMI_DEFAULT_VALUE 0x71
-#define MPU9250_WHOAMI_ALT_VALUE     0x73
+#define MPU9250_WHOAMI_ALT_VALUE 0x73
 
 namespace Espfc::Device::Gyro {
 

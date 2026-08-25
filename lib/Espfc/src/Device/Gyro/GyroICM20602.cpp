@@ -1,7 +1,7 @@
 #include "GyroICM20602.hpp"
 
-#define MPU6050_RA_WHO_AM_I           0x75
-#define ICM20602_RA_ACCEL2_CONFIG     0x1D
+#define MPU6050_RA_WHO_AM_I 0x75
+#define ICM20602_RA_ACCEL2_CONFIG 0x1D
 #define ICM20602_WHOAMI_DEFAULT_VALUE 0x12
 
 namespace Espfc::Device::Gyro {

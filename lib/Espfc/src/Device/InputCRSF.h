@@ -11,48 +11,49 @@
 
 namespace Espfc::Device {
 
-class InputCRSF: public InputDevice
+class InputCRSF : public InputDevice
 {
-  public:
-    enum CrsfState {
-      CRSF_ADDR,
-      CRSF_SIZE,
-      CRSF_TYPE,
-      CRSF_DATA,
-      CRSF_CRC
-    };
+public:
+  enum CrsfState
+  {
+    CRSF_ADDR,
+    CRSF_SIZE,
+    CRSF_TYPE,
+    CRSF_DATA,
+    CRSF_CRC
+  };
 
-    InputCRSF();
+  InputCRSF();
 
-    int begin(Device::SerialDevice * serial, TelemetryManager * telemetry);
-    virtual InputStatus update() override;
-    virtual uint16_t get(uint8_t i) const override;
-    virtual void get(uint16_t * data, size_t len) const override;
-    virtual size_t getChannelCount() const override;
-    virtual bool needAverage() const override;
+  int begin(Device::SerialDevice* serial, TelemetryManager* telemetry);
+  virtual InputStatus update() override;
+  virtual uint16_t get(uint8_t i) const override;
+  virtual void get(uint16_t* data, size_t len) const override;
+  virtual size_t getChannelCount() const override;
+  virtual bool needAverage() const override;
 
-    void print(char c) const;
-    void parse(Rc::CrsfMessage& frame, int d);
+  void print(char c) const;
+  void parse(Rc::CrsfMessage& frame, int d);
 
-  private:
-    void reset();
-    void apply(const Rc::CrsfMessage& msg);
-    void applyLinkStats(const Rc::CrsfMessage& msg);
-    void applyChannels(const Rc::CrsfMessage& msg);
-    void applyMspReq(const Rc::CrsfMessage& msg);
+private:
+  void reset();
+  void apply(const Rc::CrsfMessage& msg);
+  void applyLinkStats(const Rc::CrsfMessage& msg);
+  void applyChannels(const Rc::CrsfMessage& msg);
+  void applyMspReq(const Rc::CrsfMessage& msg);
 
-    static constexpr size_t CHANNELS = 16;
-    static constexpr size_t TELEMETRY_INTERVAL = 20000;
+  static constexpr size_t CHANNELS = 16;
+  static constexpr size_t TELEMETRY_INTERVAL = 20000;
 
-    Device::SerialDevice * _serial;
-    TelemetryManager * _telemetry;
-    CrsfState _state;
-    uint8_t _idx;
-    bool _new_data;
-    Rc::CrsfMessage _frame;
-    uint16_t _channels[CHANNELS];
-    uint32_t _telemetry_next;
-    Connect::MspMessage _msg;
+  Device::SerialDevice* _serial;
+  TelemetryManager* _telemetry;
+  CrsfState _state;
+  uint8_t _idx;
+  bool _new_data;
+  Rc::CrsfMessage _frame;
+  uint16_t _channels[CHANNELS];
+  uint32_t _telemetry_next;
+  Connect::MspMessage _msg;
 };
 
-}
+} // namespace Espfc::Device

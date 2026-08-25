@@ -118,7 +118,8 @@ int BaroBMP280::getDelay(BaroDeviceMode mode) const
 {
   switch (mode)
   {
-    case BARO_MODE_TEMP: return 0;
+    case BARO_MODE_TEMP:
+      return 0;
     default:
       // return 5500; // if sapling X1
       // return 7500; // if sampling X2

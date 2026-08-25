@@ -16,4 +16,4 @@ private:
   bool _triggerLow = true;
 };
 
-}
+} // namespace Espfc::Device::Input

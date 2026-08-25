@@ -210,7 +210,8 @@ int GyroMPU6050::getRate() const
   switch (_dlpf)
   {
     case GYRO_DLPF_256:
-    case GYRO_DLPF_EX: return 8000;
+    case GYRO_DLPF_EX:
+      return 8000;
   }
   return 1000;
 }

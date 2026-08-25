@@ -107,7 +107,8 @@ int BaroBMP085::getDelay(BaroDeviceMode mode) const
 {
   switch (mode)
   {
-    case BARO_MODE_TEMP: return 4550; // temp
+    case BARO_MODE_TEMP:
+      return 4550; // temp
     default:
       // return 4550;  // press_0
       // return 7550;  // press_1
