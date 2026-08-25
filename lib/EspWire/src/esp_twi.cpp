@@ -423,8 +423,9 @@ uint8_t esp_twi_status()
       return I2C_SCL_HELD_LOW_AFTER_READ; // I2C bus error. SCL held low beyond slave clock stretch time
   }
 
-  if (SDA_READ() == 0) return I2C_SDA_HELD_LOW; // I2C bus error. SDA line held low by slave/another_master after n
-                                                // bits.
+  if (SDA_READ() == 0)
+    return I2C_SDA_HELD_LOW; // I2C bus error. SDA line held low by slave/another_master after n
+                             // bits.
 
   if (!esp_twi_write_start())
     return I2C_SDA_HELD_LOW_AFTER_INIT; // line busy. SDA again held low by another device. 2nd master?
