@@ -761,22 +761,24 @@ void GpsSensor::handleNavPvt() const
   _model.state.gps.accuracy.pDop = m.pDOP;
   _model.state.gps.accuracy.horizontal = m.hAcc; // mm
   _model.state.gps.accuracy.vertical = m.vAcc;   // mm
-  _model.state.gps.accuracy.speed = m.sAcc;      // mm/s
   _model.state.gps.accuracy.heading = m.headAcc; // deg * 1e5
 
   _model.state.gps.location.raw.lat = m.lat;
   _model.state.gps.location.raw.lon = m.lon;
   _model.state.gps.location.raw.height = m.hSML;
 
-  _model.state.gps.velocity.raw.groundSpeed = m.gSpeed;
+  _model.state.gps.velocity.raw.groundSpeed = m.gSpeed * 10;
   _model.state.gps.velocity.raw.heading = m.headMot;
 
-  _model.state.gps.velocity.raw.north = m.velN;
-  _model.state.gps.velocity.raw.east = m.velE;
-  _model.state.gps.velocity.raw.down = m.velD;
+  // NAV-PVT velocities (velN/velE/velD/gSpeed) and sAcc are cm/s per the
+  // u-blox interface manual; the shared GPS state uses mm/s like NAV-VELNED.
+  _model.state.gps.velocity.raw.north = m.velN * 10;
+  _model.state.gps.velocity.raw.east = m.velE * 10;
+  _model.state.gps.velocity.raw.down = m.velD * 10;
   _model.state.gps.velocity.raw.speed3d =
       lrintf(std::hypot(static_cast<float>(_model.state.gps.velocity.raw.groundSpeed),
                         static_cast<float>(_model.state.gps.velocity.raw.down)));
+  _model.state.gps.accuracy.speed = m.sAcc * 10;
 
   if (m.valid.validDate && m.valid.validTime)
   {
@@ -803,11 +805,14 @@ void GpsSensor::handleNavPvt() const
 
 void GpsSensor::handleNavSat() const
 {
+  if (_ubxMsg.length < sizeof(Gps::UbxNavSat)) return; // truncated header
   const auto& m = *_ubxMsg.getAs<Gps::UbxNavSat>();
-  _model.state.gps.numCh = m.numSvs;
+  // only trust satellite entries actually delivered in this message
+  const size_t available = (_ubxMsg.length - sizeof(Gps::UbxNavSat)) / sizeof(m.sats[0]);
+  _model.state.gps.numCh = std::min<size_t>({m.numSvs, SAT_MAX, available});
   for (uint8_t i = 0; i < SAT_MAX; i++)
   {
-    if (i < m.numSvs)
+    if (i < _model.state.gps.numCh)
     {
       _model.state.gps.svinfo[i].id = m.sats[i].svId;
       _model.state.gps.svinfo[i].gnssId = m.sats[i].gnssId;

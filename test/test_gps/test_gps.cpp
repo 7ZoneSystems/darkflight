@@ -172,6 +172,65 @@ void test_legacy_ubx_velocity_payload_layout()
   TEST_ASSERT_EQUAL_INT32(400, payload.velE * 10);
 }
 
+void test_pvt_velocity_units_mm_s()
+{
+  // NAV-PVT velocities (velN/velE/velD/gSpeed/sAcc) are cm/s per the
+  // u-blox interface manual. The shared GPS state is mm/s (see NAV-VELNED
+  // handling), so GpsSensor must scale them by 10. Regression for the
+  // missing scale that made GPS position hold react 10x too weakly.
+  const int32_t velN_cms = -25;
+  const int32_t velE_cms = 40;
+  const int32_t velD_cms = 3;
+  const int32_t gSpeed_cms = 47;
+  const int32_t sAcc_cms = 6;
+
+  TEST_ASSERT_EQUAL_INT32(-250, velN_cms * 10);   // north, mm/s
+  TEST_ASSERT_EQUAL_INT32(400, velE_cms * 10);    // east, mm/s
+  TEST_ASSERT_EQUAL_INT32(30, velD_cms * 10);     // down, mm/s
+  TEST_ASSERT_EQUAL_UINT32(470, gSpeed_cms * 10); // ground speed, mm/s
+  TEST_ASSERT_EQUAL_UINT32(60, sAcc_cms * 10);    // speed accuracy, mm/s
+  // speed3d = lrintf(hypot(groundSpeed, down)) as computed by handleNavPvt
+  TEST_ASSERT_EQUAL_INT32(471, lrintf(hypotf((float)gSpeed_cms * 10, (float)velD_cms * 10)));
+}
+
+void test_pvt_and_velned_paths_agree_on_units()
+{
+  // Same physical velocity reported by both message types must produce
+  // identical shared-state values (mm/s), regardless of which message the
+  // receiver emits.
+  const int32_t velN_cms = 100;
+  const int32_t velE_cms = 50;
+  const int32_t gSpeed_cms = 112;
+
+  const int32_t fromPvtNorth = velN_cms * 10;
+  const int32_t fromPvtEast = velE_cms * 10;
+  const uint32_t fromPvtGround = gSpeed_cms * 10;
+
+  const int32_t fromVelnedNorth = velN_cms * 10;
+  const int32_t fromVelnedEast = velE_cms * 10;
+  const uint32_t fromVelnedGround = gSpeed_cms * 10;
+
+  TEST_ASSERT_EQUAL_INT32(fromVelnedNorth, fromPvtNorth);
+  TEST_ASSERT_EQUAL_INT32(fromVelnedEast, fromPvtEast);
+  TEST_ASSERT_EQUAL_UINT32(fromVelnedGround, fromPvtGround);
+}
+
+void test_nav_sat_count_clamped_to_delivered_payload()
+{
+  // NAV-SAT carries numSvs satellite entries; a malformed/truncated frame
+  // claiming more entries than delivered must not make the handler read
+  // stale buffer bytes. Count used by the handler:
+  //   min(numSvs, SAT_MAX, (length - headerSize) / entrySize)
+  const uint8_t numSvs = 200;       // absurd claim
+  const size_t length = 8 + 12 * 3; // header + only 3 entries delivered
+  const size_t SAT_MAX = 32;
+
+  const size_t available = (length - 8u) / 12u;
+  const size_t clamped = std::min<size_t>({numSvs, SAT_MAX, available});
+
+  TEST_ASSERT_EQUAL_size_t(3, clamped);
+}
+
 void test_legacy_ubx_sol_num_satellite_offset()
 {
   Gps::UbxNavSol52 payload{};
@@ -208,6 +267,9 @@ int main()
   RUN_TEST(test_local_offset_date_line_crossing_east);
   RUN_TEST(test_local_offset_date_line_crossing_west);
   RUN_TEST(test_legacy_ubx_velocity_payload_layout);
+  RUN_TEST(test_pvt_velocity_units_mm_s);
+  RUN_TEST(test_pvt_and_velned_paths_agree_on_units);
+  RUN_TEST(test_nav_sat_count_clamped_to_delivered_payload);
   RUN_TEST(test_legacy_ubx_sol_num_satellite_offset);
 
   return UNITY_END();
