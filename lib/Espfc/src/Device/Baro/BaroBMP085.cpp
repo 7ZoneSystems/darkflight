@@ -77,6 +77,7 @@ float BaroBMP085::readPressure()
   x2 = ((int32_t)_cal.b1 * ((b6 * b6) >> 12)) >> 16;
   x3 = ((x1 + x2) + 2) >> 2;
   uint32_t b4 = ((uint32_t)_cal.ac4 * (uint32_t)(x3 + 32768)) >> 15;
+  if (b4 == 0) return NAN; // corrupted calibration data, avoid division by zero
   uint32_t b7 = ((uint32_t)up - b3) * (uint32_t)(50000UL >> oss);
 
   int32_t p = 0;

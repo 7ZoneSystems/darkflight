@@ -9,6 +9,17 @@ Timer::Timer(): interval(0), last(0), next(0), iteration(0), delta(0) {}
 
 int Timer::setInterval(uint32_t interval)
 {
+  if (interval == 0)
+  {
+    // zero interval cannot be converted to a rate; leave timer disabled
+    this->interval = 0;
+    this->rate = 0;
+    this->denom = 1;
+    this->delta = 0;
+    this->intervalf = 0;
+    iteration = 0;
+    return 0;
+  }
   this->interval = interval;
   this->rate = (1000000UL + interval / 2) / interval;
   this->denom = 1;
@@ -20,7 +31,18 @@ int Timer::setInterval(uint32_t interval)
 
 int Timer::setRate(uint32_t rate, uint32_t denom)
 {
+  if (denom == 0) denom = 1; // avoid division by zero on unvalidated config
   this->rate = (rate + denom / 2) / denom;
+  if (this->rate == 0)
+  {
+    // rate below 1Hz cannot produce a valid interval; leave timer disabled
+    this->interval = 0;
+    this->delta = 0;
+    this->intervalf = 0;
+    this->denom = denom;
+    iteration = 0;
+    return 0;
+  }
   this->interval = (1000000UL + this->rate / 2) / this->rate;
   this->denom = denom;
   this->delta = this->interval;

@@ -455,6 +455,10 @@ public:
     {
       config.gyro.dynamicFilter.count = DYN_NOTCH_COUNT_MAX;
     }
+
+    // prevent division by zero in timer setup (CWE-369)
+    if (config.mixerSync < 1) config.mixerSync = 1;
+    if (config.telemetryInterval < 1) config.telemetryInterval = 1; // ms
   }
 
   void begin()

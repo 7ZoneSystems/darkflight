@@ -297,6 +297,7 @@ void FAST_CODE_ATTR Input::updateFrameRate()
 
   _model.state.input.frameTime = now;
   _model.state.input.frameDelta += (((int)frameDelta - (int)_model.state.input.frameDelta) >> 3); // avg * 0.125
+  if (_model.state.input.frameDelta < 1) _model.state.input.frameDelta = 1; // avoid division by zero below
   _model.state.input.frameRate = 1000000ul / _model.state.input.frameDelta;
 
   if (_model.config.input.interpolationMode == INPUT_INTERPOLATION_AUTO &&
