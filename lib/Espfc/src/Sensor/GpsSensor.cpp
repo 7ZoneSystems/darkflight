@@ -742,7 +742,7 @@ void GpsSensor::calculateHomeVector() const
 
 void GpsSensor::handleCfgValGet() const
 {
-  const uint32_t key = *(reinterpret_cast<const uint32_t*>(_ubxMsg.payload) + sizeof(Gps::UbxCfgValsetHeader));
+  const uint32_t key = *reinterpret_cast<const uint32_t*>(_ubxMsg.payload + sizeof(Gps::UbxCfgValsetHeader));
   if (key == Gps::CFG_SIGNAL_GPS_L5)
   {
     _model.state.gps.support.gpsL5 = true;
