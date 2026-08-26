@@ -34,6 +34,7 @@ void MspMessage::advance(size_t size)
 
 uint8_t MspMessage::readU8()
 {
+  if (read >= received) return 0; // never read past received data
   return buffer[read++];
 }
 
@@ -57,6 +58,8 @@ uint32_t MspMessage::readU32()
 
 uint16_t MspMessage::append(const uint8_t* data, size_t len)
 {
+  if (received >= MSP_BUF_SIZE) return received;
+  if (len > (size_t)(MSP_BUF_SIZE - received)) len = MSP_BUF_SIZE - received; // truncate to capacity
   std::copy(data, data + len, buffer + received);
   received += len;
   return received;
@@ -92,6 +95,7 @@ void MspResponse::writeString(const char* v)
 
 void MspResponse::writeU8(uint8_t v)
 {
+  if (len >= MSP_BUF_OUT_SIZE) return; // drop excess bytes instead of overflowing
   data[len++] = v;
 }
 

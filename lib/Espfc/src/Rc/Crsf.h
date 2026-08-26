@@ -147,6 +147,7 @@ struct CrsfMessage
 
   void writeU8(uint8_t v)
   {
+    if (size - 2 >= CRSF_FRAME_SIZE_MAX - 3) return; // payload full, avoid overflow
     payload[size++ - 2] = v;
   }
 
