@@ -173,6 +173,8 @@ void FAST_CODE_ATTR InputCRSF::applyLinkStats(const CrsfMessage& msg)
 
 void FAST_CODE_ATTR InputCRSF::applyChannels(const CrsfMessage& msg)
 {
+  // RC channels packed: 16ch x 11bit = 22 bytes of payload required
+  if (msg.size < 2 + sizeof(CrsfData)) return;
   const auto* data = reinterpret_cast<const CrsfData*>(msg.payload);
   Crsf::decodeRcDataShift8(_channels, data);
   // Crsf::decodeRcData(_channels, frame);

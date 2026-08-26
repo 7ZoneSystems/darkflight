@@ -204,7 +204,7 @@ void GpsSensor::handleReceive()
       _state = _ackState;
       _counter = 0;
     }
-    else if (_ubxMsg.isResponse(Gps::UbxNavPvt92::ID))
+    else if (_ubxMsg.isResponse(Gps::UbxNavPvt92::ID) && _ubxMsg.length >= sizeof(Gps::UbxNavPvt92))
     {
       handleNavPvt();
     }
@@ -742,7 +742,11 @@ void GpsSensor::calculateHomeVector() const
 
 void GpsSensor::handleCfgValGet() const
 {
-  const uint32_t key = *reinterpret_cast<const uint32_t*>(_ubxMsg.payload + sizeof(Gps::UbxCfgValsetHeader));
+  // UBX-CFG-VALGET payload: [version u1 | layers u1 | position u2] then key/value pairs.
+  // Require the header plus a full key before reading (payload buffer is not cleared between frames).
+  if (_ubxMsg.length < sizeof(Gps::UbxCfgValsetHeader) + sizeof(uint32_t)) return;
+  uint32_t key;
+  std::memcpy(&key, _ubxMsg.payload + sizeof(Gps::UbxCfgValsetHeader), sizeof(key));
   if (key == Gps::CFG_SIGNAL_GPS_L5)
   {
     _model.state.gps.support.gpsL5 = true;
@@ -1012,6 +1016,7 @@ void GpsSensor::handleNmeaGsv(char** f, size_t n) const
 
   const uint8_t msgNum = (uint8_t)std::atoi(f[2]);
   _model.state.gps.numCh = std::min<uint8_t>((uint8_t)std::atoi(f[3]), SAT_MAX);
+  if (msgNum == 0) return; // avoid (msgNum - 1) underflow
 
   const size_t base = (msgNum - 1) * 4;
   for (size_t i = 0; i < 4; i++)
@@ -1029,6 +1034,8 @@ void GpsSensor::handleNmeaGsv(char** f, size_t n) const
 
 void GpsSensor::handleVersion() const
 {
+  // MON-VER payload: 30 bytes sw version + 10 bytes hw version, extensions follow.
+  if (_ubxMsg.length < 40) return;
   const char* payload = (const char*)_ubxMsg.payload;
 
   _model.logger.info().log("GPS VER").logln(payload);
