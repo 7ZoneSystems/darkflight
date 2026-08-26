@@ -12,7 +12,7 @@ Repository: <https://github.com/7ZoneSystems/espfc>
 - **License:** the original ESP-FC project is distributed under the [MIT license](/LICENSE). All upstream copyright and attribution is retained; see [License](#license).
 - **Relationship:** DarkFlight is an independent derivative project with a broader, integration-oriented scope. It does not represent, speak for, or continue the upstream project in any official capacity.
 - **Upstream community:** the original project's documentation and community resources (e.g., the [ESP-FC Discord](https://discord.gg/jhyPPM5UEH)) remain valuable references for hardware inherited from upstream.
-- **Upstream contributions:** DarkFlight intends to contribute relevant bug reports and appropriate fixes back to upstream ESP-FC when they are useful there. Memory-safety defects found during DarkFlight audits of inherited CRSF/MSP code have already been fixed locally and documented for upstream submission (see `report.md`).
+- **Upstream contributions:** DarkFlight intends to contribute relevant bug reports and appropriate fixes back to upstream ESP-FC when they are useful there. Memory-safety defects found during DarkFlight audits of inherited CRSF/MSP code have already been fixed locally and documented for upstream submission (see `report/msp-crsf-memory-safety-audit.md`).
 
 ## Project direction
 

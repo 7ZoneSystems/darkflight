@@ -150,4 +150,4 @@ only.
 4. Default motor on strapping pin GPIO12 (`ESPFC_OUTPUT_3`): consider a
    documented warning or future default change with migration note (wiring
    compatibility makes silent renumbering unsafe).
-5. Open items ESPFC-006…009 (see `report.md`).
+5. Open items ESPFC-006…009 (see `msp-crsf-memory-safety-audit.md`).

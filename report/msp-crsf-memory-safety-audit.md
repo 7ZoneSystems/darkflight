@@ -17,7 +17,7 @@ Repository: fork of rtlopez/esp-fc (`upstream` read-only). All work below is com
 
 Second audit pass driven by official Espressif documentation
 (`resources/esp32/`, full index + constraint checklist) targeting GPS,
-navigation and motor-output paths. Full details in `resources/BUG-AUDIT.md`.
+navigation and motor-output paths. Full details in `hardware-safety-audit.md`.
 
 Newly found and fixed (commit `87d6f4a`, regression tests added):
 
@@ -30,7 +30,7 @@ Investigated and ruled out with evidence: firmware-side cause of the historical
 "motor 4 / D4" misbehavior (output stack unchanged functionally since baseline;
 GPIO4 is an ordinary digital IO per official docs; no RMT/pin/NVS-config
 corruption mechanism exists). Residual suspects are hardware/configuration-side;
-bench checklist in BUG-AUDIT §6.
+bench checklist in hardware-safety-audit §6.
 
 Potential issues requiring hardware-in-the-loop testing: PosHold earth→body
 rotation sign/heading-source convention; async RMT ISR jitter under load.
